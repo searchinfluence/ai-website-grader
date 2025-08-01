@@ -61,12 +61,10 @@ export interface AIOptimization extends AnalysisScore {
   contextualRelevance: number;
 }
 
-export interface Authority extends AnalysisScore {
-  socialMediaPresence: number;
-  companyInformation: number;
-  legalCompliance: number;
-  testimonials: number;
-  affiliations: number;
+export interface EEATSignals extends AnalysisScore {
+  expertiseExperience: number;
+  authoritativeness: number;
+  trustworthiness: number;
 }
 
 export interface UserExperience extends AnalysisScore {
@@ -257,9 +255,7 @@ export interface WebsiteAnalysis {
   aiOptimization: AIOptimization;
   mobileOptimization: MobileOptimization;
   schemaAnalysis: SchemaAnalysis;
-  authority: Authority;
-  userExperience: UserExperience;
-  contentStructure: ContentStructure;
+  eeatSignals: EEATSignals;
   contentImprovements: ContentImprovement[];
   crawledContent: CrawledContent;
 }

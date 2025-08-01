@@ -103,12 +103,14 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             gap: '20px', 
             marginBottom: '40px' 
           }}>
+            {/* AI Optimization - 25% */}
             <div style={{ 
               textAlign: 'center', 
               padding: '20px', 
               background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%)', 
               borderRadius: '12px',
-              border: '1px solid rgba(52, 152, 219, 0.2)'
+              border: '1px solid rgba(52, 152, 219, 0.2)',
+              borderLeft: '4px solid #10b981'
             }}>
               <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--info-blue)', marginBottom: '5px' }}>
                 {analysis.aiOptimization.score}%
@@ -116,16 +118,19 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
                 AI Optimization
               </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
-                {analysis.aiOptimization.status.replace('-', ' ')}
+              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                25% Weight
               </div>
             </div>
+            
+            {/* Content Quality - 18% */}
             <div style={{ 
               textAlign: 'center', 
               padding: '20px', 
               background: 'linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%)', 
               borderRadius: '12px',
-              border: '1px solid rgba(39, 174, 96, 0.2)'
+              border: '1px solid rgba(39, 174, 96, 0.2)',
+              borderLeft: '4px solid #10b981'
             }}>
               <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--success-green)', marginBottom: '5px' }}>
                 {analysis.contentQuality.score}%
@@ -133,76 +138,108 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
                 Content Quality
               </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
-                {analysis.contentQuality.status.replace('-', ' ')}
+              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                18% Weight
               </div>
             </div>
+            
+            {/* Technical Crawlability - 16% */}
             <div style={{ 
               textAlign: 'center', 
               padding: '20px', 
               background: 'linear-gradient(135deg, rgba(230, 126, 34, 0.1) 0%, rgba(230, 126, 34, 0.05) 100%)', 
               borderRadius: '12px',
-              border: '1px solid rgba(230, 126, 34, 0.2)'
+              border: '1px solid rgba(230, 126, 34, 0.2)',
+              borderLeft: '4px solid #10b981'
             }}>
               <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--orange-accent)', marginBottom: '5px' }}>
-                {analysis.technicalSEO.score}%
+                {analysis.technicalCrawlability.score}%
               </div>
               <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                Technical SEO
+                Technical Crawlability
               </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
-                {analysis.technicalSEO.status.replace('-', ' ')}
+              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                16% Weight
               </div>
             </div>
+            
+            {/* E-E-A-T Signals - 12% */}
             <div style={{ 
               textAlign: 'center', 
               padding: '20px', 
               background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0.05) 100%)', 
               borderRadius: '12px',
-              border: '1px solid rgba(155, 89, 182, 0.2)'
+              border: '1px solid rgba(155, 89, 182, 0.2)',
+              borderLeft: '4px solid #f59e0b'
             }}>
               <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#9b59b6', marginBottom: '5px' }}>
-                {analysis.authority.score}%
+                {analysis.eeatSignals.score}%
               </div>
               <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                Authority
+                E-E-A-T Signals
               </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
-                {analysis.authority.status.replace('-', ' ')}
-              </div>
-            </div>
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '20px', 
-              background: 'linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%)', 
-              borderRadius: '12px',
-              border: '1px solid rgba(231, 76, 60, 0.2)'
-            }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--error-red)', marginBottom: '5px' }}>
-                {analysis.userExperience.score}%
-              </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                User Experience
-              </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
-                {analysis.userExperience.status.replace('-', ' ')}
+              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                12% Weight
               </div>
             </div>
+            
+            {/* Mobile Optimization - 12% */}
             <div style={{ 
               textAlign: 'center', 
               padding: '20px', 
               background: 'linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(26, 188, 156, 0.05) 100%)', 
               borderRadius: '12px',
-              border: '1px solid rgba(26, 188, 156, 0.2)'
+              border: '1px solid rgba(26, 188, 156, 0.2)',
+              borderLeft: '4px solid #f59e0b'
             }}>
               <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#1abc9c', marginBottom: '5px' }}>
-                {analysis.contentStructure.score}%
+                {analysis.mobileOptimization.score}%
               </div>
               <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                Content Structure
+                Mobile Optimization
               </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--muted-text)', marginTop: '5px', textTransform: 'capitalize' }}>
-                {analysis.contentStructure.status.replace('-', ' ')}
+              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                12% Weight
+              </div>
+            </div>
+            
+            {/* Schema Analysis - 10% */}
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '20px', 
+              background: 'linear-gradient(135deg, rgba(52, 73, 94, 0.1) 0%, rgba(52, 73, 94, 0.05) 100%)', 
+              borderRadius: '12px',
+              border: '1px solid rgba(52, 73, 94, 0.2)',
+              borderLeft: '4px solid #f59e0b'
+            }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#34495e', marginBottom: '5px' }}>
+                {analysis.schemaAnalysis.score}%
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                Schema Analysis
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                10% Weight
+              </div>
+            </div>
+            
+            {/* Technical SEO - 7% */}
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '20px', 
+              background: 'linear-gradient(135deg, rgba(149, 165, 166, 0.1) 0%, rgba(149, 165, 166, 0.05) 100%)', 
+              borderRadius: '12px',
+              border: '1px solid rgba(149, 165, 166, 0.2)',
+              borderLeft: '4px solid #6b7280'
+            }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#95a5a6', marginBottom: '5px' }}>
+                {analysis.technicalSEO.score}%
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                Technical SEO
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                7% Weight
               </div>
             </div>
           </div>
@@ -222,9 +259,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         gap: '30px',
         marginTop: '40px'
       }}>
-        {/* Enhanced AI Search Optimization */}
+        {/* AI Optimization - 25% */}
         <ScoreCard
-          title="AI Search Optimization"
+          title="AI Optimization"
           score={analysis.aiOptimization.score}
           status={analysis.aiOptimization.status}
           findings={analysis.aiOptimization.findings}
@@ -251,58 +288,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           }}
         />
 
-        {/* Content Quality */}
-        <ScoreCard
-          title="Mobile Optimization"
-          score={analysis.mobileOptimization.score}
-          status={analysis.mobileOptimization.status}
-          findings={analysis.mobileOptimization.findings}
-          recommendations={analysis.mobileOptimization.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
-          details={{
-            mobilePageSpeed: analysis.mobileOptimization.mobilePageSpeed,
-            touchTargets: analysis.mobileOptimization.touchTargets,
-            viewportConfiguration: analysis.mobileOptimization.viewportConfiguration,
-            mobileUsability: analysis.mobileOptimization.mobileUsability,
-            responsiveDesign: analysis.mobileOptimization.responsiveDesign
-          }}
-        />
-
-        <ScoreCard
-          title="Technical Crawlability"
-          score={analysis.technicalCrawlability.score}
-          status={analysis.technicalCrawlability.status}
-          findings={analysis.technicalCrawlability.findings}
-          recommendations={analysis.technicalCrawlability.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
-          details={{
-            robotsAccess: analysis.technicalCrawlability.robotsAccess,
-            botAccessibility: analysis.technicalCrawlability.botAccessibility,
-            contentDelivery: analysis.technicalCrawlability.contentDelivery,
-            javascriptDependency: analysis.technicalCrawlability.javascriptDependency,
-            loadSpeed: analysis.technicalCrawlability.loadSpeed
-          }}
-        />
-
-        <ScoreCard
-          title="Schema Analysis"
-          score={analysis.schemaAnalysis.score}
-          status={analysis.schemaAnalysis.status}
-          findings={analysis.schemaAnalysis.findings}
-          recommendations={analysis.schemaAnalysis.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
-          details={{
-            schemaPresence: analysis.schemaAnalysis.schemaPresence,
-            schemaValidation: analysis.schemaAnalysis.schemaValidation,
-            richSnippetPotential: analysis.schemaAnalysis.richSnippetPotential,
-            structuredDataCompleteness: analysis.schemaAnalysis.structuredDataCompleteness,
-            jsonLdImplementation: analysis.schemaAnalysis.jsonLdImplementation
-          }}
-        />
-
+        {/* Content Quality - 18% */}
         <ScoreCard
           title="Content Quality"
           score={analysis.contentQuality.score}
@@ -320,7 +306,77 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           }}
         />
 
-        {/* Technical SEO */}
+        {/* Technical Crawlability - 16% */}
+        <ScoreCard
+          title="Technical Crawlability"
+          score={analysis.technicalCrawlability.score}
+          status={analysis.technicalCrawlability.status}
+          findings={analysis.technicalCrawlability.findings}
+          recommendations={analysis.technicalCrawlability.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
+          details={{
+            robotsAccess: analysis.technicalCrawlability.robotsAccess,
+            botAccessibility: analysis.technicalCrawlability.botAccessibility,
+            contentDelivery: analysis.technicalCrawlability.contentDelivery,
+            javascriptDependency: analysis.technicalCrawlability.javascriptDependency,
+            loadSpeed: analysis.technicalCrawlability.loadSpeed
+          }}
+        />
+
+        {/* E-E-A-T Signals - 12% */}
+        <ScoreCard
+          title="E-E-A-T Signals"
+          score={analysis.eeatSignals.score}
+          status={analysis.eeatSignals.status}
+          findings={analysis.eeatSignals.findings}
+          recommendations={analysis.eeatSignals.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
+          details={{
+            expertiseExperience: analysis.eeatSignals.expertiseExperience,
+            authoritativeness: analysis.eeatSignals.authoritativeness,
+            trustworthiness: analysis.eeatSignals.trustworthiness
+          }}
+        />
+
+        {/* Mobile Optimization - 12% */}
+        <ScoreCard
+          title="Mobile Optimization"
+          score={analysis.mobileOptimization.score}
+          status={analysis.mobileOptimization.status}
+          findings={analysis.mobileOptimization.findings}
+          recommendations={analysis.mobileOptimization.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
+          details={{
+            mobilePageSpeed: analysis.mobileOptimization.mobilePageSpeed,
+            touchTargets: analysis.mobileOptimization.touchTargets,
+            viewportConfiguration: analysis.mobileOptimization.viewportConfiguration,
+            mobileUsability: analysis.mobileOptimization.mobileUsability,
+            responsiveDesign: analysis.mobileOptimization.responsiveDesign
+          }}
+        />
+
+        {/* Schema Analysis - 10% */}
+        <ScoreCard
+          title="Schema Analysis"
+          score={analysis.schemaAnalysis.score}
+          status={analysis.schemaAnalysis.status}
+          findings={analysis.schemaAnalysis.findings}
+          recommendations={analysis.schemaAnalysis.recommendations.map(rec => 
+            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
+          details={{
+            schemaPresence: analysis.schemaAnalysis.schemaPresence,
+            schemaValidation: analysis.schemaAnalysis.schemaValidation,
+            richSnippetPotential: analysis.schemaAnalysis.richSnippetPotential,
+            structuredDataCompleteness: analysis.schemaAnalysis.structuredDataCompleteness,
+            jsonLdImplementation: analysis.schemaAnalysis.jsonLdImplementation
+          }}
+        />
+
+        {/* Technical SEO - 7% */}
         <ScoreCard
           title="Technical SEO"
           score={analysis.technicalSEO.score}
@@ -336,66 +392,6 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             links: analysis.technicalSEO.links,
             schemaMarkup: analysis.technicalSEO.schemaMarkup,
             pageSpeed: analysis.technicalSEO.pageSpeed
-          }}
-        />
-
-        {/* Authority */}
-        <ScoreCard
-          title="Authority & Trust"
-          score={analysis.authority.score}
-          status={analysis.authority.status}
-          findings={analysis.authority.findings}
-          recommendations={analysis.authority.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
-          details={{
-            socialMediaPresence: analysis.authority.socialMediaPresence,
-            companyInformation: analysis.authority.companyInformation,
-            legalCompliance: analysis.authority.legalCompliance,
-            testimonials: analysis.authority.testimonials,
-            affiliations: analysis.authority.affiliations
-          }}
-        />
-
-        {/* User Experience */}
-        <ScoreCard
-          title="User Experience"
-          score={analysis.userExperience.score}
-          status={analysis.userExperience.status}
-          findings={analysis.userExperience.findings}
-          recommendations={analysis.userExperience.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
-          details={{
-            contactInfo: analysis.userExperience.contactInfo,
-            callsToAction: analysis.userExperience.callsToAction,
-            language: analysis.userExperience.language,
-            navigation: analysis.userExperience.navigation,
-            formUsability: analysis.userExperience.formUsability,
-            loadingExperience: analysis.userExperience.loadingExperience,
-            errorHandling: analysis.userExperience.errorHandling,
-            accessibility: analysis.userExperience.accessibility,
-            visualHierarchy: analysis.userExperience.visualHierarchy,
-            interactiveElements: analysis.userExperience.interactiveElements,
-            searchFunctionality: analysis.userExperience.searchFunctionality,
-            contentReadability: analysis.userExperience.contentReadability,
-            socialProof: analysis.userExperience.socialProof
-          }}
-        />
-
-        {/* Content Structure */}
-        <ScoreCard
-          title="Content Structure"
-          score={analysis.contentStructure.score}
-          status={analysis.contentStructure.status}
-          findings={analysis.contentStructure.findings}
-          recommendations={analysis.contentStructure.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
-          details={{
-            structuredContent: analysis.contentStructure.structuredContent,
-            multimedia: analysis.contentStructure.multimedia,
-            readability: analysis.contentStructure.readability
           }}
         />
       </div>

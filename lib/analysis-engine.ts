@@ -4,12 +4,10 @@ import {
   analyzeTechnicalSEO, 
   analyzeContentQuality, 
   analyzeAIOptimization, 
-  analyzeAuthority, 
-  analyzeUserExperience,
-  analyzeContentStructure,
   analyzeTechnicalCrawlability,
   analyzeMobileOptimization,
-  analyzeSchemaAnalysis
+  analyzeSchemaAnalysis,
+  analyzeEEATSignals
 } from './analyzer';
 // Performance analysis functions are used in the crawler module
 
@@ -50,9 +48,7 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     aiOptimization,
     mobileOptimization,
     schemaAnalysis,
-    authority,
-    userExperience,
-    contentStructure
+    eeatSignals
   ] = await Promise.all([
     Promise.resolve(analyzeTechnicalSEO(content)),
     Promise.resolve(analyzeTechnicalCrawlability(content)),
@@ -60,9 +56,7 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     Promise.resolve(analyzeAIOptimization(content)),
     Promise.resolve(analyzeMobileOptimization(content)),
     Promise.resolve(analyzeSchemaAnalysis(content)),
-    Promise.resolve(analyzeAuthority(content)),
-    Promise.resolve(analyzeUserExperience(content)),
-    Promise.resolve(analyzeContentStructure(content))
+    Promise.resolve(analyzeEEATSignals(content))
   ]);
   
   // Calculate weighted overall score
@@ -73,9 +67,7 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     aiOptimization: aiOptimization.score,
     mobileOptimization: mobileOptimization.score,
     schemaAnalysis: schemaAnalysis.score,
-    authority: authority.score,
-    userExperience: userExperience.score,
-    contentStructure: contentStructure.score
+    eeatSignals: eeatSignals.score
   });
   
   // Generate content improvements
@@ -90,9 +82,7 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     aiOptimization,
     mobileOptimization,
     schemaAnalysis,
-    authority,
-    userExperience,
-    contentStructure,
+    eeatSignals,
     contentImprovements: [],
     crawledContent: content
   });
@@ -111,9 +101,7 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     aiOptimization,
     mobileOptimization,
     schemaAnalysis,
-    authority,
-    userExperience,
-    contentStructure,
+    eeatSignals,
     contentImprovements,
     crawledContent: content
   };
@@ -126,34 +114,28 @@ export function calculateOverallScore(scores: {
   aiOptimization: number;
   mobileOptimization: number;
   schemaAnalysis: number;
-  authority: number;
-  userExperience: number;
-  contentStructure: number;
+  eeatSignals: number;
 }): number {
-  // Enhanced AI Search Weighted Scoring Framework
+  // 7-Factor AI Search Weighted Scoring Framework
   // Prioritizes factors that directly impact AI search rankings and content digestibility
   const weights = {
     aiOptimization: 0.25,          // 25% - AI content digestibility, answer potential, factual accuracy
-    mobileOptimization: 0.20,      // 20% - Mobile-first indexing, voice search readiness
+    contentQuality: 0.18,          // 18% - Content foundation and expertise (increased from 10%)
     technicalCrawlability: 0.16,   // 16% - AI bot accessibility, content availability
-    schemaAnalysis: 0.12,          // 12% - AI-friendly structured data (FAQ, How-to, etc.)
-    contentQuality: 0.10,          // 10% - Content foundation and expertise
-    technicalSEO: 0.08,            // 8% - Technical performance and SEO basics
-    authority: 0.05,               // 5% - Trust signals and topical authority
-    contentStructure: 0.03,        // 3% - Content organization and hierarchy
-    userExperience: 0.01           // 1% - Traditional UX (less critical for AI search)
+    eeatSignals: 0.12,             // 12% - Expertise, Experience, Authoritativeness, Trustworthiness (NEW)
+    mobileOptimization: 0.12,      // 12% - Mobile-first indexing, voice search readiness (decreased from 20%)
+    schemaAnalysis: 0.10,          // 10% - AI-friendly structured data (decreased from 12%)
+    technicalSEO: 0.07             // 7% - Technical performance and SEO basics (decreased from 8%)
   };
   
   const weightedScore = 
     scores.aiOptimization * weights.aiOptimization +
-    scores.mobileOptimization * weights.mobileOptimization +
-    scores.technicalCrawlability * weights.technicalCrawlability +
-    scores.schemaAnalysis * weights.schemaAnalysis +
     scores.contentQuality * weights.contentQuality +
-    scores.technicalSEO * weights.technicalSEO +
-    scores.authority * weights.authority +
-    scores.contentStructure * weights.contentStructure +
-    scores.userExperience * weights.userExperience;
+    scores.technicalCrawlability * weights.technicalCrawlability +
+    scores.eeatSignals * weights.eeatSignals +
+    scores.mobileOptimization * weights.mobileOptimization +
+    scores.schemaAnalysis * weights.schemaAnalysis +
+    scores.technicalSEO * weights.technicalSEO;
   
   return Math.round(weightedScore);
 }

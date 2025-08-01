@@ -303,71 +303,52 @@ export function analyzeAIOptimization(content: CrawledContent): AIOptimization {
   };
 }
 
-export function analyzeAuthority(content: CrawledContent): Authority {
+export function analyzeEEATSignals(content: CrawledContent): EEATSignals {
   const findings: string[] = [];
   const recommendations: RecommendationItem[] = [];
   
-  // Analyze social media presence indicators
-  const socialMediaPresence = analyzeSocialMediaPresence(content);
-  if (socialMediaPresence < 70) {
-    findings.push('Limited social media presence indicators');
+  // Analyze expertise and experience (40% weight)
+  const expertiseExperience = analyzeExpertiseExperience(content);
+  if (expertiseExperience < 70) {
+    findings.push('Limited demonstration of expertise and experience');
     recommendations.push(createRecommendation(
-      'Strengthen social media presence and social proof',
-      'medium',
-      'social-presence',
-      '1. Add social media links in header/footer\n2. Include social sharing buttons\n3. Display follower counts where appropriate\n4. Add social media widgets or feeds\n5. Encourage content sharing and engagement'
-    ));
-  }
-  
-  // Analyze company information
-  const companyInformation = analyzeCompanyInformation(content);
-  if (companyInformation < 70) {
-    findings.push('Company information could be more detailed');
-    recommendations.push(createRecommendation(
-      'Provide comprehensive company information',
-      'medium',
-      'company-info',
-      '1. Add detailed About Us page\n2. Include team member bios and credentials\n3. Add company mission and values\n4. Include business hours and location\n5. Provide company history and milestones'
-    ));
-  }
-  
-  // Analyze legal compliance
-  const legalCompliance = analyzeLegalCompliance(content);
-  if (legalCompliance < 70) {
-    findings.push('Legal compliance information may be missing');
-    recommendations.push(createRecommendation(
-      'Ensure legal compliance and transparency',
+      'Strengthen expertise and experience signals',
       'high',
-      'legal-compliance',
-      '1. Add privacy policy and terms of service\n2. Include cookie policy if applicable\n3. Add legal disclaimers where needed\n4. Provide contact info for legal inquiries\n5. Ensure GDPR/CCPA compliance if applicable'
+      'expertise-experience',
+      '1. Add author credentials and detailed bios\n2. Include industry-specific experience details\n3. Highlight relevant qualifications and certifications\n4. Showcase first-hand experience with case studies\n5. Demonstrate deep subject matter knowledge'
     ));
   }
   
-  // Analyze testimonials
-  const testimonials = analyzeTestimonials(content);
-  if (testimonials < 70) {
-    findings.push('Limited social proof and testimonials');
+  // Analyze authoritativeness (35% weight)
+  const authoritativeness = analyzeAuthoritativeness(content);
+  if (authoritativeness < 70) {
+    findings.push('Authoritativeness signals need improvement');
     recommendations.push(createRecommendation(
-      'Add more social proof and testimonials',
-      'medium',
-      'social-proof',
-      '1. Include customer testimonials with photos\n2. Add case studies and success stories\n3. Display client logos and awards\n4. Include industry recognition\n5. Add review widgets or badges'
+      'Enhance authoritativeness and recognition',
+      'high',
+      'authoritativeness',
+      '1. Build domain authority through quality backlinks\n2. Gain industry recognition and awards\n3. Establish thought leadership through original research\n4. Get cited by authoritative sources\n5. Build strong brand presence in your niche'
     ));
   }
   
-  // Analyze affiliations
-  const affiliations = analyzeAffiliations(content);
-  if (affiliations < 70) {
-    findings.push('Professional affiliations and certifications not prominently displayed');
+  // Analyze trustworthiness (25% weight)
+  const trustworthiness = analyzeTrustworthiness(content);
+  if (trustworthiness < 70) {
+    findings.push('Trustworthiness and transparency need improvement');
     recommendations.push(createRecommendation(
-      'Highlight professional credentials and affiliations',
-      'low',
-      'affiliations',
-      '1. Display industry certifications prominently\n2. Include partner organization logos\n3. Highlight professional memberships\n4. Add award badges and recognition\n5. Include relevant credentials and licenses'
+      'Improve trustworthiness and transparency',
+      'high',
+      'trustworthiness',
+      '1. Add comprehensive citations and sources\n2. Include clear contact information\n3. Add privacy policies and terms of service\n4. Provide business verification details\n5. Include transparent pricing and policies'
     ));
   }
   
-  const score = Math.round((socialMediaPresence + companyInformation + legalCompliance + testimonials + affiliations) / 5);
+  // Calculate weighted score
+  const score = Math.round(
+    expertiseExperience * 0.40 +
+    authoritativeness * 0.35 +
+    trustworthiness * 0.25
+  );
   const status = getScoreStatus(score);
   
   return {
@@ -375,319 +356,15 @@ export function analyzeAuthority(content: CrawledContent): Authority {
     status,
     findings,
     recommendations,
-    socialMediaPresence,
-    companyInformation,
-    legalCompliance,
-    testimonials,
-    affiliations
+    expertiseExperience,
+    authoritativeness,
+    trustworthiness
   };
 }
 
-export function analyzeUserExperience(content: CrawledContent): UserExperience {
-  const findings: string[] = [];
-  const recommendations: RecommendationItem[] = [];
-  
-  // Analyze contact information
-  const contactInfo = analyzeContactInfo(content);
-  if (contactInfo < 70) {
-    findings.push('Contact information is not easily accessible');
-    recommendations.push(createRecommendation(
-      'Make contact information more prominent and accessible',
-      'medium',
-      'contact-accessibility',
-      '1. Add contact info in header and footer\n2. Create a dedicated contact page\n3. Include phone, email, and address\n4. Add business hours and contact forms\n5. Make contact info visible on every page',
-      '<div class="contact-info">\n  <h3>Contact Us</h3>\n  <p>📞 (555) 123-4567</p>\n  <p>📧 info@example.com</p>\n  <p>📍 123 Main St, City, State</p>\n</div>',
-      ['Google My Business', 'Contact form plugins', 'Schema markup for LocalBusiness'],
-      'medium',
-      '1-2 hours',
-      'Check if contact info appears in multiple places and is easily clickable on mobile',
-      ['https://developers.google.com/search/docs/data-types/local-business', 'https://schema.org/LocalBusiness']
-    ));
-  }
-  
-  // Analyze calls to action
-  const callsToAction = analyzeCallsToAction(content);
-  if (callsToAction < 70) {
-    findings.push('Calls-to-action could be more compelling and strategically placed');
-    recommendations.push(createRecommendation(
-      'Improve calls-to-action placement and effectiveness',
-      'high',
-      'cta-optimization',
-      '1. Use action-oriented language (Get Started, Learn More)\n2. Make CTA buttons visually prominent\n3. Place CTAs at the end of sections\n4. Use contrasting colors for CTA buttons\n5. Test different CTA variations',
-      '<button class="cta-button primary">\n  🚀 Get Started Free\n</button>\n\n<a href="/demo" class="cta-link">\n  👀 See Live Demo\n</a>',
-      ['Hotjar', 'Google Optimize', 'Unbounce', 'Figma for design'],
-      'high',
-      '2-4 hours',
-      'Use heatmaps to verify CTA clicks and A/B test different versions',
-      ['https://blog.hubspot.com/marketing/call-to-action-examples', 'https://unbounce.com/conversion-rate-optimization/']
-    ));
-  }
-  
-  // Analyze language accessibility
-  const language = analyzeLanguageAccessibility(content);
-  if (language < 70) {
-    findings.push('Language may not be accessible to all audiences');
-    recommendations.push(createRecommendation(
-      'Improve language accessibility and readability',
-      'medium',
-      'language-accessibility',
-      '1. Use clear, simple language for target audience\n2. Avoid unnecessary jargon and technical terms\n3. Write in active voice\n4. Keep sentences concise (15-20 words)\n5. Define technical terms when necessary',
-      '<!-- Instead of: -->\n<p>Utilize our comprehensive solution...</p>\n\n<!-- Use: -->\n<p>Use our complete tool to help you...</p>',
-      ['Hemingway Editor', 'Grammarly', 'Readable.io'],
-      'medium',
-      '1-3 hours',
-      'Run content through readability tools and aim for 8th grade reading level',
-      ['https://hemingwayapp.com/', 'https://readable.com/']
-    ));
-  }
-  
-  // Analyze navigation structure
-  const navigation = analyzeNavigation(content);
-  if (navigation < 70) {
-    findings.push('Navigation structure needs improvement for better user experience');
-    recommendations.push(createRecommendation(
-      'Enhance navigation structure and usability',
-      'high',
-      'navigation-optimization',
-      '1. Use clear, descriptive menu labels\n2. Limit main navigation to 7±2 items\n3. Add breadcrumb navigation\n4. Include search functionality\n5. Make navigation sticky on scroll\n6. Add visual hierarchy with dropdowns',
-      '<nav class="main-nav">\n  <ul>\n    <li><a href="/about">About</a></li>\n    <li><a href="/services">Services</a>\n      <ul class="dropdown">\n        <li><a href="/web-design">Web Design</a></li>\n        <li><a href="/seo">SEO</a></li>\n      </ul>\n    </li>\n  </ul>\n</nav>',
-      ['TreeJack for navigation testing', 'OptimalSort for card sorting'],
-      'high',
-      '3-6 hours',
-      'Conduct user testing to verify navigation clarity and findability',
-      ['https://www.nngroup.com/articles/menu-design/', 'https://www.smashingmagazine.com/2013/12/redesigning-navigation/']
-    ));
-  }
-  
-  // Analyze form usability
-  const formUsability = analyzeFormUsability(content);
-  if (formUsability < 70) {
-    findings.push('Forms need better usability and user experience');
-    recommendations.push(createRecommendation(
-      'Improve form design and usability',
-      'medium',
-      'form-optimization',
-      '1. Use clear field labels and placeholders\n2. Group related fields together\n3. Provide real-time validation feedback\n4. Minimize required fields\n5. Add progress indicators for multi-step forms\n6. Use appropriate input types (email, tel, etc.)',
-      '<form class="user-friendly-form">\n  <div class="field-group">\n    <label for="email">Email Address *</label>\n    <input type="email" id="email" required\n           placeholder="your@email.com">\n    <span class="validation-message"></span>\n  </div>\n</form>',
-      ['Formik', 'React Hook Form', 'Typeform', 'Gravity Forms'],
-      'medium',
-      '2-4 hours',
-      'Test form completion rates and monitor abandonment points',
-      ['https://www.smashingmagazine.com/2018/08/ux-html5-mobile-form-part-1/', 'https://uxplanet.org/designing-more-efficient-forms-assistance-and-validation-f26a5241199d']
-    ));
-  }
-  
-  // Analyze loading experience
-  const loadingExperience = analyzeLoadingExperience(content);
-  if (loadingExperience < 70) {
-    findings.push('Loading experience could be improved with better feedback');
-    recommendations.push(createRecommendation(
-      'Enhance loading states and perceived performance',
-      'high',
-      'loading-optimization',
-      '1. Add loading spinners for async operations\n2. Use skeleton screens for content loading\n3. Implement progressive image loading\n4. Show progress bars for file uploads\n5. Prefetch critical resources\n6. Use service workers for offline experience',
-      '<div class="skeleton-loader">\n  <div class="skeleton-header"></div>\n  <div class="skeleton-text"></div>\n  <div class="skeleton-image"></div>\n</div>\n\n<div class="loading-spinner">\n  <span>Loading...</span>\n</div>',
-      ['React Suspense', 'Lottie for animations', 'LazyLoad libraries'],
-      'high',
-      '4-8 hours',
-      'Monitor Core Web Vitals and user feedback on loading experience',
-      ['https://web.dev/skeleton-screens/', 'https://uxplanet.org/how-to-design-better-loading-states-f1e4bbe0c3a6']
-    ));
-  }
-  
-  // Analyze error handling
-  const errorHandling = analyzeErrorHandling(content);
-  if (errorHandling < 70) {
-    findings.push('Error handling and user feedback systems need improvement');
-    recommendations.push(createRecommendation(
-      'Implement comprehensive error handling and user feedback',
-      'medium',
-      'error-handling',
-      '1. Create custom 404 and 500 error pages\n2. Add helpful navigation on error pages\n3. Include search functionality on error pages\n4. Use friendly, non-technical error messages\n5. Provide clear next steps for users\n6. Log errors for monitoring',
-      '<div class="error-page">\n  <h1>Oops! Page not found</h1>\n  <p>The page you\'re looking for doesn\'t exist.</p>\n  <div class="error-actions">\n    <a href="/" class="btn">Go Home</a>\n    <a href="/contact" class="btn">Contact Us</a>\n  </div>\n  <div class="search-box">\n    <input type="search" placeholder="Search our site...">\n  </div>\n</div>',
-      ['Sentry for error monitoring', 'LogRocket for user sessions'],
-      'medium',
-      '2-3 hours',
-      'Monitor error page analytics and user behavior after errors',
-      ['https://www.smashingmagazine.com/2009/01/404-error-pages-one-more-time/', 'https://uxplanet.org/error-handling-in-ux-design-useful-tips-and-best-practices-cc53c1f7a2c9']
-    ));
-  }
-  
-  // Analyze accessibility
-  const accessibility = analyzeAccessibility(content);
-  if (accessibility < 70) {
-    findings.push('Accessibility features need significant improvement');
-    recommendations.push(createRecommendation(
-      'Implement comprehensive accessibility improvements',
-      'high',
-      'accessibility-enhancement',
-      '1. Add alt text to all images\n2. Use proper heading hierarchy (h1-h6)\n3. Ensure sufficient color contrast (4.5:1 ratio)\n4. Add ARIA labels and roles\n5. Make site keyboard navigable\n6. Include focus indicators\n7. Test with screen readers',
-      '<img src="chart.jpg" alt="Sales increased 25% from Q1 to Q2 2023">\n\n<button aria-label="Close dialog" class="close-btn">\n  <span aria-hidden="true">&times;</span>\n</button>\n\n<nav aria-label="Main navigation" role="navigation">',
-      ['WAVE Web Accessibility Evaluator', 'axe DevTools', 'NVDA screen reader'],
-      'high',
-      '6-12 hours',
-      'Run automated accessibility tests and manual screen reader testing',
-      ['https://www.w3.org/WAI/WCAG21/quickref/', 'https://webaim.org/resources/']
-    ));
-  }
-  
-  // Analyze visual hierarchy
-  const visualHierarchy = analyzeVisualHierarchy(content);
-  if (visualHierarchy < 70) {
-    findings.push('Visual hierarchy could be improved for better content scanning');
-    recommendations.push(createRecommendation(
-      'Enhance visual hierarchy and content organization',
-      'medium',
-      'visual-hierarchy',
-      '1. Use consistent heading sizes and weights\n2. Implement proper typography scale\n3. Add sufficient white space between sections\n4. Use visual cues like colors and icons\n5. Group related content together\n6. Create clear content sections',
-      '<h1 class="page-title">Main Heading (32px)</h1>\n<h2 class="section-title">Section Heading (24px)</h2>\n<h3 class="subsection-title">Subsection (20px)</h3>\n<p class="body-text">Body text (16px)</p>\n<p class="caption">Caption text (14px)</p>',
-      ['Figma for design', 'Adobe XD', 'Typography scale generators'],
-      'medium',
-      '3-5 hours',
-      'Use eye-tracking studies or heatmaps to verify scanning patterns',
-      ['https://www.nngroup.com/articles/visual-hierarchy/', 'https://www.typescale.com/']
-    ));
-  }
-  
-  // Analyze interactive elements
-  const interactiveElements = analyzeInteractiveElements(content);
-  if (interactiveElements < 70) {
-    findings.push('Interactive elements need better design and feedback');
-    recommendations.push(createRecommendation(
-      'Improve interactive element design and usability',
-      'medium',
-      'interactive-optimization',
-      '1. Make clickable elements obviously clickable\n2. Use hover and focus states\n3. Ensure touch targets are at least 44px\n4. Provide immediate feedback on interactions\n5. Use consistent interaction patterns\n6. Add loading states for actions',
-      'button {\n  padding: 12px 24px;\n  min-height: 44px;\n  min-width: 44px;\n  border-radius: 4px;\n  transition: all 0.2s ease;\n}\n\nbutton:hover {\n  background-color: #0056b3;\n  transform: translateY(-1px);\n}\n\nbutton:active {\n  transform: translateY(0);\n}',
-      ['CSS transitions', 'Framer Motion', 'GSAP for animations'],
-      'medium',
-      '2-4 hours',
-      'Test with users on different devices and monitor interaction analytics',
-      ['https://material.io/design/interaction/', 'https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/']
-    ));
-  }
-  
-  // Analyze search functionality
-  const searchFunctionality = analyzeSearchFunctionality(content);
-  if (searchFunctionality < 70) {
-    findings.push('Search functionality is missing or needs improvement');
-    recommendations.push(createRecommendation(
-      'Implement or enhance search functionality',
-      'medium',
-      'search-enhancement',
-      '1. Add prominent search box in header\n2. Include search suggestions/autocomplete\n3. Implement filters and sorting options\n4. Show search result counts\n5. Handle no-results cases gracefully\n6. Track search analytics',
-      '<div class="search-container">\n  <input type="search" \n         placeholder="Search products, articles..."\n         class="search-input"\n         autocomplete="off">\n  <button class="search-btn">🔍</button>\n  <div class="search-suggestions"></div>\n</div>',
-      ['Algolia', 'Elasticsearch', 'Lunr.js for client-side search'],
-      'medium',
-      '4-8 hours',
-      'Monitor search success rates and most common search terms',
-      ['https://www.nngroup.com/articles/search-interface/', 'https://blog.algolia.com/ux-search-best-practices/']
-    ));
-  }
-  
-  // Analyze content readability
-  const contentReadability = analyzeContentReadability(content);
-  if (contentReadability < 70) {
-    findings.push('Content readability needs improvement');
-    recommendations.push(createRecommendation(
-      'Enhance content readability and structure',
-      'medium',
-      'readability-improvement',
-      '1. Use shorter paragraphs (2-3 sentences)\n2. Add bullet points and numbered lists\n3. Implement proper line spacing (1.5x)\n4. Choose readable fonts (16px minimum)\n5. Ensure good contrast ratios\n6. Break up text with subheadings',
-      'p {\n  font-size: 16px;\n  line-height: 1.6;\n  margin-bottom: 1rem;\n  max-width: 65ch; /* Optimal reading width */\n}\n\nul {\n  margin: 1rem 0;\n  padding-left: 1.5rem;\n}\n\nli {\n  margin-bottom: 0.5rem;\n}',
-      ['Hemingway Editor', 'Readable.io', 'Google Fonts'],
-      'medium',
-      '2-3 hours',
-      'Test with real users and measure reading completion rates',
-      ['https://www.nngroup.com/articles/how-users-read-on-the-web/', 'https://practicaltypography.com/']
-    ));
-  }
-  
-  // Analyze social proof
-  const socialProof = analyzeSocialProof(content);
-  if (socialProof < 70) {
-    findings.push('Social proof elements could be enhanced');
-    recommendations.push(createRecommendation(
-      'Add compelling social proof elements',
-      'low',
-      'social-proof',
-      '1. Add customer testimonials with photos\n2. Display client logos or badges\n3. Show user counts or statistics\n4. Include customer reviews and ratings\n5. Add case studies and success stories\n6. Display social media followers',
-      '<div class="testimonial">\n  <blockquote>\n    "This product increased our sales by 40%"\n  </blockquote>\n  <cite>\n    <img src="customer.jpg" alt="John Smith">\n    <span>John Smith, CEO of Example Corp</span>\n  </cite>\n</div>\n\n<div class="social-proof">\n  <span>Trusted by 10,000+ customers</span>\n  <div class="client-logos">...</div>\n</div>',
-      ['Testimonial plugins', 'Review aggregation tools', 'Trustpilot'],
-      'low',
-      '3-6 hours',
-      'Monitor conversion rates before and after adding social proof',
-      ['https://cxl.com/blog/social-proof/', 'https://blog.hubspot.com/marketing/social-proof-examples']
-    ));
-  }
-  
-  const score = Math.round((
-    contactInfo + callsToAction + language + navigation + formUsability + 
-    loadingExperience + errorHandling + accessibility + visualHierarchy + 
-    interactiveElements + searchFunctionality + contentReadability + socialProof
-  ) / 13);
-  
-  const status = getScoreStatus(score);
-  
-  return {
-    score,
-    status,
-    findings,
-    recommendations,
-    contactInfo,
-    callsToAction,
-    language,
-    navigation,
-    formUsability,
-    loadingExperience,
-    errorHandling,
-    accessibility,
-    visualHierarchy,
-    interactiveElements,
-    searchFunctionality,
-    contentReadability,
-    socialProof
-  };
-}
 
-export function analyzeContentStructure(content: CrawledContent): ContentStructure {
-  const findings: string[] = [];
-  const recommendations: string[] = [];
-  
-  // Analyze structured content
-  const structuredContent = analyzeStructuredContent(content);
-  if (structuredContent < 70) {
-    findings.push('Content structure could be more scannable');
-    recommendations.push('Use more bullet points, numbered lists, clear sections, and structured formatting. Break up long paragraphs, use white space effectively, and organize content with clear headings and subheadings.');
-  }
-  
-  // Analyze multimedia usage
-  const multimedia = analyzeMultimedia(content);
-  if (multimedia < 70) {
-    findings.push('Limited use of multimedia elements');
-    recommendations.push('Incorporate relevant images, videos, infographics, and interactive elements. Ensure all media is optimized, includes proper alt text, and enhances the user experience without slowing page load.');
-  }
-  
-  // Analyze readability (moved from Technical SEO)
-  const readability = analyzeReadability(content.paragraphs);
-  if (readability < 70) {
-    findings.push('Content readability needs improvement');
-    recommendations.push('Use shorter sentences and paragraphs for better readability. Aim for 2-3 sentences per paragraph and use clear, simple language. Include subheadings and use formatting to highlight key points.');
-  }
-  
-  const score = Math.round((structuredContent + multimedia + readability) / 3);
-  const status = getScoreStatus(score);
-  
-  return {
-    score,
-    status,
-    findings,
-    recommendations: recommendations.map(rec => createRecommendation(rec, 'medium', 'content-structure')),
-    structuredContent,
-    multimedia,
-    readability
-  };
-}
+
+
 
 export function analyzeTechnicalCrawlability(content: CrawledContent): TechnicalCrawlability {
   const findings: string[] = [];
@@ -2400,6 +2077,136 @@ function analyzeCrawlability(content: CrawledContent): number {
   const url = content.url || '';
   const urlParams = (url.match(/[?&]/g) || []).length;
   if (urlParams <= 2) score += 5;
+  
+  return Math.min(100, score);
+}
+
+// Helper functions for EEAT Signals analysis
+function analyzeExpertiseExperience(content: CrawledContent): number {
+  let score = 0;
+  
+  const text = content.paragraphs.join(' ').toLowerCase();
+  
+  // Author credentials and bio
+  const authorIndicators = [
+    'author', 'written by', 'by', 'contributor', 'expert', 'specialist',
+    'credentials', 'certified', 'licensed', 'qualified', 'experience'
+  ];
+  const authorCount = authorIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(25, authorCount * 5);
+  
+  // Industry-specific experience
+  const experienceIndicators = [
+    'years of experience', 'over 10 years', 'more than 5 years',
+    'specialized in', 'focus on', 'expertise in', 'background in'
+  ];
+  const experienceCount = experienceIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(20, experienceCount * 10);
+  
+  // First-hand experience signals
+  const firsthandIndicators = [
+    'i have', 'we have', 'our experience', 'based on our work',
+    'from our practice', 'in our experience', 'we\'ve found'
+  ];
+  const firsthandCount = firsthandIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(20, firsthandCount * 10);
+  
+  // Relevant qualifications
+  const qualificationIndicators = [
+    'degree', 'certification', 'license', 'accreditation', 'training',
+    'education', 'background', 'studied', 'graduated'
+  ];
+  const qualificationCount = qualificationIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(15, qualificationCount * 3);
+  
+  return Math.min(100, score);
+}
+
+function analyzeAuthoritativeness(content: CrawledContent): number {
+  let score = 0;
+  
+  const text = content.paragraphs.join(' ').toLowerCase();
+  
+  // Domain authority signals
+  const authorityIndicators = [
+    'authority', 'leading', 'premier', 'top', 'best', 'expert',
+    'recognized', 'award-winning', 'accredited', 'certified'
+  ];
+  const authorityCount = authorityIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(25, authorityCount * 5);
+  
+  // Industry recognition
+  const recognitionIndicators = [
+    'award', 'recognition', 'honor', 'achievement', 'distinction',
+    'featured', 'highlighted', 'spotlight', 'accolade'
+  ];
+  const recognitionCount = recognitionIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(20, recognitionCount * 5);
+  
+  // External validation
+  const externalIndicators = [
+    'cited by', 'referenced in', 'mentioned in', 'featured in',
+    'published in', 'appeared in', 'quoted in'
+  ];
+  const externalCount = externalIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(20, externalCount * 5);
+  
+  // Quality backlinks (simulated)
+  const linkText = content.links.map(link => link.text.toLowerCase()).join(' ');
+  const qualityLinkIndicators = [
+    'authority', 'expert', 'leading', 'premier', 'official'
+  ];
+  const qualityLinkCount = qualityLinkIndicators.filter(indicator => linkText.includes(indicator)).length;
+  score += Math.min(15, qualityLinkCount * 3);
+  
+  return Math.min(100, score);
+}
+
+function analyzeTrustworthiness(content: CrawledContent): number {
+  let score = 0;
+  
+  const text = content.paragraphs.join(' ').toLowerCase();
+  const html = content.html.toLowerCase();
+  
+  // Citations and sources
+  const citationIndicators = [
+    'according to', 'source:', 'cited', 'reference', 'study',
+    'research', 'data from', 'statistics from', 'based on'
+  ];
+  const citationCount = citationIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(30, citationCount * 6);
+  
+  // Contact information
+  const contactIndicators = [
+    'contact', 'phone', 'email', 'address', 'location',
+    'call us', 'reach us', 'get in touch'
+  ];
+  const contactCount = contactIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(20, contactCount * 4);
+  
+  // Privacy policies and transparency
+  const transparencyIndicators = [
+    'privacy policy', 'terms of service', 'cookie policy',
+    'transparent', 'open', 'honest', 'clear'
+  ];
+  const transparencyCount = transparencyIndicators.filter(indicator => html.includes(indicator)).length;
+  score += Math.min(20, transparencyCount * 5);
+  
+  // Business verification
+  const verificationIndicators = [
+    'verified', 'certified', 'licensed', 'registered',
+    'accredited', 'bonded', 'insured'
+  ];
+  const verificationCount = verificationIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(15, verificationCount * 3);
+  
+  // Transparent pricing and policies
+  const pricingIndicators = [
+    'pricing', 'cost', 'fee', 'rate', 'price',
+    'transparent pricing', 'clear pricing'
+  ];
+  const pricingCount = pricingIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(15, pricingCount * 3);
   
   return Math.min(100, score);
 }
