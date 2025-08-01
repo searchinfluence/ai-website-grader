@@ -510,3 +510,40 @@ textarea::placeholder {
   margin-right: 8px;
   font-size: 18px;
 }
+
+/* FAQ Accordion Styles */
+details[open] summary span:last-child {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+details summary {
+  transition: background-color 0.3s ease;
+}
+
+details summary:hover {
+  background-color: var(--light-gray) !important;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details summary::marker {
+  display: none;
+}
+
+/* FAQ Section Responsive */
+@media (max-width: 768px) {
+  .faq-section h2 {
+    font-size: 2rem !important;
+  }
+  
+  details summary {
+    font-size: 1rem !important;
+    padding: 20px 20px !important;
+  }
+  
+  details div {
+    padding: 20px 20px !important;
+  }
+}
