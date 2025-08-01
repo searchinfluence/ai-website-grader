@@ -298,19 +298,19 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
       sources: [],
       externalLinks: 0
     },
-    botAccessibility: {
-      aiBotDirectives: {
-        gptBot: 'unspecified',
-        googleExtended: 'unspecified',
-        chatgptUser: 'unspecified',
-        claudeWeb: 'unspecified',
-        bingBot: 'unspecified',
-        ccBot: 'unspecified',
-        perplexityBot: 'unspecified'
+          botAccessibility: {
+        aiBotDirectives: {
+          gptBot: 'unspecified' as const,
+          googleExtended: 'unspecified' as const,
+          chatgptUser: 'unspecified' as const,
+          claudeWeb: 'unspecified' as const,
+          bingBot: 'unspecified' as const,
+          ccBot: 'unspecified' as const,
+          perplexityBot: 'unspecified' as const
+        },
+        metaRobotsAI: [],
+        contentAvailability: 'full' as const
       },
-      metaRobotsAI: [],
-      contentAvailability: 'full'
-    },
     voiceSearchOptimization: {
       naturalLanguagePatterns: 0,
       conversationalContent: 0,
