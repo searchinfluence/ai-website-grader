@@ -81,12 +81,12 @@ export default function AnalysisStatus({ isVisible }: AnalysisStatusProps) {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.8)',
+      background: 'rgba(44, 62, 80, 0.85)', // Using your dark-blue with transparency
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 1000,
-      backdropFilter: 'blur(8px)'
+      backdropFilter: 'blur(12px)'
     }}>
       <div style={{
         background: 'var(--content-bg)',
@@ -95,8 +95,8 @@ export default function AnalysisStatus({ isVisible }: AnalysisStatusProps) {
         maxWidth: '600px',
         width: '90%',
         textAlign: 'center',
-        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
-        border: '1px solid var(--border-gray)',
+        boxShadow: '0 25px 80px rgba(44, 62, 80, 0.4)',
+        border: '2px solid var(--orange-accent)',
         opacity: fadeState === 'in' ? 1 : 0,
         transform: fadeState === 'in' ? 'translateY(0)' : 'translateY(20px)',
         transition: 'all 0.3s ease'
@@ -151,7 +151,7 @@ export default function AnalysisStatus({ isVisible }: AnalysisStatusProps) {
         <div style={{
           marginBottom: '30px',
           padding: '20px',
-          background: 'rgba(255, 255, 255, 0.05)',
+          background: 'var(--background-gray)',
           borderRadius: '12px',
           border: '1px solid var(--border-gray)'
         }}>
@@ -194,16 +194,16 @@ export default function AnalysisStatus({ isVisible }: AnalysisStatusProps) {
                 alignItems: 'center',
                 gap: '8px'
               }}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'rgba(255, 152, 0, 0.1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '2px solid var(--orange-accent)'
-                }}>
+                                 <div style={{
+                   width: '40px',
+                   height: '40px',
+                   borderRadius: '50%',
+                   background: 'var(--background-gray)',
+                   display: 'flex',
+                   alignItems: 'center',
+                   justifyContent: 'center',
+                   border: '2px solid var(--orange-accent)'
+                 }}>
                   <StepIcon size={18} style={{ color: 'var(--orange-accent)' }} />
                 </div>
                 <span style={{
@@ -222,9 +222,9 @@ export default function AnalysisStatus({ isVisible }: AnalysisStatusProps) {
         <div style={{
           marginTop: '30px',
           padding: '15px',
-          background: 'rgba(255, 152, 0, 0.05)',
+          background: 'var(--background-gray)',
           borderRadius: '8px',
-          border: '1px solid rgba(255, 152, 0, 0.2)'
+          border: '1px solid var(--border-gray)'
         }}>
           <p style={{
             fontSize: '0.9rem',
