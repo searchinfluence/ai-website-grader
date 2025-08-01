@@ -614,7 +614,8 @@ function generateMarkdownContent(
     
     if (tagName.startsWith('h')) {
       const level = parseInt(tagName.charAt(1));
-      priority = 100 - (level * 10); // H1 = 90, H2 = 80, etc.
+      // Headings get slight priority boost but maintain document order
+      priority = 55 + (6 - level); // H1 = 60, H2 = 59, etc.
       contentElements.push({
         type: 'heading',
         content,
@@ -623,9 +624,8 @@ function generateMarkdownContent(
         position: elementIndex++
       });
     } else if (tagName === 'p') {
-      // Paragraphs get priority based on length and position
-      priority = Math.min(70, 30 + (content.length / 10));
-      if (content.length > 100) priority += 10; // Longer paragraphs = more important
+      // Paragraphs get slight priority based on length
+      priority = 50 + Math.min(10, content.length / 50);
       
       contentElements.push({
         type: 'paragraph',
@@ -645,8 +645,8 @@ function generateMarkdownContent(
       });
       
       if (listItems.length > 0) {
-        // Lists get higher priority if they're substantial
-        priority = Math.min(75, 40 + (listItems.length * 5));
+        // Lists get slight priority boost
+        priority = 52 + Math.min(8, listItems.length);
         
         contentElements.push({
           type: 'list',
@@ -657,8 +657,8 @@ function generateMarkdownContent(
         });
       }
     } else if (tagName === 'blockquote') {
-      // Blockquotes often contain important content
-      priority = 65;
+      // Blockquotes get slight priority boost
+      priority = 53;
       contentElements.push({
         type: 'blockquote',
         content,
@@ -666,9 +666,9 @@ function generateMarkdownContent(
         position: elementIndex++
       });
     } else if (tagName === 'table') {
-      // Tables often contain structured data
+      // Tables get slight priority boost
       const cells = $el.find('td, th').length;
-      priority = Math.min(70, 30 + (cells / 2));
+      priority = 51 + Math.min(5, cells / 5);
       
       const tableContent = $el.find('td, th').map((_, cell) => $(cell).text().trim()).get().join(' | ');
       if (tableContent.length > 20) {
@@ -680,14 +680,14 @@ function generateMarkdownContent(
         });
       }
     } else if (tagName === 'img' || tagName === 'figure') {
-      // Images with good alt text are important
+      // Images with good alt text get slight priority
       const $img = tagName === 'img' ? $el : $el.find('img');
       const src = $img.attr('src');
       const alt = $img.attr('alt') || '';
       const title = $img.attr('title') || '';
       
       if (src && (alt.length > 10 || title.length > 10)) {
-        priority = 60;
+        priority = 52;
         const caption = alt || title || 'Image';
         contentElements.push({
           type: 'image',
@@ -700,7 +700,7 @@ function generateMarkdownContent(
       // Only include divs with substantial content (like bots do)
       const childElements = $el.children().length;
       if (text.length > 100 && childElements <= 5) {
-        priority = Math.min(60, 20 + (text.length / 20));
+        priority = 50 + Math.min(5, text.length / 100);
         contentElements.push({
           type: 'div',
           content,
@@ -711,14 +711,14 @@ function generateMarkdownContent(
     }
   });
   
-  // 4. Sort by bot priority (like real bots prioritize content)
+  // 4. Sort by document order with intelligent prioritization (like real bots read)
   contentElements.sort((a, b) => {
-    // Primary sort: priority (higher = more important)
-    if (b.priority !== a.priority) {
-      return b.priority - a.priority;
+    // Primary sort: document position (maintain reading order)
+    if (a.position !== b.position) {
+      return a.position - b.position;
     }
-    // Secondary sort: position (earlier in DOM = more important)
-    return a.position - b.position;
+    // Secondary sort: priority (for elements at same position)
+    return b.priority - a.priority;
   });
   
   // 5. Convert to markdown (simulating bot's content extraction)
