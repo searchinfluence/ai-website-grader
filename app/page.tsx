@@ -151,7 +151,7 @@ export default function Home() {
               </summary>
               <div style={{ padding: '25px 30px', color: 'var(--secondary-content)', lineHeight: '1.6' }}>
                 <p>The AI Website Grader is a sophisticated analysis tool designed for <strong>digital marketers, SEO professionals, web developers, and business owners</strong> who want to optimize their websites for AI-powered search engines and modern search algorithms.</p>
-                <p style={{ marginTop: '15px' }}>It's particularly valuable for:</p>
+                <p style={{ marginTop: '15px' }}>It&apos;s particularly valuable for:</p>
                 <ul style={{ marginTop: '10px', paddingLeft: '20px' }}>
                   <li>Higher education institutions optimizing for student search behavior</li>
                   <li>Healthcare organizations improving patient information discoverability</li>
@@ -238,7 +238,7 @@ export default function Home() {
               <div style={{ padding: '25px 30px', color: 'var(--secondary-content)', lineHeight: '1.6' }}>
                 <p>The AI Website Grader addresses key challenges in modern digital marketing:</p>
                 <ul style={{ marginTop: '15px', paddingLeft: '20px' }}>
-                  <li><strong>AI Overview Optimization:</strong> Improve chances of appearing in Google's AI-generated overviews</li>
+                  <li><strong>AI Overview Optimization:</strong> Improve chances of appearing in Google&apos;s AI-generated overviews</li>
                   <li><strong>Voice Search Readiness:</strong> Optimize content for natural language queries and voice assistants</li>
                   <li><strong>Featured Snippet Targeting:</strong> Structure content to appear in answer boxes and featured snippets</li>
                   <li><strong>Technical Performance:</strong> Identify and fix Core Web Vitals issues affecting search rankings</li>
