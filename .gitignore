@@ -221,6 +221,19 @@ crawl-results/
 *.test.md
 *.analysis.md
 
+# Analysis and test output files
+2025*.md
+ours_*.md
+scrunch_*.md
+*-higher-education-seo.md
+page-markdown-*.md
+
+# Documentation files (internal use only)
+ANALYTICS_SETUP.md
+EMAIL_ANNOUNCEMENT.md
+ENHANCEMENT_DISCUSSION.md
+HANDOFF_DOCUMENT_v2.0.md
+
 # Development and testing artifacts
 *.test.json
 *.debug.json

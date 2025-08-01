@@ -42,19 +42,19 @@ A comprehensive web application that analyzes websites for their readiness in AI
   - Alt text for images and link quality assessment
   - Readability scoring and HTML validation
 
-- **Authority & Trust** (5% weight)
+- **Authority** (5% weight)
   - Social media presence and company information depth
   - Legal compliance and testimonials analysis
   - Professional affiliations and credibility signals
 
-- **User Experience** (3% weight)
+- **Content Structure** (3% weight)
+  - Structured content analysis and multimedia assessment
+  - Readability optimization and content organization
+
+- **User Experience** (1% weight)
   - Navigation, form usability, and loading experience
   - Error handling, accessibility, and visual hierarchy
   - Interactive elements and content readability
-
-- **Content Structure** (1% weight)
-  - Structured content analysis and multimedia assessment
-  - Readability optimization and content organization
 
 ### Key Features
 - **Free API Integration**: Google PageSpeed Insights and W3C HTML Validator
@@ -169,13 +169,19 @@ This tool is specifically designed for the future of search, focusing on:
 
 ## 📊 Analysis Methodology
 
-The scoring system uses weighted calculations with AI Optimization receiving the highest weight (30%) as it's most critical for future search visibility:
+The scoring system uses weighted calculations with AI Optimization receiving the highest weight (25%) as it's most critical for future search visibility:
 
-- AI Optimization: 30%
-- Content Quality: 25%
-- Technical SEO: 20%
-- Authority & Trust: 15%
-- User Experience: 10%
+- AI Optimization: 25%
+- Mobile Optimization: 20%
+- Technical Crawlability: 16%
+- Schema Analysis: 12%
+- Content Quality: 10%
+- Technical SEO: 8%
+- Authority: 5%
+- Content Structure: 3%
+- User Experience: 1%
+
+For detailed information about the weighting system, see [WEIGHTING_SYSTEM.md](WEIGHTING_SYSTEM.md).
 
 ## 🚀 Deployment
 
@@ -233,12 +239,13 @@ The application uses a modern design system with:
 ## 📄 Recent Updates
 
 ### Latest Improvements
-- ✅ **Fixed Decimal Display**: All scores now rounded to 2 decimal places
-- ✅ **Enhanced PDF Generation**: Professional PDF with clickable URLs
-- ✅ **Modern Design System**: Updated UI with GetChunks design
+- ✅ **W3C HTML Validation**: Real-time HTML validation with detailed error reporting
+- ✅ **Enhanced Content Extraction**: Improved markdown generation with full page content
+- ✅ **Performance Metrics**: Real Core Web Vitals data from Google PageSpeed Insights
 - ✅ **Multiple Export Options**: PDF, Markdown, and Print functionality
-- ✅ **Clickable URLs**: PDF includes clickable links to Search Influence and AI Website Grader
-- ✅ **Improved Performance**: Faster analysis and better error handling
+- ✅ **Professional Reports**: Detailed analysis with actionable recommendations
+- ✅ **Modern Design System**: Clean, professional interface with optimized spacing
+- ✅ **Free API Integration**: No signup required for core functionality
 
 ## 🗺️ Roadmap
 
