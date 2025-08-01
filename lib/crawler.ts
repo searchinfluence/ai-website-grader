@@ -271,8 +271,10 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
   const aiAnalysisData = analyzeAIContent($, html, { title, paragraphs, headings, links });
   
   // Performance analysis (async - may use free APIs)
+  console.log('Starting performance analysis for URL:', url);
   const performanceMetrics = await analyzePerformanceWithCaching(url, html);
   console.log('Performance Metrics from Crawler:', performanceMetrics);
+  console.log('W3C Validation included:', !!performanceMetrics.htmlValidation);
   
   // Ensure aiAnalysisData is always defined with performance metrics
   const finalAIAnalysisData = aiAnalysisData ? {

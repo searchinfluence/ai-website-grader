@@ -18,18 +18,22 @@ export async function validateHTML(url: string, html?: string): Promise<{
   }>;
 }> {
   try {
-    // Use W3C Markup Validator API (free, no signup required)
+    // Use a simpler approach with the W3C validator
     const validatorUrl = 'https://validator.w3.org/nu/';
     
     // Add timeout to prevent hanging requests
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
     
     let response: Response;
     
     if (html) {
-      // Validate HTML content directly
-      response = await fetch(validatorUrl, {
+      // Validate HTML content directly using a simpler approach
+      const params = new URLSearchParams({
+        out: 'json'
+      });
+      
+      response = await fetch(`${validatorUrl}?${params.toString()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
@@ -60,116 +64,97 @@ export async function validateHTML(url: string, html?: string): Promise<{
       throw new Error(`HTML validation failed: ${response.status}`);
     }
     
-    // Check content type to determine response format
-    const contentType = response.headers.get('content-type') || '';
-    let data: unknown;
-    
-    if (contentType.includes('application/json')) {
-      // JSON response
-      data = await response.json();
-    } else {
-      // HTML response - try to extract validation info from HTML
+    // Try to parse as JSON first
+    try {
+      const data = await response.json();
+      console.log('W3C JSON Response:', JSON.stringify(data, null, 2));
+      
+      // Handle the W3C validator JSON response format
+      if (Array.isArray(data)) {
+        const errors = data.filter((msg: any) => msg.type === 'error').length;
+        const warnings = data.filter((msg: any) => msg.type === 'warning').length;
+        const messages = data.slice(0, 10).map((msg: any) => ({
+          type: msg.type as 'error' | 'warning' | 'info',
+          message: msg.message || msg.extract || 'HTML validation issue',
+          line: msg.lastLine || msg.firstLine
+        }));
+        
+        console.log('W3C Validation Results:', { errors, warnings, isValid: errors === 0, messageCount: messages.length });
+        
+        return {
+          errors,
+          warnings,
+          isValid: errors === 0,
+          messages
+        };
+      } else {
+        // Handle other JSON formats
+        const messages = (data as { messages?: Array<{ type: string; message: string; lastLine?: number }> }).messages || [];
+        const errors = (data as { errors?: number }).errors || messages.filter((msg: { type: string }) => msg.type === 'error').length;
+        const warnings = (data as { warnings?: number }).warnings || messages.filter((msg: { type: string }) => msg.type === 'warning').length;
+        
+        console.log('W3C Validation Results:', { errors, warnings, isValid: errors === 0, messageCount: messages.length });
+        
+        return {
+          errors,
+          warnings,
+          isValid: errors === 0,
+          messages: messages.slice(0, 10).map((msg: { type: string; message: string; lastLine?: number }) => ({
+            type: msg.type as 'error' | 'warning' | 'info',
+            message: msg.message,
+            line: msg.lastLine
+          }))
+        };
+      }
+    } catch (jsonError) {
+      console.log('JSON parsing failed, trying HTML response');
+      
+      // Fallback to HTML response parsing
       const htmlText = await response.text();
+      console.log('W3C HTML Response Sample:', htmlText.substring(0, 1000));
       
-      // Debug: Log a sample of the HTML response to understand the structure
-      console.log('W3C HTML Response Sample:', htmlText.substring(0, 500));
-      
-      // Enhanced pattern matching for validation results
+      // Simple pattern matching for validation results
       const errorMatches = htmlText.match(/class="error"/gi) || [];
       const warningMatches = htmlText.match(/class="warning"/gi) || [];
       
-      // More comprehensive regex patterns for different W3C response formats
-      const errorMessageRegex = /<li class="error"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>|<div class="error"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/div>|<span class="error"[^>]*>([^<]+)<\/span>|<td[^>]*class="error"[^>]*>([^<]+)<\/td>/gi;
-      const warningMessageRegex = /<li class="warning"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>|<div class="warning"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/div>|<span class="warning"[^>]*>([^<]+)<\/span>|<td[^>]*class="warning"[^>]*>([^<]+)<\/td>/gi;
-      
+      // Extract basic messages
       const errorMessages: Array<{ type: 'error'; message: string; line?: number }> = [];
       const warningMessages: Array<{ type: 'warning'; message: string; line?: number }> = [];
       
-      // Extract error messages
-      let match;
-      while ((match = errorMessageRegex.exec(htmlText)) !== null) {
-        // Try all capture groups to find the actual message
-        const message = match[1] || match[2] || match[3] || match[4] || 'HTML validation error';
-        if (message && message.trim() !== '' && message.trim() !== 'Error') {
+      // Look for common validation messages
+      const commonErrors = [
+        'Missing DOCTYPE declaration',
+        'Missing <html> tag',
+        'Missing <head> tag',
+        'Missing <body> tag',
+        'Missing <title> tag',
+        'Unclosed tag',
+        'Invalid attribute',
+        'Missing required attribute'
+      ];
+      
+      commonErrors.forEach(errorMsg => {
+        if (htmlText.toLowerCase().includes(errorMsg.toLowerCase())) {
           errorMessages.push({
             type: 'error',
-            message: message.trim(),
+            message: errorMsg,
             line: undefined
           });
         }
-      }
+      });
       
-      // Extract warning messages
-      while ((match = warningMessageRegex.exec(htmlText)) !== null) {
-        // Try all capture groups to find the actual message
-        const message = match[1] || match[2] || match[3] || match[4] || 'HTML validation warning';
-        if (message && message.trim() !== '' && message.trim() !== 'Warning') {
-          warningMessages.push({
-            type: 'warning',
-            message: message.trim(),
-            line: undefined
-          });
-        }
-      }
+      const errors = errorMatches.length || errorMessages.length;
+      const warnings = warningMatches.length || warningMessages.length;
       
-      // If we didn't extract any specific messages, try a broader approach
-      if (errorMessages.length === 0 && warningMessages.length === 0) {
-        console.log('No specific messages extracted, trying broader pattern matching');
-        
-        // Look for any text that might be error/warning messages
-        const allTextMatches = htmlText.match(/[A-Z][^.!?]*[.!?]/g) || [];
-        const potentialMessages = allTextMatches
-          .filter(text => 
-            text.toLowerCase().includes('error') || 
-            text.toLowerCase().includes('warning') ||
-            text.toLowerCase().includes('invalid') ||
-            text.toLowerCase().includes('missing') ||
-            text.toLowerCase().includes('required')
-          )
-          .slice(0, 5); // Limit to first 5 potential messages
-        
-        potentialMessages.forEach(text => {
-          const cleanText = text.trim();
-          if (cleanText.length > 10 && cleanText.length < 200) {
-            if (text.toLowerCase().includes('error')) {
-              errorMessages.push({
-                type: 'error',
-                message: cleanText,
-                line: undefined
-              });
-            } else {
-              warningMessages.push({
-                type: 'warning',
-                message: cleanText,
-                line: undefined
-              });
-            }
-          }
-        });
-      }
+      console.log('W3C Validation Results (HTML parsing):', { errors, warnings, isValid: errors === 0, messageCount: errorMessages.length + warningMessages.length });
       
-      data = {
-        messages: [...errorMessages, ...warningMessages],
-        errors: errorMatches.length,
-        warnings: warningMatches.length
+      return {
+        errors,
+        warnings,
+        isValid: errors === 0,
+        messages: [...errorMessages, ...warningMessages].slice(0, 10)
       };
     }
-    
-    // Process validation results
-    const messages = (data as { messages?: Array<{ type: string; message: string; lastLine?: number }> }).messages || [];
-    const errors = (data as { errors?: number }).errors || messages.filter((msg: { type: string }) => msg.type === 'error').length;
-    const warnings = (data as { warnings?: number }).warnings || messages.filter((msg: { type: string }) => msg.type === 'warning').length;
-    
-    return {
-      errors,
-      warnings,
-      isValid: errors === 0,
-      messages: messages.slice(0, 10).map((msg: { type: string; message: string; lastLine?: number }) => ({
-        type: msg.type as 'error' | 'warning' | 'info',
-        message: msg.message,
-        line: msg.lastLine
-      }))
-    };
     
   } catch (error) {
     console.warn('W3C HTML validation failed:', error);
@@ -284,6 +269,71 @@ function performLocalHTMLValidation(html: string): {
       message: 'Links without href attributes detected'
     });
   }
+  
+  // Check for deprecated elements
+  const deprecatedElements = ['<center>', '<font>', '<marquee>', '<blink>', '<applet>', '<basefont>', '<big>', '<strike>', '<tt>'];
+  deprecatedElements.forEach(element => {
+    if (html.includes(element)) {
+      warnings++;
+      messages.push({
+        type: 'warning',
+        message: `Deprecated HTML element found: ${element}`
+      });
+    }
+  });
+  
+  // Check for accessibility issues
+  const hasFormWithoutLabel = /<input[^>]*>(?!.*<label)/i.test(html);
+  if (hasFormWithoutLabel) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'Form inputs without associated labels detected'
+    });
+  }
+  
+  // Check for semantic HTML usage
+  const semanticElements = ['<article>', '<section>', '<nav>', '<header>', '<footer>', '<main>', '<aside>'];
+  const foundSemantic = semanticElements.filter(element => html.includes(element)).length;
+  if (foundSemantic === 0) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'No semantic HTML5 elements found (consider using article, section, nav, etc.)'
+    });
+  }
+  
+  // Check for meta viewport (mobile optimization)
+  const hasViewportMeta = /<meta[^>]*name=["']viewport["'][^>]*>/i.test(html);
+  if (!hasViewportMeta) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'Missing viewport meta tag for mobile optimization'
+    });
+  }
+  
+  // Check for character encoding
+  const hasCharset = /<meta[^>]*charset[^>]*>/i.test(html);
+  if (!hasCharset) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'Missing character encoding declaration'
+    });
+  }
+  
+  // Check for language attribute
+  const hasLangAttr = /<html[^>]*lang[^>]*>/i.test(html);
+  if (!hasLangAttr) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'Missing language attribute on html element'
+    });
+  }
+  
+  console.log('Local HTML Validation Results:', { errors, warnings, isValid: errors === 0, messageCount: messages.length });
   
   return {
     errors,
@@ -444,6 +494,8 @@ export async function analyzePerformanceMetrics(url: string, html: string): Prom
   accessibilityScore?: number;
   performanceScore?: number;
 }> {
+  console.log('Starting performance analysis for:', url);
+  
   // Run analyses in parallel for better performance
   const [htmlValidation, coreWebVitals, accessibilityScore] = await Promise.all([
     validateHTML(url, html),
@@ -451,12 +503,21 @@ export async function analyzePerformanceMetrics(url: string, html: string): Prom
     Promise.resolve(analyzeAccessibility(html))
   ]);
   
+  console.log('HTML Validation completed:', {
+    errors: htmlValidation.errors,
+    warnings: htmlValidation.warnings,
+    isValid: htmlValidation.isValid,
+    messageCount: htmlValidation.messages.length
+  });
+  
   // Calculate overall performance score
   const performanceScore = Math.round((
     (coreWebVitals?.score || 75) * 0.4 +  // 40% weight on Core Web Vitals
     (htmlValidation?.isValid ? 100 : 60) * 0.3 +  // 30% weight on HTML validity
     accessibilityScore * 0.3  // 30% weight on accessibility
   ));
+  
+  console.log('Performance analysis completed with score:', performanceScore);
   
   return {
     coreWebVitals,
