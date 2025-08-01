@@ -63,12 +63,38 @@ export async function validateHTML(url: string, html?: string): Promise<{
       // HTML response - try to extract validation info from HTML
       const htmlText = await response.text();
       
-      // Simple pattern matching for validation results
+      // Enhanced pattern matching for validation results
       const errorMatches = htmlText.match(/class="error"/gi) || [];
       const warningMatches = htmlText.match(/class="warning"/gi) || [];
       
+      // Extract actual error messages from HTML
+      const errorMessageRegex = /<li class="error"[^>]*>.*?<strong[^>]*>([^<]+)<\/strong>.*?<\/li>/gis;
+      const warningMessageRegex = /<li class="warning"[^>]*>.*?<strong[^>]*>([^<]+)<\/strong>.*?<\/li>/gis;
+      
+      const errorMessages: Array<{ type: 'error'; message: string; line?: number }> = [];
+      const warningMessages: Array<{ type: 'warning'; message: string; line?: number }> = [];
+      
+      // Extract error messages
+      let match;
+      while ((match = errorMessageRegex.exec(htmlText)) !== null) {
+        errorMessages.push({
+          type: 'error',
+          message: match[1]?.trim() || 'HTML validation error',
+          line: undefined
+        });
+      }
+      
+      // Extract warning messages
+      while ((match = warningMessageRegex.exec(htmlText)) !== null) {
+        warningMessages.push({
+          type: 'warning',
+          message: match[1]?.trim() || 'HTML validation warning',
+          line: undefined
+        });
+      }
+      
       data = {
-        messages: [],
+        messages: [...errorMessages, ...warningMessages],
         errors: errorMatches.length,
         warnings: warningMatches.length
       };

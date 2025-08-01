@@ -112,7 +112,7 @@ export default function Home() {
             textAlign: 'center', 
             fontSize: '2.5rem', 
             fontWeight: '800', 
-            color: 'var(--white)', 
+            color: 'var(--dark-blue)', 
             marginBottom: '50px' 
           }}>
             Frequently Asked Questions
