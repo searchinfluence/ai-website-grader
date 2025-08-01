@@ -463,7 +463,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                             lineHeight: '1.4'
                           }}>
                             <strong>{msg.type.toUpperCase()}:</strong> {msg.message}
-                            {msg.line && ` <span style="color: #666;">(Line ${msg.line})</span>`}
+                            {msg.line && <span style={{ color: '#666' }}> (Line {msg.line})</span>}
                           </li>
                         ))}
                         {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.length > 10 && (
