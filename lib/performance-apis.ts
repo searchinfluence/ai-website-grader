@@ -68,8 +68,8 @@ export async function validateHTML(url: string, html?: string): Promise<{
       const warningMatches = htmlText.match(/class="warning"/gi) || [];
       
       // Extract actual error messages from HTML
-      const errorMessageRegex = /<li class="error"[^>]*>.*?<strong[^>]*>([^<]+)<\/strong>.*?<\/li>/gis;
-      const warningMessageRegex = /<li class="warning"[^>]*>.*?<strong[^>]*>([^<]+)<\/strong>.*?<\/li>/gis;
+      const errorMessageRegex = /<li class="error"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>/gi;
+      const warningMessageRegex = /<li class="warning"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>/gi;
       
       const errorMessages: Array<{ type: 'error'; message: string; line?: number }> = [];
       const warningMessages: Array<{ type: 'warning'; message: string; line?: number }> = [];
