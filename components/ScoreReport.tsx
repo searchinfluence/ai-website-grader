@@ -410,12 +410,12 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             {/* Core Web Vitals */}
             {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals && (
               <div style={{ padding: '15px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #b3e6b3' }}>
-                <h4>🎯 Core Web Vitals</h4>
-                <p><strong>Performance Score:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.score}/100</p>
-                <p><strong>LCP:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.lcp}ms</p>
-                <p><strong>FID:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.fid}ms</p>
-                <p><strong>CLS:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.cls}</p>
-                <p style={{ fontSize: '12px', color: '#666', fontStyle: 'italic' }}>
+                <h4 style={{ color: '#333' }}>🎯 Core Web Vitals</h4>
+                <p style={{ color: '#333' }}><strong>Performance Score:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.score}/100</p>
+                <p style={{ color: '#333' }}><strong>LCP:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.lcp}ms</p>
+                <p style={{ color: '#333' }}><strong>FID:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.fid}ms</p>
+                <p style={{ color: '#333' }}><strong>CLS:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.cls}</p>
+                <p style={{ fontSize: '12px', color: '#333', fontStyle: 'italic' }}>
                   ✅ Real Core Web Vitals data from Google PageSpeed Insights API
                 </p>
               </div>
@@ -424,10 +424,10 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             {/* HTML Validation */}
             {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation && (
               <div style={{ padding: '15px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #b3e6b3' }}>
-                <h4>✅ HTML Validation (W3C)</h4>
-                <p><strong>Status:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.isValid ? '✅ Valid' : '❌ Invalid'}</p>
-                <p><strong>Errors:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.errors}</p>
-                <p><strong>Warnings:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.warnings}</p>
+                <h4 style={{ color: '#333' }}>✅ HTML Validation (W3C)</h4>
+                <p style={{ color: '#333' }}><strong>Status:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.isValid ? '✅ Valid' : '❌ Invalid'}</p>
+                <p style={{ color: '#333' }}><strong>Errors:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.errors}</p>
+                <p style={{ color: '#333' }}><strong>Warnings:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.warnings}</p>
                 {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.length > 0 && (
                   <details style={{ marginTop: '10px' }}>
                     <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>View Issues</summary>
@@ -447,9 +447,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             {/* Accessibility Score */}
             {analysis.crawledContent.aiAnalysisData.performanceMetrics.accessibilityScore !== undefined && (
               <div style={{ padding: '15px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #b3e6b3' }}>
-                <h4>♿ Accessibility Analysis</h4>
-                <p><strong>Score:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.accessibilityScore}/100</p>
-                <p style={{ fontSize: '12px', color: '#666' }}>
+                <h4 style={{ color: '#333' }}>♿ Accessibility Analysis</h4>
+                <p style={{ color: '#333' }}><strong>Score:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.accessibilityScore}/100</p>
+                <p style={{ fontSize: '12px', color: '#333' }}>
                   Based on alt text coverage, ARIA attributes, semantic HTML, and form labels
                 </p>
               </div>
@@ -458,9 +458,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             {/* Overall Performance */}
             {analysis.crawledContent.aiAnalysisData.performanceMetrics.performanceScore !== undefined && (
               <div style={{ padding: '15px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #b3e6b3' }}>
-                <h4>📊 Combined Performance</h4>
-                <p><strong>Overall Score:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.performanceScore}/100</p>
-                <p style={{ fontSize: '12px', color: '#666' }}>
+                <h4 style={{ color: '#333' }}>📊 Combined Performance</h4>
+                <p style={{ color: '#333' }}><strong>Overall Score:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.performanceScore}/100</p>
+                <p style={{ fontSize: '12px', color: '#333' }}>
                   Weighted: 40% Core Web Vitals, 30% HTML Validity, 30% Accessibility
                 </p>
               </div>
@@ -475,7 +475,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             <p style={{ fontSize: '14px', margin: '5px 0' }}>
               <strong>Google PageSpeed Insights:</strong> Optional free API (25,000 requests/day)
             </p>
-            <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+            <p style={{ fontSize: '12px', color: '#333', marginTop: '10px' }}>
               ✅ Google PageSpeed Insights API key is configured and providing real Core Web Vitals data.
             </p>
           </div>
