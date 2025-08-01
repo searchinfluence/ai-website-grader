@@ -576,6 +576,64 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               </span>
               Page Content Structure (Markdown)
             </summary>
+            
+            {/* Copy and Download Buttons */}
+            <div style={{
+              display: 'flex',
+              gap: '10px',
+              marginBottom: '20px'
+            }}>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(analysis.crawledContent.markdownContent || '');
+                  // You could add a toast notification here
+                }}
+                style={{
+                  background: 'var(--orange-accent)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s ease'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = '#e65100'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'var(--orange-accent)'}
+              >
+                📋 Copy Markdown
+              </button>
+              
+              <button
+                onClick={() => {
+                  const blob = new Blob([analysis.crawledContent.markdownContent || ''], { type: 'text/markdown' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `page-markdown-${analysis.url.replace(/[^a-z0-9]/gi, '-')}-${new Date().toISOString().split('T')[0]}.md`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                }}
+                style={{
+                  background: 'var(--info-blue)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s ease'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = '#1976d2'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'var(--info-blue)'}
+              >
+                💾 Download Markdown
+              </button>
+            </div>
             <div style={{
               marginTop: '20px',
               background: '#1e1e1e',

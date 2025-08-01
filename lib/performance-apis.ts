@@ -21,6 +21,10 @@ export async function validateHTML(url: string, html?: string): Promise<{
     // Use W3C Markup Validator API (free, no signup required)
     const validatorUrl = 'https://validator.w3.org/nu/';
     
+    // Add timeout to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
     let response: Response;
     
     if (html) {
@@ -32,6 +36,7 @@ export async function validateHTML(url: string, html?: string): Promise<{
           'User-Agent': 'AI-Website-Grader/1.0 (+https://ai-website-grader.vercel.app)',
         },
         body: html,
+        signal: controller.signal,
       });
     } else {
       // Validate by URL
@@ -45,8 +50,11 @@ export async function validateHTML(url: string, html?: string): Promise<{
         headers: {
           'User-Agent': 'AI-Website-Grader/1.0 (+https://ai-website-grader.vercel.app)',
         },
+        signal: controller.signal,
       });
     }
+    
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       throw new Error(`HTML validation failed: ${response.status}`);
@@ -164,17 +172,125 @@ export async function validateHTML(url: string, html?: string): Promise<{
     };
     
   } catch (error) {
-    console.warn('HTML validation failed:', error);
-    return {
-      errors: 0,
-      warnings: 0,
-      isValid: true,
-      messages: [{
-        type: 'info' as const,
-        message: 'HTML validation unavailable - validation service may be temporarily down'
-      }]
-    };
+    console.warn('W3C HTML validation failed:', error);
+    
+    // Fallback: Perform basic local HTML validation
+    try {
+      return performLocalHTMLValidation(html || '');
+    } catch (fallbackError) {
+      console.warn('Local HTML validation also failed:', fallbackError);
+      return {
+        errors: 0,
+        warnings: 0,
+        isValid: false,
+        messages: [{
+          type: 'warning' as const,
+          message: 'HTML validation unavailable - validation services may be temporarily down or blocked'
+        }]
+      };
+    }
   }
+}
+
+// Fallback HTML validation function
+function performLocalHTMLValidation(html: string): {
+  errors: number;
+  warnings: number;
+  isValid: boolean;
+  messages: Array<{
+    type: 'error' | 'warning' | 'info';
+    message: string;
+    line?: number;
+  }>;
+} {
+  const messages: Array<{ type: 'error' | 'warning' | 'info'; message: string; line?: number }> = [];
+  let errors = 0;
+  let warnings = 0;
+  
+  // Basic HTML structure validation
+  const hasDoctype = /<!DOCTYPE/i.test(html);
+  const hasHtmlTag = /<html/i.test(html);
+  const hasHeadTag = /<head/i.test(html);
+  const hasBodyTag = /<body/i.test(html);
+  const hasTitleTag = /<title/i.test(html);
+  
+  if (!hasDoctype) {
+    errors++;
+    messages.push({
+      type: 'error',
+      message: 'Missing DOCTYPE declaration'
+    });
+  }
+  
+  if (!hasHtmlTag) {
+    errors++;
+    messages.push({
+      type: 'error',
+      message: 'Missing <html> tag'
+    });
+  }
+  
+  if (!hasHeadTag) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'Missing <head> tag'
+    });
+  }
+  
+  if (!hasBodyTag) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'Missing <body> tag'
+    });
+  }
+  
+  if (!hasTitleTag) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'Missing <title> tag'
+    });
+  }
+  
+  // Check for unclosed tags (basic check)
+  const openTags = (html.match(/<[^/][^>]*>/g) || []).length;
+  const closeTags = (html.match(/<\/[^>]*>/g) || []).length;
+  
+  if (Math.abs(openTags - closeTags) > 5) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'Possible unclosed HTML tags detected'
+    });
+  }
+  
+  // Check for common issues
+  const hasImgWithoutAlt = /<img[^>]*>(?!.*alt=)/i.test(html);
+  if (hasImgWithoutAlt) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'Images without alt attributes detected'
+    });
+  }
+  
+  const hasLinksWithoutHref = /<a[^>]*>(?!.*href=)/i.test(html);
+  if (hasLinksWithoutHref) {
+    warnings++;
+    messages.push({
+      type: 'warning',
+      message: 'Links without href attributes detected'
+    });
+  }
+  
+  return {
+    errors,
+    warnings,
+    isValid: errors === 0,
+    messages: messages.slice(0, 10)
+  };
 }
 
 // ========================================

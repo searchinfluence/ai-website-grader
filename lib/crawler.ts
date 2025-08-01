@@ -600,13 +600,18 @@ function generateMarkdownContent(
   let elementIndex = 0;
   
   // Process elements in document order (like a real bot)
-  contentArea.find('h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, div, table, img, figure').each((_, element) => {
+  contentArea.find('h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, table, img, figure').each((_, element) => {
     const $el = $(element);
     const tagName = $el.prop('tagName')?.toLowerCase() || '';
     const text = $el.text().trim();
     
-    // Skip empty elements and nested list items
+    // Skip empty elements, nested list items, and elements that are children of already processed elements
     if (!text || $el.parents('ul, ol').length > 0) return;
+    
+    // Skip if this element is inside a div that we're processing separately
+    if ($el.parents('div').length > 0 && $el.parents('div').find('h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, table, img, figure').length > 1) {
+      return;
+    }
     
     // Calculate bot priority score (simulating how bots prioritize content)
     let priority = 50; // Base priority
@@ -692,18 +697,6 @@ function generateMarkdownContent(
         contentElements.push({
           type: 'image',
           content: `![${caption}](${src})`,
-          priority,
-          position: elementIndex++
-        });
-      }
-    } else if (tagName === 'div') {
-      // Only include divs with substantial content (like bots do)
-      const childElements = $el.children().length;
-      if (text.length > 100 && childElements <= 5) {
-        priority = 50 + Math.min(5, text.length / 100);
-        contentElements.push({
-          type: 'div',
-          content,
           priority,
           position: elementIndex++
         });
