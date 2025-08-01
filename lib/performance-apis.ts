@@ -63,13 +63,16 @@ export async function validateHTML(url: string, html?: string): Promise<{
       // HTML response - try to extract validation info from HTML
       const htmlText = await response.text();
       
+      // Debug: Log a sample of the HTML response to understand the structure
+      console.log('W3C HTML Response Sample:', htmlText.substring(0, 500));
+      
       // Enhanced pattern matching for validation results
       const errorMatches = htmlText.match(/class="error"/gi) || [];
       const warningMatches = htmlText.match(/class="warning"/gi) || [];
       
-      // Extract actual error messages from HTML - improved pattern matching
-      const errorMessageRegex = /<li class="error"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>|<div class="error"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/div>/gi;
-      const warningMessageRegex = /<li class="warning"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>|<div class="warning"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/div>/gi;
+      // More comprehensive regex patterns for different W3C response formats
+      const errorMessageRegex = /<li class="error"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>|<div class="error"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/div>|<span class="error"[^>]*>([^<]+)<\/span>|<td[^>]*class="error"[^>]*>([^<]+)<\/td>/gi;
+      const warningMessageRegex = /<li class="warning"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>|<div class="warning"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/div>|<span class="warning"[^>]*>([^<]+)<\/span>|<td[^>]*class="warning"[^>]*>([^<]+)<\/td>/gi;
       
       const errorMessages: Array<{ type: 'error'; message: string; line?: number }> = [];
       const warningMessages: Array<{ type: 'warning'; message: string; line?: number }> = [];
@@ -77,8 +80,9 @@ export async function validateHTML(url: string, html?: string): Promise<{
       // Extract error messages
       let match;
       while ((match = errorMessageRegex.exec(htmlText)) !== null) {
-        const message = match[1] || match[2] || 'HTML validation error';
-        if (message && message.trim() !== '') {
+        // Try all capture groups to find the actual message
+        const message = match[1] || match[2] || match[3] || match[4] || 'HTML validation error';
+        if (message && message.trim() !== '' && message.trim() !== 'Error') {
           errorMessages.push({
             type: 'error',
             message: message.trim(),
@@ -89,14 +93,51 @@ export async function validateHTML(url: string, html?: string): Promise<{
       
       // Extract warning messages
       while ((match = warningMessageRegex.exec(htmlText)) !== null) {
-        const message = match[1] || match[2] || 'HTML validation warning';
-        if (message && message.trim() !== '') {
+        // Try all capture groups to find the actual message
+        const message = match[1] || match[2] || match[3] || match[4] || 'HTML validation warning';
+        if (message && message.trim() !== '' && message.trim() !== 'Warning') {
           warningMessages.push({
             type: 'warning',
             message: message.trim(),
             line: undefined
           });
         }
+      }
+      
+      // If we didn't extract any specific messages, try a broader approach
+      if (errorMessages.length === 0 && warningMessages.length === 0) {
+        console.log('No specific messages extracted, trying broader pattern matching');
+        
+        // Look for any text that might be error/warning messages
+        const allTextMatches = htmlText.match(/[A-Z][^.!?]*[.!?]/g) || [];
+        const potentialMessages = allTextMatches
+          .filter(text => 
+            text.toLowerCase().includes('error') || 
+            text.toLowerCase().includes('warning') ||
+            text.toLowerCase().includes('invalid') ||
+            text.toLowerCase().includes('missing') ||
+            text.toLowerCase().includes('required')
+          )
+          .slice(0, 5); // Limit to first 5 potential messages
+        
+        potentialMessages.forEach(text => {
+          const cleanText = text.trim();
+          if (cleanText.length > 10 && cleanText.length < 200) {
+            if (text.toLowerCase().includes('error')) {
+              errorMessages.push({
+                type: 'error',
+                message: cleanText,
+                line: undefined
+              });
+            } else {
+              warningMessages.push({
+                type: 'warning',
+                message: cleanText,
+                line: undefined
+              });
+            }
+          }
+        });
       }
       
       data = {
