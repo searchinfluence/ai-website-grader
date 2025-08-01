@@ -929,6 +929,83 @@ export function analyzeSchemaAnalysis(content: CrawledContent): SchemaAnalysis {
   };
 }
 
+// New function: Analyze site structure (navigation, internal linking, etc.)
+export function analyzeSiteStructure(content: CrawledContent): {
+  score: number;
+  status: 'excellent' | 'good' | 'needs-improvement' | 'poor';
+  findings: string[];
+  recommendations: RecommendationItem[];
+  navigationQuality: number;
+  internalLinking: number;
+  siteHierarchy: number;
+  crawlability: number;
+} {
+  const findings: string[] = [];
+  const recommendations: RecommendationItem[] = [];
+  
+  // Analyze navigation quality
+  const navigationQuality = analyzeNavigationQuality(content);
+  if (navigationQuality < 70) {
+    findings.push('Navigation structure needs improvement');
+    recommendations.push(createRecommendation(
+      'Improve site navigation structure',
+      'high',
+      'navigation',
+      '1. Create clear main navigation menu\n2. Add breadcrumb navigation\n3. Ensure mobile-friendly navigation\n4. Include footer navigation links\n5. Test navigation usability'
+    ));
+  }
+  
+  // Analyze internal linking
+  const internalLinking = analyzeInternalLinking(content);
+  if (internalLinking < 70) {
+    findings.push('Internal linking strategy needs improvement');
+    recommendations.push(createRecommendation(
+      'Enhance internal linking strategy',
+      'medium',
+      'internal-linking',
+      '1. Add more internal links to related content\n2. Use descriptive anchor text\n3. Create topic clusters\n4. Link to important pages from multiple locations\n5. Ensure no broken internal links'
+    ));
+  }
+  
+  // Analyze site hierarchy
+  const siteHierarchy = analyzeSiteHierarchy(content);
+  if (siteHierarchy < 70) {
+    findings.push('Site hierarchy and structure needs improvement');
+    recommendations.push(createRecommendation(
+      'Improve site hierarchy and structure',
+      'medium',
+      'site-hierarchy',
+      '1. Create logical URL structure\n2. Organize content in categories\n3. Use clear page titles\n4. Implement proper heading hierarchy\n5. Create sitemap.xml'
+    ));
+  }
+  
+  // Analyze crawlability
+  const crawlability = analyzeCrawlability(content);
+  if (crawlability < 70) {
+    findings.push('Site crawlability issues detected');
+    recommendations.push(createRecommendation(
+      'Fix crawlability issues',
+      'high',
+      'crawlability',
+      '1. Check robots.txt configuration\n2. Ensure no broken links\n3. Optimize page load speed\n4. Fix mobile usability issues\n5. Submit sitemap to search engines'
+    ));
+  }
+  
+  const score = Math.round((navigationQuality + internalLinking + siteHierarchy + crawlability) / 4);
+  const status = getScoreStatus(score);
+  
+  return {
+    score,
+    status,
+    findings,
+    recommendations,
+    navigationQuality,
+    internalLinking,
+    siteHierarchy,
+    crawlability
+  };
+}
+
 // Helper functions for TechnicalCrawlability analysis
 function analyzeRobotsAccess(content: CrawledContent): number {
   if (!content.robotsInfo) {
@@ -1392,7 +1469,7 @@ function analyzeLanguageAccessibility(content: CrawledContent): number {
 function analyzeStructuredContent(content: CrawledContent): number {
   let score = 0;
   
-  // Analyze heading structure
+  // Enhanced heading structure analysis
   const headings = content.headings;
   if (headings.length > 0) {
     score += 20; // Base score for having headings
@@ -1402,10 +1479,13 @@ function analyzeStructuredContent(content: CrawledContent): number {
     const hasH1 = headingLevels.includes(1);
     const hasH2 = headingLevels.includes(2);
     const hasH3 = headingLevels.includes(3);
+    const hasH4 = headingLevels.includes(4);
     
-    if (hasH1) score += 10;
-    if (hasH2) score += 10;
-    if (hasH3) score += 5;
+    // Enhanced hierarchy scoring
+    if (hasH1) score += 15; // H1 is crucial
+    if (hasH2) score += 10; // H2 for major sections
+    if (hasH3) score += 8;  // H3 for subsections
+    if (hasH4) score += 5;  // H4 for detailed subsections
     
     // Check for logical hierarchy (no skipping levels)
     let hasGoodHierarchy = true;
@@ -1416,31 +1496,57 @@ function analyzeStructuredContent(content: CrawledContent): number {
       }
     }
     if (hasGoodHierarchy) score += 10;
+    
+    // Bonus for comprehensive heading structure
+    if (hasH1 && hasH2 && hasH3) score += 5;
   }
   
-  // Analyze lists and structured elements
+  // Enhanced structured elements analysis
   const html = content.html.toLowerCase();
-  const structureElements = ['<ul>', '<ol>', '<li>', '<table>', '<th>', '<td>', '<blockquote>', '<section>', '<article>', '<aside>'];
+  const structureElements = [
+    '<ul>', '<ol>', '<li>', '<table>', '<th>', '<td>', 
+    '<blockquote>', '<section>', '<article>', '<aside>',
+    '<nav>', '<header>', '<footer>', '<main>'
+  ];
   const foundElements = structureElements.filter(element => html.includes(element)).length;
-  score += Math.min(30, foundElements * 3);
+  score += Math.min(25, foundElements * 2); // More balanced scoring
   
-  // Analyze paragraph structure
+  // Enhanced paragraph structure analysis
   const paragraphs = content.paragraphs;
   if (paragraphs.length > 0) {
     score += 10; // Base score for having paragraphs
     
-    // Check for reasonable paragraph lengths
-    const goodLengthParagraphs = paragraphs.filter(p => p.length > 50 && p.length < 500).length;
-    const paragraphScore = Math.min(20, (goodLengthParagraphs / paragraphs.length) * 20);
+    // Check for reasonable paragraph lengths with better distribution
+    const shortParagraphs = paragraphs.filter(p => p.length < 50).length;
+    const mediumParagraphs = paragraphs.filter(p => p.length >= 50 && p.length < 200).length;
+    const longParagraphs = paragraphs.filter(p => p.length >= 200 && p.length < 500).length;
+    const veryLongParagraphs = paragraphs.filter(p => p.length >= 500).length;
+    
+    // Prefer medium-length paragraphs, allow some variety
+    const paragraphScore = Math.min(20, 
+      (mediumParagraphs * 2 + longParagraphs * 1.5 + shortParagraphs * 0.5 - veryLongParagraphs * 0.5) / paragraphs.length * 20
+    );
     score += paragraphScore;
   }
   
-  // Analyze content organization
+  // Enhanced content organization analysis
   const totalContentLength = content.html.length;
   const textContentLength = content.paragraphs.join(' ').length;
   const contentRatio = textContentLength / totalContentLength;
   
-  if (contentRatio > 0.3) score += 10; // Good content-to-markup ratio
+  if (contentRatio > 0.4) score += 15; // Excellent content-to-markup ratio
+  else if (contentRatio > 0.3) score += 10; // Good content-to-markup ratio
+  else if (contentRatio > 0.2) score += 5;  // Acceptable content-to-markup ratio
+  
+  // Navigation and site structure bonus
+  if (html.includes('<nav>') || html.includes('class="nav') || html.includes('id="nav')) {
+    score += 5; // Bonus for clear navigation structure
+  }
+  
+  // Semantic HTML bonus
+  if (html.includes('<main>') || html.includes('<article>') || html.includes('<section>')) {
+    score += 5; // Bonus for semantic HTML elements
+  }
   
   return Math.min(100, score);
 }
@@ -1448,43 +1554,69 @@ function analyzeStructuredContent(content: CrawledContent): number {
 function analyzeMultimedia(content: CrawledContent): number {
   let score = 0;
   
-  // Analyze images
+  // Enhanced image analysis
   const imageCount = content.images.length;
   if (imageCount > 0) {
-    score += 30; // Base score for having images
+    score += 25; // Base score for having images
     
-    // Check for alt text quality
-    const imagesWithAlt = content.images.filter(img => img.alt && img.alt.length > 3).length;
-    const altTextScore = Math.min(20, (imagesWithAlt / imageCount) * 20);
+    // Enhanced alt text quality analysis
+    const imagesWithGoodAlt = content.images.filter(img => 
+      img.alt && img.alt.length > 10 && img.alt.length < 150
+    ).length;
+    const imagesWithBasicAlt = content.images.filter(img => 
+      img.alt && img.alt.length > 3 && img.alt.length <= 10
+    ).length;
+    
+    const altTextScore = Math.min(20, 
+      (imagesWithGoodAlt * 2 + imagesWithBasicAlt) / imageCount * 20
+    );
     score += altTextScore;
     
-    // Bonus for multiple images
-    if (imageCount > 2) score += 10;
-    if (imageCount > 5) score += 10;
+    // Enhanced image quantity scoring
+    if (imageCount >= 3 && imageCount <= 8) score += 15; // Optimal range
+    else if (imageCount > 8) score += 10; // Good amount
+    else if (imageCount >= 1) score += 5; // At least some images
   }
   
-  // Analyze videos
+  // Enhanced video analysis
   const videoCount = (content.html.match(/<video|<iframe.*youtube|<iframe.*vimeo|<iframe.*wistia|<iframe.*brightcove/gi) || []).length;
   if (videoCount > 0) {
     score += 20; // Base score for having videos
-    if (videoCount > 1) score += 10;
+    if (videoCount >= 2 && videoCount <= 4) score += 15; // Optimal range
+    else if (videoCount > 4) score += 10; // Good amount
+    else score += 5; // At least one video
   }
   
-  // Analyze other multimedia elements
+  // Enhanced multimedia elements analysis
   const hasAudio = content.html.toLowerCase().includes('<audio');
   const hasEmbeddedContent = content.html.toLowerCase().includes('<embed') || content.html.toLowerCase().includes('<object');
   const hasInteractiveElements = content.html.toLowerCase().includes('<canvas') || content.html.toLowerCase().includes('<svg');
+  const hasSlideshows = content.html.toLowerCase().includes('slideshow') || content.html.toLowerCase().includes('carousel');
+  const hasMaps = content.html.toLowerCase().includes('google.maps') || content.html.toLowerCase().includes('mapbox');
   
-  if (hasAudio) score += 10;
-  if (hasEmbeddedContent) score += 10;
-  if (hasInteractiveElements) score += 10;
+  if (hasAudio) score += 8;
+  if (hasEmbeddedContent) score += 8;
+  if (hasInteractiveElements) score += 8;
+  if (hasSlideshows) score += 5;
+  if (hasMaps) score += 5;
   
-  // Check for multimedia optimization
+  // Enhanced multimedia optimization analysis
   const hasResponsiveImages = content.html.toLowerCase().includes('srcset') || content.html.toLowerCase().includes('sizes');
   const hasLazyLoading = content.html.toLowerCase().includes('loading="lazy"');
+  const hasWebpImages = content.html.toLowerCase().includes('.webp');
+  const hasOptimizedImages = content.html.toLowerCase().includes('optimized') || content.html.toLowerCase().includes('compressed');
   
-  if (hasResponsiveImages) score += 5;
-  if (hasLazyLoading) score += 5;
+  if (hasResponsiveImages) score += 8;
+  if (hasLazyLoading) score += 8;
+  if (hasWebpImages) score += 5;
+  if (hasOptimizedImages) score += 5;
+  
+  // Multimedia accessibility bonus
+  const hasVideoTranscripts = content.html.toLowerCase().includes('transcript') || content.html.toLowerCase().includes('captions');
+  const hasAudioDescriptions = content.html.toLowerCase().includes('audio description') || content.html.toLowerCase().includes('aria-describedby');
+  
+  if (hasVideoTranscripts) score += 5;
+  if (hasAudioDescriptions) score += 5;
   
   return Math.min(100, score);
 }
@@ -2139,4 +2271,135 @@ function analyzeContentFreshness(content: CrawledContent): number {
   return Math.min(100, score);
 }
 
- 
+// Helper functions for Site Structure analysis
+function analyzeNavigationQuality(content: CrawledContent): number {
+  const html = content.html.toLowerCase();
+  let score = 50; // Base score
+  
+  // Check for navigation elements
+  const hasMainNav = html.includes('<nav>') || html.includes('class="nav') || html.includes('id="nav');
+  const hasHeader = html.includes('<header>') || html.includes('class="header');
+  const hasFooter = html.includes('<footer>') || html.includes('class="footer');
+  const hasBreadcrumbs = html.includes('breadcrumb') || html.includes('bread-crumb');
+  const hasMobileNav = html.includes('mobile-nav') || html.includes('hamburger') || html.includes('menu-toggle');
+  
+  if (hasMainNav) score += 15;
+  if (hasHeader) score += 10;
+  if (hasFooter) score += 10;
+  if (hasBreadcrumbs) score += 10;
+  if (hasMobileNav) score += 5;
+  
+  // Check for navigation links
+  const navLinks = content.links.filter(link => link.internal).length;
+  if (navLinks >= 5) score += 10;
+  else if (navLinks >= 3) score += 5;
+  
+  return Math.min(100, score);
+}
+
+function analyzeInternalLinking(content: CrawledContent): number {
+  const internalLinks = content.links.filter(link => link.internal);
+  
+  let score = 50; // Base score
+  
+  // Internal link ratio
+  const totalLinks = content.links.length;
+  if (totalLinks > 0) {
+    const internalRatio = internalLinks.length / totalLinks;
+    if (internalRatio >= 0.7) score += 20;
+    else if (internalRatio >= 0.5) score += 15;
+    else if (internalRatio >= 0.3) score += 10;
+  }
+  
+  // Internal link quantity
+  if (internalLinks.length >= 10) score += 15;
+  else if (internalLinks.length >= 5) score += 10;
+  else if (internalLinks.length >= 2) score += 5;
+  
+  // Link quality (descriptive anchor text)
+  const descriptiveLinks = internalLinks.filter(link => 
+    link.text.length > 5 && link.text.length < 100
+  ).length;
+  
+  if (descriptiveLinks >= 5) score += 15;
+  else if (descriptiveLinks >= 2) score += 10;
+  
+  return Math.min(100, score);
+}
+
+function analyzeSiteHierarchy(content: CrawledContent): number {
+  let score = 50; // Base score
+  
+  // Analyze heading hierarchy
+  const headings = content.headings;
+  if (headings.length > 0) {
+    const hasH1 = headings.some(h => h.level === 1);
+    const hasH2 = headings.some(h => h.level === 2);
+    const hasH3 = headings.some(h => h.level === 3);
+    
+    if (hasH1) score += 15;
+    if (hasH2) score += 10;
+    if (hasH3) score += 5;
+    
+    // Check for logical hierarchy
+    const levels = headings.map(h => h.level).sort();
+    let hasGoodHierarchy = true;
+    for (let i = 0; i < levels.length - 1; i++) {
+      if (levels[i + 1] - levels[i] > 1) {
+        hasGoodHierarchy = false;
+        break;
+      }
+    }
+    if (hasGoodHierarchy) score += 10;
+  }
+  
+  // Check for semantic HTML structure
+  const html = content.html.toLowerCase();
+  const hasMain = html.includes('<main>');
+  const hasArticle = html.includes('<article>');
+  const hasSection = html.includes('<section>');
+  const hasAside = html.includes('<aside>');
+  
+  if (hasMain) score += 10;
+  if (hasArticle) score += 5;
+  if (hasSection) score += 5;
+  if (hasAside) score += 5;
+  
+  return Math.min(100, score);
+}
+
+function analyzeCrawlability(content: CrawledContent): number {
+  let score = 50; // Base score
+  
+  // Check robots.txt
+  if (content.robotsInfo?.hasRobotsTxt) {
+    score += 10;
+    if (content.robotsInfo.allowsAllBots) {
+      score += 10;
+    }
+  }
+  
+  // Check for sitemap reference
+  const html = content.html.toLowerCase();
+  const hasSitemap = html.includes('sitemap') || html.includes('sitemap.xml');
+  if (hasSitemap) score += 10;
+  
+  // Check for canonical URLs
+  const hasCanonical = html.includes('rel="canonical"') || html.includes('rel=\'canonical\'');
+  if (hasCanonical) score += 10;
+  
+  // Check for meta robots
+  const hasMetaRobots = html.includes('name="robots"') || html.includes('name=\'robots\'');
+  if (hasMetaRobots) score += 5;
+  
+  // Check for structured data (helps crawlers understand content)
+  const hasStructuredData = html.includes('application/ld+json') || html.includes('itemtype');
+  if (hasStructuredData) score += 10;
+  
+  // Check for clean URLs (no excessive parameters)
+  const url = content.url || '';
+  const urlParams = (url.match(/[?&]/g) || []).length;
+  if (urlParams <= 2) score += 5;
+  
+  return Math.min(100, score);
+}
