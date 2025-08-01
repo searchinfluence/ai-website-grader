@@ -52,12 +52,32 @@ export async function validateHTML(url: string, html?: string): Promise<{
       throw new Error(`HTML validation failed: ${response.status}`);
     }
     
-    const data = await response.json();
+    // Check content type to determine response format
+    const contentType = response.headers.get('content-type') || '';
+    let data: any;
+    
+    if (contentType.includes('application/json')) {
+      // JSON response
+      data = await response.json();
+    } else {
+      // HTML response - try to extract validation info from HTML
+      const htmlText = await response.text();
+      
+      // Simple pattern matching for validation results
+      const errorMatches = htmlText.match(/class="error"/gi) || [];
+      const warningMatches = htmlText.match(/class="warning"/gi) || [];
+      
+      data = {
+        messages: [],
+        errors: errorMatches.length,
+        warnings: warningMatches.length
+      };
+    }
     
     // Process validation results
     const messages = data.messages || [];
-    const errors = messages.filter((msg: { type: string }) => msg.type === 'error').length;
-    const warnings = messages.filter((msg: { type: string }) => msg.type === 'warning').length;
+    const errors = data.errors || messages.filter((msg: { type: string }) => msg.type === 'error').length;
+    const warnings = data.warnings || messages.filter((msg: { type: string }) => msg.type === 'warning').length;
     
     return {
       errors,
