@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Search, FileText, Loader2, AlertCircle } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
+import { useGoogleAnalytics } from './GoogleAnalytics';
 
 interface URLAnalyzerProps {
   onAnalysisComplete: (analysis: WebsiteAnalysis) => void;
@@ -16,6 +17,7 @@ export default function URLAnalyzer({ onAnalysisComplete, onAnalysisStart, isLoa
   const [textContent, setTextContent] = useState('');
   const [error, setError] = useState<string | null>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const { trackAnalysis, trackAnalysisComplete, trackError } = useGoogleAnalytics();
 
   const validateUrl = (url: string): boolean => {
     try {
@@ -51,6 +53,10 @@ export default function URLAnalyzer({ onAnalysisComplete, onAnalysisStart, isLoa
 
     onAnalysisStart();
 
+    // Track analysis start
+    const analysisUrl = inputMode === 'url' ? url : 'text-content';
+    trackAnalysis(analysisUrl, inputMode);
+
     try {
       const response = await fetch('/api/analyze', {
         method: 'POST',
@@ -69,10 +75,17 @@ export default function URLAnalyzer({ onAnalysisComplete, onAnalysisStart, isLoa
       }
 
       const analysis = await response.json();
+      
+      // Track analysis completion
+      trackAnalysisComplete(analysisUrl, analysis.overallScore, inputMode);
+      
       onAnalysisComplete(analysis);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Analysis failed';
       setError(errorMessage);
+      
+      // Track error
+      trackError('analysis_failed', errorMessage);
     }
   };
 

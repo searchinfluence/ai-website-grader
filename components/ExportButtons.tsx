@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FileText, FileDown, Loader2, Printer } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
 import { generatePDFReport, generateMarkdownReport } from '@/lib/exporters';
+import { useGoogleAnalytics } from './GoogleAnalytics';
 
 interface ExportButtonsProps {
   analysis: WebsiteAnalysis;
@@ -12,11 +13,15 @@ interface ExportButtonsProps {
 
 export default function ExportButtons({ analysis, onExportMarkdown }: ExportButtonsProps) {
   const [isExportingPDF, setIsExportingPDF] = useState(false);
+  const { trackExport } = useGoogleAnalytics();
 
   const handleExportPDF = async () => {
     setIsExportingPDF(true);
     try {
       console.log('Starting PDF export...');
+      
+      // Track PDF export
+      trackExport('pdf');
       
       // Check if the report container exists
       const reportContainer = document.getElementById('report-container');
@@ -43,6 +48,9 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
   };
 
   const handlePrint = () => {
+    // Track print export
+    trackExport('print');
+    
     // Create a print-friendly version of the report using markdown content
     const printWindow = window.open('', '_blank');
     if (!printWindow) {

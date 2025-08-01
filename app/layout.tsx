@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import GoogleSearchConsole from "@/components/GoogleSearchConsole";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,11 +22,14 @@ export const metadata: Metadata = {
   creator: "Search Influence",
   publisher: "Search Influence",
   robots: "index, follow",
+  verification: {
+    google: process.env.GOOGLE_SEARCH_CONSOLE_VERIFICATION || '',
+  },
   openGraph: {
     title: "AI Website Grader - Search Influence",
     description: "Analyze your website's readiness for AI-powered search engines",
     type: "website",
-    url: "https://ai-website-grader.searchinfluence.com",
+    url: "https://ai-grader.searchinfluence.com",
     siteName: "Search Influence",
   },
   twitter: {
@@ -49,6 +54,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Google Analytics */}
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />
+        
+        {/* Google Search Console */}
+        <GoogleSearchConsole verificationCode={process.env.GOOGLE_SEARCH_CONSOLE_VERIFICATION} />
+        
         {children}
       </body>
     </html>
