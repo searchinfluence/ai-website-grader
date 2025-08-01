@@ -67,9 +67,9 @@ export async function validateHTML(url: string, html?: string): Promise<{
       const errorMatches = htmlText.match(/class="error"/gi) || [];
       const warningMatches = htmlText.match(/class="warning"/gi) || [];
       
-      // Extract actual error messages from HTML
-      const errorMessageRegex = /<li class="error"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>/gi;
-      const warningMessageRegex = /<li class="warning"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>/gi;
+      // Extract actual error messages from HTML - improved pattern matching
+      const errorMessageRegex = /<li class="error"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>|<div class="error"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/div>/gi;
+      const warningMessageRegex = /<li class="warning"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/li>|<div class="warning"[^>]*>[\s\S]*?<strong[^>]*>([^<]+)<\/strong>[\s\S]*?<\/div>/gi;
       
       const errorMessages: Array<{ type: 'error'; message: string; line?: number }> = [];
       const warningMessages: Array<{ type: 'warning'; message: string; line?: number }> = [];
@@ -77,20 +77,26 @@ export async function validateHTML(url: string, html?: string): Promise<{
       // Extract error messages
       let match;
       while ((match = errorMessageRegex.exec(htmlText)) !== null) {
-        errorMessages.push({
-          type: 'error',
-          message: match[1]?.trim() || 'HTML validation error',
-          line: undefined
-        });
+        const message = match[1] || match[2] || 'HTML validation error';
+        if (message && message.trim() !== '') {
+          errorMessages.push({
+            type: 'error',
+            message: message.trim(),
+            line: undefined
+          });
+        }
       }
       
       // Extract warning messages
       while ((match = warningMessageRegex.exec(htmlText)) !== null) {
-        warningMessages.push({
-          type: 'warning',
-          message: match[1]?.trim() || 'HTML validation warning',
-          line: undefined
-        });
+        const message = match[1] || match[2] || 'HTML validation warning';
+        if (message && message.trim() !== '') {
+          warningMessages.push({
+            type: 'warning',
+            message: message.trim(),
+            line: undefined
+          });
+        }
       }
       
       data = {
