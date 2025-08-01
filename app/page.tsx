@@ -104,16 +104,16 @@ export default function Home() {
       {/* FAQ Section */}
       <div className="faq-section" style={{ 
         background: 'var(--background-gray)', 
-        padding: '60px 0',
-        marginTop: '60px'
+        padding: '40px 0',
+        marginTop: '40px'
       }}>
         <div className="container">
           <h2 style={{ 
             textAlign: 'center', 
-            fontSize: '2.5rem', 
+            fontSize: '2.2rem', 
             fontWeight: '800', 
             color: 'var(--dark-blue)', 
-            marginBottom: '50px' 
+            marginBottom: '40px' 
           }}>
             Frequently Asked Questions
           </h2>
@@ -121,7 +121,7 @@ export default function Home() {
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             {/* FAQ Item 1 */}
             <details style={{ 
-              marginBottom: '20px',
+              marginBottom: '16px',
               background: 'var(--content-bg)',
               borderRadius: '12px',
               border: '1px solid var(--border-color)',
@@ -164,7 +164,7 @@ export default function Home() {
 
             {/* FAQ Item 2 */}
             <details style={{ 
-              marginBottom: '20px',
+              marginBottom: '16px',
               background: 'var(--content-bg)',
               borderRadius: '12px',
               border: '1px solid var(--border-color)',
@@ -207,7 +207,7 @@ export default function Home() {
 
             {/* FAQ Item 3 */}
             <details style={{ 
-              marginBottom: '20px',
+              marginBottom: '16px',
               background: 'var(--content-bg)',
               borderRadius: '12px',
               border: '1px solid var(--border-color)',
@@ -252,7 +252,7 @@ export default function Home() {
 
             {/* FAQ Item 4 */}
             <details style={{ 
-              marginBottom: '20px',
+              marginBottom: '16px',
               background: 'var(--content-bg)',
               borderRadius: '12px',
               border: '1px solid var(--border-color)',
@@ -297,7 +297,7 @@ export default function Home() {
 
             {/* FAQ Item 5 */}
             <details style={{ 
-              marginBottom: '20px',
+              marginBottom: '16px',
               background: 'var(--content-bg)',
               borderRadius: '12px',
               border: '1px solid var(--border-color)',

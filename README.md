@@ -10,59 +10,72 @@ A comprehensive web application that analyzes websites for their readiness in AI
 
 ## 🚀 Features
 
-### Core Analysis Categories
-- **AI Optimization** (30% weight) - Most critical for future search visibility
-  - Content chunkability for AI processing
-  - Q&A format optimization
-  - Entity recognition and clarity
-  - Factual density analysis
-  - Semantic clarity assessment
+### Core Analysis Categories (9 Categories)
+- **AI Optimization** (25% weight) - Most critical for future search visibility
+  - Real Core Web Vitals from Google PageSpeed Insights
+  - Semantic chunk analysis and answer-specific content detection
+  - Factual accuracy scoring and topical authority measurement
+  - AI bot accessibility analysis and voice search optimization
 
-- **Content Quality** (25% weight)
-  - Long-tail keyword usage
-  - Comprehensive topic coverage
-  - Relevance to user intent
-  - Accuracy and currency indicators
-  - Natural language assessment
+- **Mobile Optimization** (20% weight)
+  - Mobile page speed and touch target analysis
+  - Viewport configuration and responsive design assessment
+  - Mobile usability and accessibility compliance
 
-- **Technical SEO** (20% weight)
-  - Heading structure analysis
-  - Meta information optimization
-  - Alt text for images
-  - Link quality assessment
-  - Readability scoring
+- **Technical Crawlability** (16% weight)
+  - Robots.txt analysis for AI bots (GPTBot, Google-Extended, etc.)
+  - JavaScript dependency assessment and content delivery analysis
+  - Load speed optimization and bot accessibility scoring
 
-- **Authority & Trust** (15% weight)
-  - Social media presence
-  - Company information depth
-  - Legal compliance
-  - Testimonials and reviews
-  - Professional affiliations
+- **Schema Analysis** (12% weight)
+  - AI-friendly schema detection (FAQ, Q&A, HowTo, Article)
+  - Conversational schema analysis and semantic markup validation
+  - Rich answer potential scoring and structured data optimization
 
-- **User Experience** (10% weight)
-  - Contact information accessibility
-  - Call-to-action effectiveness
-  - Language accessibility
+- **Content Quality** (10% weight)
+  - Long-tail keyword usage and comprehensive topic coverage
+  - Relevance to user intent and accuracy indicators
+  - Natural language assessment and content freshness analysis
+
+- **Technical SEO** (8% weight)
+  - Heading structure analysis and meta information optimization
+  - Alt text for images and link quality assessment
+  - Readability scoring and HTML validation
+
+- **Authority & Trust** (5% weight)
+  - Social media presence and company information depth
+  - Legal compliance and testimonials analysis
+  - Professional affiliations and credibility signals
+
+- **User Experience** (3% weight)
+  - Navigation, form usability, and loading experience
+  - Error handling, accessibility, and visual hierarchy
+  - Interactive elements and content readability
+
+- **Content Structure** (1% weight)
+  - Structured content analysis and multimedia assessment
+  - Readability optimization and content organization
 
 ### Key Features
-- **URL Analysis**: Crawl and analyze live websites
-- **Text Analysis**: Analyze pasted content directly
-- **Comprehensive Scoring**: Weighted scoring system focused on AI optimization
-- **Detailed Reports**: In-depth analysis with actionable recommendations
-- **Multiple Export Options**: PDF (with clickable URLs), Markdown, and Print
-- **Modern Design**: Clean, professional interface with GetChunks design system
+- **Free API Integration**: Google PageSpeed Insights and W3C HTML Validator
+- **Real Performance Data**: Actual Core Web Vitals (LCP, FID, CLS) from Google
+- **Advanced AI Analysis**: Pattern-based entity recognition and semantic analysis
+- **Comprehensive Validation**: W3C HTML validation with detailed error reporting
+- **Mobile-First Analysis**: Mobile optimization and accessibility assessment
+- **Professional Reports**: Detailed markdown exports with performance metrics
+- **Modern Design**: Clean, professional interface with optimized spacing
 - **Real-time Analysis**: Instant results with detailed breakdowns
-- **Precise Scoring**: All numbers rounded to 2 decimal places for clean display
+- **Accessibility Focus**: Built-in accessibility analysis and compliance checking
 
 ## 🛠️ Technology Stack
 
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
-- **Styling**: Custom CSS with modern design system
-- **Icons**: Lucide React
-- **HTML Parsing**: Cheerio
-- **PDF Generation**: jsPDF with clickable URLs
-- **Deployment**: Vercel-ready
+- **Styling**: Custom CSS with optimized design system
+- **APIs**: Google PageSpeed Insights, W3C HTML Validator
+- **HTML Parsing**: Cheerio with advanced pattern matching
+- **Performance**: Parallel analysis processing with caching
+- **Deployment**: Vercel-ready with environment variable support
 
 ## 📦 Installation
 

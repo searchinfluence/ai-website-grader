@@ -176,3 +176,10 @@ coverage/
 
 # Local development
 .local
+
+# Stray files and temporary data
+html_validation_*.json
+pagespeed_results.json
+temp.html
+*.json.bak
+*.tmp
