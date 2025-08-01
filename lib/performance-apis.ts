@@ -54,7 +54,7 @@ export async function validateHTML(url: string, html?: string): Promise<{
     
     // Check content type to determine response format
     const contentType = response.headers.get('content-type') || '';
-    let data: any;
+    let data: unknown;
     
     if (contentType.includes('application/json')) {
       // JSON response
@@ -75,9 +75,9 @@ export async function validateHTML(url: string, html?: string): Promise<{
     }
     
     // Process validation results
-    const messages = data.messages || [];
-    const errors = data.errors || messages.filter((msg: { type: string }) => msg.type === 'error').length;
-    const warnings = data.warnings || messages.filter((msg: { type: string }) => msg.type === 'warning').length;
+    const messages = (data as { messages?: Array<{ type: string; message: string; lastLine?: number }> }).messages || [];
+    const errors = (data as { errors?: number }).errors || messages.filter((msg: { type: string }) => msg.type === 'error').length;
+    const warnings = (data as { warnings?: number }).warnings || messages.filter((msg: { type: string }) => msg.type === 'warning').length;
     
     return {
       errors,
