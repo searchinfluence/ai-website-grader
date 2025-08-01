@@ -240,6 +240,22 @@ The application uses a modern design system with:
 - ✅ **Clickable URLs**: PDF includes clickable links to Search Influence and AI Website Grader
 - ✅ **Improved Performance**: Faster analysis and better error handling
 
+## 🗺️ Roadmap
+
+### Completed ✅
+- ✅ **Status Indicator**: Added real-time status updates with inspirational quotes during analysis
+- ✅ **Email Announcement**: Created comprehensive email draft with subject lines, content, and social media posts
+- ✅ **Page Crawling Logic Review**: 
+  - ✅ Fixed missing content in markdown version of pages
+  - ✅ Improved Content Structure scoring algorithm
+  - ✅ Enhanced content capture for better analysis
+  - ✅ Added support for more content types (lists, blockquotes, divs, images)
+
+### Upcoming Features
+- 🚀 **Performance Optimization**: Further improve analysis speed and accuracy
+- 📊 **Enhanced Analytics**: Add more detailed reporting and insights
+- 🔧 **API Improvements**: Expand API capabilities for enterprise use
+
 ## 🤝 Contributing
 
 1. Fork the repository

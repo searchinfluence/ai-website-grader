@@ -552,29 +552,65 @@ function generateMarkdownContent(
 ): string {
   let markdown = `# ${title}\n\n`;
   
-  // Add headings and content in document order
-  const contentElements: { type: 'heading' | 'paragraph'; content: string; level?: number }[] = [];
-  
-  // Extract main content area
-  const mainContent = $('main, article, .content, .main-content, #content').first();
+  // Extract main content area - try multiple selectors
+  const mainContent = $('main, article, .content, .main-content, #content, .post-content, .entry-content, .page-content').first();
   const contentArea = mainContent.length > 0 ? mainContent : $('body');
   
-  contentArea.find('h1, h2, h3, h4, h5, h6, p').each((_, element) => {
+  // Remove navigation, footer, and other non-content elements
+  contentArea.find('nav, .nav, .navigation, .navbar, .menu, footer, .footer, .sidebar, .widget, .advertisement, .ads, script, style').remove();
+  
+  // Collect all content elements in document order
+  const contentElements: { type: 'heading' | 'paragraph' | 'list' | 'blockquote' | 'div'; content: string; level?: number; isOrdered?: boolean }[] = [];
+  
+  contentArea.find('h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, div').each((_, element) => {
     const $el = $(element);
     const tagName = $el.prop('tagName')?.toLowerCase() || '';
     const text = $el.text().trim();
     
-    if (text) {
-      if (tagName.startsWith('h')) {
-        const level = parseInt(tagName.charAt(1));
+    // Skip empty elements and elements that are children of lists
+    if (!text || $el.parents('ul, ol').length > 0) return;
+    
+    if (tagName.startsWith('h')) {
+      const level = parseInt(tagName.charAt(1));
+      contentElements.push({
+        type: 'heading',
+        content: text,
+        level
+      });
+    } else if (tagName === 'p') {
+      contentElements.push({
+        type: 'paragraph',
+        content: text
+      });
+    } else if (tagName === 'ul' || tagName === 'ol') {
+      const isOrdered = tagName === 'ol';
+      const listItems: string[] = [];
+      
+      $el.find('li').each((_, item) => {
+        const itemText = $(item).text().trim();
+        if (itemText) {
+          listItems.push(itemText);
+        }
+      });
+      
+      if (listItems.length > 0) {
         contentElements.push({
-          type: 'heading',
-          content: text,
-          level
+          type: 'list',
+          content: listItems.join('\n'),
+          isOrdered
         });
-      } else if (tagName === 'p') {
+      }
+    } else if (tagName === 'blockquote') {
+      contentElements.push({
+        type: 'blockquote',
+        content: text
+      });
+    } else if (tagName === 'div') {
+      // Only include divs that have substantial content and aren't just containers
+      const childElements = $el.children().length;
+      if (text.length > 50 && childElements <= 3) {
         contentElements.push({
-          type: 'paragraph',
+          type: 'div',
           content: text
         });
       }
@@ -588,23 +624,38 @@ function generateMarkdownContent(
       markdown += `${prefix} ${element.content}\n\n`;
     } else if (element.type === 'paragraph') {
       markdown += `${element.content}\n\n`;
+    } else if (element.type === 'list') {
+      const lines = element.content.split('\n');
+      lines.forEach((line, index) => {
+        const prefix = element.isOrdered ? `${index + 1}. ` : '- ';
+        markdown += `${prefix}${line}\n`;
+      });
+      markdown += '\n';
+    } else if (element.type === 'blockquote') {
+      markdown += `> ${element.content}\n\n`;
+    } else if (element.type === 'div') {
+      markdown += `${element.content}\n\n`;
     }
   });
   
-  // Add lists
-  $('ul, ol').each((_, list) => {
-    const $list = $(list);
-    const isOrdered = $list.prop('tagName')?.toLowerCase() === 'ol';
-    
-    $list.find('li').each((index, item) => {
-      const text = $(item).text().trim();
-      if (text) {
-        const prefix = isOrdered ? `${index + 1}. ` : '- ';
-        markdown += `${prefix}${text}\n`;
+  // Add images section
+  const images = $('img[src]').map((_, img) => {
+    const $img = $(img);
+    const src = $img.attr('src');
+    const alt = $img.attr('alt') || '';
+    const title = $img.attr('title') || '';
+    return { src, alt, title };
+  }).get();
+  
+  if (images.length > 0) {
+    markdown += '## Images\n\n';
+    images.slice(0, 5).forEach(img => { // Limit to first 5 images
+      if (img.src) {
+        const caption = img.alt || img.title || 'Image';
+        markdown += `![${caption}](${img.src})\n\n`;
       }
     });
-    markdown += '\n';
-  });
+  }
   
   // Add links section
   const links = $('a[href]').map((_, link) => {
@@ -616,8 +667,8 @@ function generateMarkdownContent(
   
   if (links.length > 0) {
     markdown += '## Links\n\n';
-    links.slice(0, 10).forEach(link => { // Limit to first 10 links
-      if (link.text && link.href) {
+    links.slice(0, 15).forEach(link => { // Increased limit to 15 links
+      if (link.text && link.href && link.text.length > 2) {
         markdown += `- [${link.text}](${link.href})\n`;
       }
     });

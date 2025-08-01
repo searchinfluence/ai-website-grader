@@ -1390,21 +1390,101 @@ function analyzeLanguageAccessibility(content: CrawledContent): number {
 }
 
 function analyzeStructuredContent(content: CrawledContent): number {
-  const text = content.html.toLowerCase();
-  const structureElements = ['<ul>', '<ol>', '<li>', '<table>', '<th>', '<td>'];
-  const foundElements = structureElements.filter(element => text.includes(element)).length;
+  let score = 0;
   
-  return Math.min(100, foundElements * 20);
+  // Analyze heading structure
+  const headings = content.headings;
+  if (headings.length > 0) {
+    score += 20; // Base score for having headings
+    
+    // Check for proper heading hierarchy
+    const headingLevels = headings.map(h => h.level);
+    const hasH1 = headingLevels.includes(1);
+    const hasH2 = headingLevels.includes(2);
+    const hasH3 = headingLevels.includes(3);
+    
+    if (hasH1) score += 10;
+    if (hasH2) score += 10;
+    if (hasH3) score += 5;
+    
+    // Check for logical hierarchy (no skipping levels)
+    let hasGoodHierarchy = true;
+    for (let i = 0; i < headingLevels.length - 1; i++) {
+      if (headingLevels[i + 1] - headingLevels[i] > 1) {
+        hasGoodHierarchy = false;
+        break;
+      }
+    }
+    if (hasGoodHierarchy) score += 10;
+  }
+  
+  // Analyze lists and structured elements
+  const html = content.html.toLowerCase();
+  const structureElements = ['<ul>', '<ol>', '<li>', '<table>', '<th>', '<td>', '<blockquote>', '<section>', '<article>', '<aside>'];
+  const foundElements = structureElements.filter(element => html.includes(element)).length;
+  score += Math.min(30, foundElements * 3);
+  
+  // Analyze paragraph structure
+  const paragraphs = content.paragraphs;
+  if (paragraphs.length > 0) {
+    score += 10; // Base score for having paragraphs
+    
+    // Check for reasonable paragraph lengths
+    const goodLengthParagraphs = paragraphs.filter(p => p.length > 50 && p.length < 500).length;
+    const paragraphScore = Math.min(20, (goodLengthParagraphs / paragraphs.length) * 20);
+    score += paragraphScore;
+  }
+  
+  // Analyze content organization
+  const totalContentLength = content.html.length;
+  const textContentLength = content.paragraphs.join(' ').length;
+  const contentRatio = textContentLength / totalContentLength;
+  
+  if (contentRatio > 0.3) score += 10; // Good content-to-markup ratio
+  
+  return Math.min(100, score);
 }
 
 function analyzeMultimedia(content: CrawledContent): number {
-  const imageCount = content.images.length;
-  const videoCount = (content.html.match(/<video|<iframe.*youtube|<iframe.*vimeo/gi) || []).length;
-  
   let score = 0;
-  if (imageCount > 0) score += 50;
-  if (imageCount > 3) score += 20;
-  if (videoCount > 0) score += 30;
+  
+  // Analyze images
+  const imageCount = content.images.length;
+  if (imageCount > 0) {
+    score += 30; // Base score for having images
+    
+    // Check for alt text quality
+    const imagesWithAlt = content.images.filter(img => img.alt && img.alt.length > 3).length;
+    const altTextScore = Math.min(20, (imagesWithAlt / imageCount) * 20);
+    score += altTextScore;
+    
+    // Bonus for multiple images
+    if (imageCount > 2) score += 10;
+    if (imageCount > 5) score += 10;
+  }
+  
+  // Analyze videos
+  const videoCount = (content.html.match(/<video|<iframe.*youtube|<iframe.*vimeo|<iframe.*wistia|<iframe.*brightcove/gi) || []).length;
+  if (videoCount > 0) {
+    score += 20; // Base score for having videos
+    if (videoCount > 1) score += 10;
+  }
+  
+  // Analyze other multimedia elements
+  const hasAudio = content.html.toLowerCase().includes('<audio');
+  const hasEmbeddedContent = content.html.toLowerCase().includes('<embed') || content.html.toLowerCase().includes('<object');
+  const hasInteractiveElements = content.html.toLowerCase().includes('<canvas') || content.html.toLowerCase().includes('<svg');
+  
+  if (hasAudio) score += 10;
+  if (hasEmbeddedContent) score += 10;
+  if (hasInteractiveElements) score += 10;
+  
+  // Check for multimedia optimization
+  const hasResponsiveImages = content.html.toLowerCase().includes('srcset') || content.html.toLowerCase().includes('sizes');
+  const hasLazyLoading = content.html.toLowerCase().includes('loading="lazy"');
+  
+  if (hasResponsiveImages) score += 5;
+  if (hasLazyLoading) score += 5;
   
   return Math.min(100, score);
 }

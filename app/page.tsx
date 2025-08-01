@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import URLAnalyzer from '@/components/URLAnalyzer';
 import ScoreReport from '@/components/ScoreReport';
+import AnalysisStatus from '@/components/AnalysisStatus';
 import { WebsiteAnalysis } from '@/types';
 
 export default function Home() {
@@ -25,6 +26,9 @@ export default function Home() {
 
   return (
     <div>
+      {/* Analysis Status Overlay */}
+      <AnalysisStatus isVisible={isLoading} />
+      
       {/* Header with Search Influence branding */}
       <header className="header">
         <div className="container">
