@@ -217,19 +217,19 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
                 <td class="status">${analysis.technicalSEO.status}</td>
               </tr>
               <tr>
-                <td><strong>Authority & Trust</strong></td>
-                <td class="score">${round(analysis.authority.score)}%</td>
-                <td class="status">${analysis.authority.status}</td>
+                <td><strong>E-E-A-T Signals</strong></td>
+                <td class="score">${round(analysis.eeatSignals.score)}%</td>
+                <td class="status">${analysis.eeatSignals.status}</td>
               </tr>
               <tr>
-                <td><strong>User Experience</strong></td>
-                <td class="score">${round(analysis.userExperience.score)}%</td>
-                <td class="status">${analysis.userExperience.status}</td>
+                <td><strong>Mobile Optimization</strong></td>
+                <td class="score">${round(analysis.mobileOptimization.score)}%</td>
+                <td class="status">${analysis.mobileOptimization.status}</td>
               </tr>
               <tr>
-                <td><strong>Content Structure</strong></td>
-                <td class="score">${round(analysis.contentStructure.score)}%</td>
-                <td class="status">${analysis.contentStructure.status}</td>
+                <td><strong>Schema Analysis</strong></td>
+                <td class="score">${round(analysis.schemaAnalysis.score)}%</td>
+                <td class="status">${analysis.schemaAnalysis.status}</td>
               </tr>
             </tbody>
           </table>
@@ -325,90 +325,34 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
         </div>
         
         <div class="section">
-          <h2>Authority & Trust (${round(analysis.authority.score)}%)</h2>
-          <p><em>Authority building strategies from Search Influence - AI SEO Experts</em></p>
+          <h2>E-E-A-T Signals (${round(analysis.eeatSignals.score)}%)</h2>
+          <p><em>Expertise, Experience, Authoritativeness, Trustworthiness by Search Influence - AI SEO Experts</em></p>
           
           <div class="findings">
             <h3>Key Findings:</h3>
             <ul>
-              ${analysis.authority.findings.map(finding => `<li>${finding}</li>`).join('')}
+              ${analysis.eeatSignals.findings.map(finding => `<li>${finding}</li>`).join('')}
             </ul>
           </div>
           
           <div class="recommendations">
             <h3>Recommendations:</h3>
             <ul>
-              ${analysis.authority.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+              ${analysis.eeatSignals.recommendations.map(rec => `<li>${rec}</li>`).join('')}
             </ul>
           </div>
           
           <div class="detailed-scores">
             <h3>Detailed Scores:</h3>
             <ul>
-              <li><strong>Social Media Presence:</strong> ${round(analysis.authority.socialMediaPresence)}%</li>
-              <li><strong>Company Information:</strong> ${round(analysis.authority.companyInformation)}%</li>
-              <li><strong>Legal Compliance:</strong> ${round(analysis.authority.legalCompliance)}%</li>
-              <li><strong>Testimonials:</strong> ${round(analysis.authority.testimonials)}%</li>
-              <li><strong>Affiliations:</strong> ${round(analysis.authority.affiliations)}%</li>
+              <li><strong>Expertise & Experience:</strong> ${round(analysis.eeatSignals.expertiseExperience)}%</li>
+              <li><strong>Authoritativeness:</strong> ${round(analysis.eeatSignals.authoritativeness)}%</li>
+              <li><strong>Trustworthiness:</strong> ${round(analysis.eeatSignals.trustworthiness)}%</li>
             </ul>
           </div>
         </div>
         
-        <div class="section">
-          <h2>User Experience (${round(analysis.userExperience.score)}%)</h2>
-          <p><em>UX optimization by Search Influence - AI SEO Experts</em></p>
-          
-          <div class="findings">
-            <h3>Key Findings:</h3>
-            <ul>
-              ${analysis.userExperience.findings.map(finding => `<li>${finding}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="recommendations">
-            <h3>Recommendations:</h3>
-            <ul>
-              ${analysis.userExperience.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="detailed-scores">
-            <h3>Detailed Scores:</h3>
-            <ul>
-              <li><strong>Contact Info:</strong> ${round(analysis.userExperience.contactInfo)}%</li>
-              <li><strong>Calls to Action:</strong> ${round(analysis.userExperience.callsToAction)}%</li>
-              <li><strong>Language:</strong> ${round(analysis.userExperience.language)}%</li>
-            </ul>
-          </div>
-        </div>
-        
-        <div class="section">
-          <h2>Content Structure (${round(analysis.contentStructure.score)}%)</h2>
-          <p><em>Content structure optimization by Search Influence - AI SEO Experts</em></p>
-          
-          <div class="findings">
-            <h3>Key Findings:</h3>
-            <ul>
-              ${analysis.contentStructure.findings.map(finding => `<li>${finding}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="recommendations">
-            <h3>Recommendations:</h3>
-            <ul>
-              ${analysis.contentStructure.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <div class="detailed-scores">
-            <h3>Detailed Scores:</h3>
-            <ul>
-              <li><strong>Structured Content:</strong> ${round(analysis.contentStructure.structuredContent)}%</li>
-              <li><strong>Multimedia:</strong> ${round(analysis.contentStructure.multimedia)}%</li>
-              <li><strong>Readability:</strong> ${round(analysis.contentStructure.readability)}%</li>
-            </ul>
-          </div>
-        </div>
+
         
         ${analysis.contentImprovements.length > 0 ? `
         <div class="section improvements">

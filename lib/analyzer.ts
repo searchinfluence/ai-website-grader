@@ -1,4 +1,4 @@
-import { CrawledContent, TechnicalSEO, ContentQuality, AIOptimization, Authority, UserExperience, ContentStructure, TechnicalCrawlability, MobileOptimization, SchemaAnalysis, RecommendationItem } from '@/types';
+import { CrawledContent, TechnicalSEO, ContentQuality, AIOptimization, EEATSignals, TechnicalCrawlability, MobileOptimization, SchemaAnalysis, RecommendationItem } from '@/types';
 
 export function analyzeTechnicalSEO(content: CrawledContent): TechnicalSEO {
   const findings: string[] = [];
@@ -603,83 +603,6 @@ export function analyzeSchemaAnalysis(content: CrawledContent): SchemaAnalysis {
     richSnippetPotential,
     structuredDataCompleteness,
     jsonLdImplementation
-  };
-}
-
-// New function: Analyze site structure (navigation, internal linking, etc.)
-export function analyzeSiteStructure(content: CrawledContent): {
-  score: number;
-  status: 'excellent' | 'good' | 'needs-improvement' | 'poor';
-  findings: string[];
-  recommendations: RecommendationItem[];
-  navigationQuality: number;
-  internalLinking: number;
-  siteHierarchy: number;
-  crawlability: number;
-} {
-  const findings: string[] = [];
-  const recommendations: RecommendationItem[] = [];
-  
-  // Analyze navigation quality
-  const navigationQuality = analyzeNavigationQuality(content);
-  if (navigationQuality < 70) {
-    findings.push('Navigation structure needs improvement');
-    recommendations.push(createRecommendation(
-      'Improve site navigation structure',
-      'high',
-      'navigation',
-      '1. Create clear main navigation menu\n2. Add breadcrumb navigation\n3. Ensure mobile-friendly navigation\n4. Include footer navigation links\n5. Test navigation usability'
-    ));
-  }
-  
-  // Analyze internal linking
-  const internalLinking = analyzeInternalLinking(content);
-  if (internalLinking < 70) {
-    findings.push('Internal linking strategy needs improvement');
-    recommendations.push(createRecommendation(
-      'Enhance internal linking strategy',
-      'medium',
-      'internal-linking',
-      '1. Add more internal links to related content\n2. Use descriptive anchor text\n3. Create topic clusters\n4. Link to important pages from multiple locations\n5. Ensure no broken internal links'
-    ));
-  }
-  
-  // Analyze site hierarchy
-  const siteHierarchy = analyzeSiteHierarchy(content);
-  if (siteHierarchy < 70) {
-    findings.push('Site hierarchy and structure needs improvement');
-    recommendations.push(createRecommendation(
-      'Improve site hierarchy and structure',
-      'medium',
-      'site-hierarchy',
-      '1. Create logical URL structure\n2. Organize content in categories\n3. Use clear page titles\n4. Implement proper heading hierarchy\n5. Create sitemap.xml'
-    ));
-  }
-  
-  // Analyze crawlability
-  const crawlability = analyzeCrawlability(content);
-  if (crawlability < 70) {
-    findings.push('Site crawlability issues detected');
-    recommendations.push(createRecommendation(
-      'Fix crawlability issues',
-      'high',
-      'crawlability',
-      '1. Check robots.txt configuration\n2. Ensure no broken links\n3. Optimize page load speed\n4. Fix mobile usability issues\n5. Submit sitemap to search engines'
-    ));
-  }
-  
-  const score = Math.round((navigationQuality + internalLinking + siteHierarchy + crawlability) / 4);
-  const status = getScoreStatus(score);
-  
-  return {
-    score,
-    status,
-    findings,
-    recommendations,
-    navigationQuality,
-    internalLinking,
-    siteHierarchy,
-    crawlability
   };
 }
 

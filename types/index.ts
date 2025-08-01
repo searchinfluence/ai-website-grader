@@ -67,28 +67,6 @@ export interface EEATSignals extends AnalysisScore {
   trustworthiness: number;
 }
 
-export interface UserExperience extends AnalysisScore {
-  contactInfo: number;
-  callsToAction: number;
-  language: number;
-  navigation: number;
-  formUsability: number;
-  loadingExperience: number;
-  errorHandling: number;
-  accessibility: number;
-  visualHierarchy: number;
-  interactiveElements: number;
-  searchFunctionality: number;
-  contentReadability: number;
-  socialProof: number;
-}
-
-export interface ContentStructure extends AnalysisScore {
-  structuredContent: number;
-  multimedia: number;
-  readability: number;
-}
-
 export interface MobileOptimization extends AnalysisScore {
   mobilePageSpeed: number;
   touchTargets: number;

@@ -265,63 +265,23 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
         }
       ]
     },
-    'Authority': {
+    'E-E-A-T Signals': {
       lowScore: (score: number) => score < 70,
       improvements: [
         {
-          current: 'Limited social media presence',
-          improved: 'Add social media links and encourage sharing. Include social proof, testimonials, and industry recognition on your website.',
-          reasoning: 'Social signals and external mentions build domain authority and trust with search engines.'
+          current: 'Limited expertise and experience signals',
+          improved: 'Add author bios, credentials, and industry experience. Include team member profiles with relevant qualifications and expertise.',
+          reasoning: 'Expertise signals help establish authority and trust with both users and search engines.'
         },
         {
-          current: 'Missing company information and credentials',
-          improved: 'Add detailed About Us page, team bios, certifications, awards, and industry affiliations. Include contact information and business hours.',
-          reasoning: 'Comprehensive company information builds trust and signals legitimacy to both users and search engines.'
+          current: 'Missing authoritativeness indicators',
+          improved: 'Display industry awards, certifications, and recognition. Include client testimonials and case studies that demonstrate authority.',
+          reasoning: 'Authoritativeness signals build credibility and can improve search rankings for competitive keywords.'
         },
         {
-          current: 'Lack of testimonials and reviews',
-          improved: 'Display customer testimonials, case studies, and reviews prominently. Include client logos and success stories where appropriate.',
-          reasoning: 'Social proof increases credibility and can improve click-through rates from search results.'
-        }
-      ]
-    },
-    'User Experience': {
-      lowScore: (score: number) => score < 75,
-      improvements: [
-        {
-          current: 'Poor contact information visibility',
-          improved: 'Display contact information prominently in header, footer, and contact page. Include phone, email, address, and business hours.',
-          reasoning: 'Easy-to-find contact information improves user experience and can increase local search visibility.'
-        },
-        {
-          current: 'Weak calls-to-action',
-          improved: 'Add clear, compelling CTAs throughout the page. Use action-oriented language and make buttons visually prominent.',
-          reasoning: 'Strong CTAs improve user engagement and conversion rates, which positively impacts search rankings.'
-        },
-        {
-          current: 'Language accessibility issues',
-          improved: 'Use clear, simple language. Avoid jargon, write in active voice, and ensure content is accessible to your target audience.',
-          reasoning: 'Clear language improves readability and user engagement, which search engines reward.'
-        }
-      ]
-    },
-    'Content Structure': {
-      lowScore: (score: number) => score < 75,
-      improvements: [
-        {
-          current: 'Poor content structure and organization',
-          improved: 'Use bullet points, numbered lists, and clear sections. Break up long paragraphs and use white space effectively.',
-          reasoning: 'Well-structured content is easier to read and scan, improving user engagement and time on page.'
-        },
-        {
-          current: 'Limited multimedia content',
-          improved: 'Add relevant images, videos, infographics, and interactive elements. Ensure all media is optimized and includes proper alt text.',
-          reasoning: 'Multimedia content increases engagement and provides additional ranking opportunities through image and video search.'
-        },
-        {
-          current: 'Poor readability and formatting',
-          improved: 'Use short paragraphs, clear fonts, and adequate spacing. Include subheadings and use formatting to highlight key points.',
-          reasoning: 'Improved readability increases time on page and reduces bounce rate, both positive ranking signals.'
+          current: 'Insufficient trustworthiness signals',
+          improved: 'Add privacy policies, terms of service, and contact information. Include business verification and security certifications.',
+          reasoning: 'Trustworthiness signals are critical for user confidence and can positively impact search rankings.'
         }
       ]
     }
@@ -335,9 +295,8 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
                        category === 'Technical Crawlability' ? 'technicalCrawlability' :
                        category === 'Mobile Optimization' ? 'mobileOptimization' :
                        category === 'Schema Analysis' ? 'schemaAnalysis' :
-                       category === 'User Experience' ? 'userExperience' :
-                       category === 'Content Structure' ? 'contentStructure' :
-                       'authority';
+                       category === 'E-E-A-T Signals' ? 'eeatSignals' :
+                       'aiOptimization'; // Default fallback
     
     const score = analysis[categoryKey as keyof WebsiteAnalysis] as AnalysisScore;
     
@@ -363,9 +322,8 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
                        category === 'Technical Crawlability' ? 'technicalCrawlability' :
                        category === 'Mobile Optimization' ? 'mobileOptimization' :
                        category === 'Schema Analysis' ? 'schemaAnalysis' :
-                       category === 'User Experience' ? 'userExperience' :
-                       category === 'Content Structure' ? 'contentStructure' :
-                       'authority';
+                       category === 'E-E-A-T Signals' ? 'eeatSignals' :
+                       'aiOptimization'; // Default fallback
     
     const score = analysis[categoryKey as keyof WebsiteAnalysis] as AnalysisScore;
     return score.score < 50;

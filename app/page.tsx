@@ -330,7 +330,7 @@ export default function Home() {
                 }}>▼</span>
               </summary>
               <div style={{ padding: '25px 30px', color: 'var(--secondary-content)', lineHeight: '1.6' }}>
-                <p>Scores are calculated on a 0-100 scale across 9 key categories:</p>
+                <p>Scores are calculated on a 0-100 scale across 7 key categories:</p>
                 <ul style={{ marginTop: '15px', paddingLeft: '20px' }}>
                   <li><strong>90-100:</strong> Excellent - Your content is well-optimized for AI search</li>
                   <li><strong>80-89:</strong> Good - Minor improvements can enhance performance</li>

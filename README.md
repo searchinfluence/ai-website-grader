@@ -10,51 +10,45 @@ A comprehensive web application that analyzes websites for their readiness in AI
 
 ## 🚀 Features
 
-### Core Analysis Categories (9 Categories)
+### Core Analysis Categories (7 Categories)
 - **AI Optimization** (25% weight) - Most critical for future search visibility
   - Real Core Web Vitals from Google PageSpeed Insights
   - Semantic chunk analysis and answer-specific content detection
   - Factual accuracy scoring and topical authority measurement
   - AI bot accessibility analysis and voice search optimization
 
-- **Mobile Optimization** (20% weight)
-  - Mobile page speed and touch target analysis
-  - Viewport configuration and responsive design assessment
-  - Mobile usability and accessibility compliance
+- **Content Quality** (18% weight) - Content foundation and expertise
+  - Long-tail keyword usage and comprehensive topic coverage
+  - Relevance to user intent and accuracy indicators
+  - Natural language assessment and content freshness analysis
+  - Original research and insights
 
-- **Technical Crawlability** (16% weight)
+- **Technical Crawlability** (16% weight) - AI bot accessibility
   - Robots.txt analysis for AI bots (GPTBot, Google-Extended, etc.)
   - JavaScript dependency assessment and content delivery analysis
   - Load speed optimization and bot accessibility scoring
 
-- **Schema Analysis** (12% weight)
+- **E-E-A-T Signals** (12% weight) - Expertise, Experience, Authoritativeness, Trustworthiness
+  - Author credentials and industry expertise demonstration
+  - Domain authority metrics and industry recognition
+  - Citations, sources, and external validation
+  - Contact information and business verification
+
+- **Mobile Optimization** (12% weight) - Mobile-first indexing
+  - Mobile page speed and touch target analysis
+  - Viewport configuration and responsive design assessment
+  - Mobile usability and accessibility compliance
+
+- **Schema Analysis** (10% weight) - AI-friendly structured data
   - AI-friendly schema detection (FAQ, Q&A, HowTo, Article)
   - Conversational schema analysis and semantic markup validation
   - Rich answer potential scoring and structured data optimization
 
-- **Content Quality** (10% weight)
-  - Long-tail keyword usage and comprehensive topic coverage
-  - Relevance to user intent and accuracy indicators
-  - Natural language assessment and content freshness analysis
-
-- **Technical SEO** (8% weight)
-  - Heading structure analysis and meta information optimization
+- **Technical SEO** (7% weight) - Technical performance and SEO basics
+  - Desktop performance (separate from mobile)
+  - Title tags and meta descriptions
+  - HTTPS implementation and technical standards compliance
   - Alt text for images and link quality assessment
-  - Readability scoring and HTML validation
-
-- **Authority** (5% weight)
-  - Social media presence and company information depth
-  - Legal compliance and testimonials analysis
-  - Professional affiliations and credibility signals
-
-- **Content Structure** (3% weight)
-  - Structured content analysis and multimedia assessment
-  - Readability optimization and content organization
-
-- **User Experience** (1% weight)
-  - Navigation, form usability, and loading experience
-  - Error handling, accessibility, and visual hierarchy
-  - Interactive elements and content readability
 
 ### Key Features
 - **Free API Integration**: Google PageSpeed Insights and W3C HTML Validator
@@ -172,14 +166,12 @@ This tool is specifically designed for the future of search, focusing on:
 The scoring system uses weighted calculations with AI Optimization receiving the highest weight (25%) as it's most critical for future search visibility:
 
 - AI Optimization: 25%
-- Mobile Optimization: 20%
+- Content Quality: 18%
 - Technical Crawlability: 16%
-- Schema Analysis: 12%
-- Content Quality: 10%
-- Technical SEO: 8%
-- Authority: 5%
-- Content Structure: 3%
-- User Experience: 1%
+- E-E-A-T Signals: 12%
+- Mobile Optimization: 12%
+- Schema Analysis: 10%
+- Technical SEO: 7%
 
 For detailed information about the weighting system, see [WEIGHTING_SYSTEM.md](WEIGHTING_SYSTEM.md).
 

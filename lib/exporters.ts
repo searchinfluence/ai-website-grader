@@ -26,14 +26,12 @@ This report analyzes your website's readiness for AI-powered search engines, cha
 | Category | Score | Status |
 |----------|-------|--------|
 | **AI Optimization** | ${round(analysis.aiOptimization.score)}% | ${analysis.aiOptimization.status} |
-| **Mobile Optimization** | ${round(analysis.mobileOptimization.score)}% | ${analysis.mobileOptimization.status} |
-| **Technical Crawlability** | ${round(analysis.technicalCrawlability.score)}% | ${analysis.technicalCrawlability.status} |
-| **Schema Analysis** | ${round(analysis.schemaAnalysis.score)}% | ${analysis.schemaAnalysis.status} |
 | **Content Quality** | ${round(analysis.contentQuality.score)}% | ${analysis.contentQuality.status} |
+| **Technical Crawlability** | ${round(analysis.technicalCrawlability.score)}% | ${analysis.technicalCrawlability.status} |
+| **E-E-A-T Signals** | ${round(analysis.eeatSignals.score)}% | ${analysis.eeatSignals.status} |
+| **Mobile Optimization** | ${round(analysis.mobileOptimization.score)}% | ${analysis.mobileOptimization.status} |
+| **Schema Analysis** | ${round(analysis.schemaAnalysis.score)}% | ${analysis.schemaAnalysis.status} |
 | **Technical SEO** | ${round(analysis.technicalSEO.score)}% | ${analysis.technicalSEO.status} |
-| **Authority & Trust** | ${round(analysis.authority.score)}% | ${analysis.authority.status} |
-| **User Experience** | ${round(analysis.userExperience.score)}% | ${analysis.userExperience.status} |
-| **Content Structure** | ${round(analysis.contentStructure.score)}% | ${analysis.contentStructure.status} |
 
 ## AI Optimization (${round(analysis.aiOptimization.score)}%)
 
@@ -140,52 +138,22 @@ ${analysis.technicalSEO.recommendations.map(rec => `- **${rec.priority.toUpperCa
 - **Schema Markup:** ${round(analysis.technicalSEO.schemaMarkup)}%
 - **Page Speed:** ${round(analysis.technicalSEO.pageSpeed)}%
 
-## Authority & Trust (${round(analysis.authority.score)}%)
+## E-E-A-T Signals (${round(analysis.eeatSignals.score)}%)
 
-*Authority building strategies from [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
-
-### Key Findings:
-${analysis.authority.findings.map(finding => `- ${finding}`).join('\n')}
-
-### Recommendations:
-${analysis.authority.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
-
-### Detailed Scores:
-- **Social Media Presence:** ${round(analysis.authority.socialMediaPresence)}%
-- **Company Information:** ${round(analysis.authority.companyInformation)}%
-- **Legal Compliance:** ${round(analysis.authority.legalCompliance)}%
-- **Testimonials:** ${round(analysis.authority.testimonials)}%
-- **Affiliations:** ${round(analysis.authority.affiliations)}%
-
-## User Experience (${round(analysis.userExperience.score)}%)
-
-*UX optimization by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
+*Expertise, Experience, Authoritativeness, Trustworthiness by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
 
 ### Key Findings:
-${analysis.userExperience.findings.map(finding => `- ${finding}`).join('\n')}
+${analysis.eeatSignals.findings.map(finding => `- ${finding}`).join('\n')}
 
 ### Recommendations:
-${analysis.userExperience.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
+${analysis.eeatSignals.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
 
 ### Detailed Scores:
-- **Contact Info:** ${round(analysis.userExperience.contactInfo)}%
-- **Calls to Action:** ${round(analysis.userExperience.callsToAction)}%
-- **Language:** ${round(analysis.userExperience.language)}%
+- **Expertise & Experience:** ${round(analysis.eeatSignals.expertiseExperience)}%
+- **Authoritativeness:** ${round(analysis.eeatSignals.authoritativeness)}%
+- **Trustworthiness:** ${round(analysis.eeatSignals.trustworthiness)}%
 
-## Content Structure (${round(analysis.contentStructure.score)}%)
 
-*Content structure optimization by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*
-
-### Key Findings:
-${analysis.contentStructure.findings.map(finding => `- ${finding}`).join('\n')}
-
-### Recommendations:
-${analysis.contentStructure.recommendations.map(rec => `- **${rec.priority.toUpperCase()}**: ${rec.text}${rec.implementation ? '\n  *Implementation:* ' + rec.implementation.replace(/\n/g, '\n  ') : ''}`).join('\n')}
-
-### Detailed Scores:
-- **Structured Content:** ${round(analysis.contentStructure.structuredContent)}%
-- **Multimedia:** ${round(analysis.contentStructure.multimedia)}%
-- **Readability:** ${round(analysis.contentStructure.readability)}%
 
 ## Performance Analysis (${analysis.crawledContent.aiAnalysisData?.performanceMetrics?.performanceScore ? round(analysis.crawledContent.aiAnalysisData.performanceMetrics.performanceScore) : 'N/A'}%)
 
@@ -357,14 +325,13 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
     pdf.setFontSize(10);
     const scores = [
       ['AI Optimization', round(analysis.aiOptimization.score), analysis.aiOptimization.status],
-      ['Mobile Optimization', round(analysis.mobileOptimization.score), analysis.mobileOptimization.status],
-      ['Technical Crawlability', round(analysis.technicalCrawlability.score), analysis.technicalCrawlability.status],
-      ['Schema Analysis', round(analysis.schemaAnalysis.score), analysis.schemaAnalysis.status],
       ['Content Quality', round(analysis.contentQuality.score), analysis.contentQuality.status],
+      ['Technical Crawlability', round(analysis.technicalCrawlability.score), analysis.technicalCrawlability.status],
+      ['E-E-A-T Signals', round(analysis.eeatSignals.score), analysis.eeatSignals.status],
+      ['Mobile Optimization', round(analysis.mobileOptimization.score), analysis.mobileOptimization.status],
+      ['Schema Analysis', round(analysis.schemaAnalysis.score), analysis.schemaAnalysis.status],
       ['Technical SEO', round(analysis.technicalSEO.score), analysis.technicalSEO.status],
-      ['Authority & Trust', round(analysis.authority.score), analysis.authority.status],
-      ['User Experience', round(analysis.userExperience.score), analysis.userExperience.status],
-      ['Content Structure', round(analysis.contentStructure.score), analysis.contentStructure.status]
+      
     ];
     
     scores.forEach((scoreData) => {
@@ -459,37 +426,16 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
         ]
       },
       {
-        title: 'Authority & Trust',
-        data: analysis.authority,
-        subtitle: 'Authority building strategies from Search Influence - AI SEO Experts',
+        title: 'E-E-A-T Signals',
+        data: analysis.eeatSignals,
+        subtitle: 'Expertise, Experience, Authoritativeness, Trustworthiness by Search Influence - AI SEO Experts',
         detailedScores: [
-          ['Social Media Presence', round(analysis.authority.socialMediaPresence)],
-          ['Company Information', round(analysis.authority.companyInformation)],
-          ['Legal Compliance', round(analysis.authority.legalCompliance)],
-          ['Testimonials', round(analysis.authority.testimonials)],
-          ['Affiliations', round(analysis.authority.affiliations)]
+          ['Expertise & Experience', round(analysis.eeatSignals.expertiseExperience)],
+          ['Authoritativeness', round(analysis.eeatSignals.authoritativeness)],
+          ['Trustworthiness', round(analysis.eeatSignals.trustworthiness)]
         ]
       },
-      {
-        title: 'User Experience',
-        data: analysis.userExperience,
-        subtitle: 'UX optimization by Search Influence - AI SEO Experts',
-        detailedScores: [
-          ['Contact Info', round(analysis.userExperience.contactInfo)],
-          ['Calls to Action', round(analysis.userExperience.callsToAction)],
-          ['Language', round(analysis.userExperience.language)]
-        ]
-      },
-      {
-        title: 'Content Structure',
-        data: analysis.contentStructure,
-        subtitle: 'Content structure optimization by Search Influence - AI SEO Experts',
-        detailedScores: [
-          ['Structured Content', round(analysis.contentStructure.structuredContent)],
-          ['Multimedia', round(analysis.contentStructure.multimedia)],
-          ['Readability', round(analysis.contentStructure.readability)]
-        ]
-      }
+
     ];
 
     sections.forEach((section) => {
