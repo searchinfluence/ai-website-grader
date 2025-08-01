@@ -570,7 +570,7 @@ function generateMarkdownContent(
   // Real bots prioritize content based on visual hierarchy, position, and semantic importance
   
   // 1. Extract and prioritize main content area (like a real bot would)
-  const mainContent = $('main, article, .content, .main-content, #content, .post-content, .entry-content, .page-content, [role="main"]').first();
+  const mainContent = $('main, article, .content, .main-content, #content, .post-content, .entry-content, .page-content, [role="main"], .content-body').first();
   const contentArea = mainContent.length > 0 ? mainContent : $('body');
   
   // 2. Remove elements that real bots typically ignore or deprioritize
@@ -582,7 +582,8 @@ function generateMarkdownContent(
     '.comments', '.comment-section', '.disqus',
     '.newsletter', '.subscribe', '.cta',
     'script', 'style', '.hidden', '[style*="display: none"]',
-    '.cookie-notice', '.popup', '.modal', '.overlay'
+    '.cookie-notice', '.popup', '.modal', '.overlay',
+    '.mobile-nav', '.mobile-submenu', '.mobile-sub-column'
   ];
   
   elementsToRemove.forEach(selector => {
@@ -607,13 +608,11 @@ function generateMarkdownContent(
     const tagName = $el.prop('tagName')?.toLowerCase() || '';
     const text = $el.text().trim();
     
-    // Skip empty elements, nested list items, and elements that are children of already processed elements
+    // Skip empty elements and nested list items
     if (!text || $el.parents('ul, ol').length > 0) return;
     
-    // Skip if this element is inside a div that we're processing separately
-    if ($el.parents('div').length > 0 && $el.parents('div').find('h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, table, img, figure').length > 1) {
-      return;
-    }
+    // Skip very short text that's likely navigation or noise
+    if (text.length < 10 && !tagName.startsWith('h')) return;
     
     // Calculate bot priority score (simulating how bots prioritize content)
     let priority = 50; // Base priority
