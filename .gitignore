@@ -183,3 +183,18 @@ pagespeed_results.json
 temp.html
 *.json.bak
 *.tmp
+
+# Documentation files (internal use only)
+# These files have been removed from the public repository
+
+# Build artifacts
+tsconfig.tsbuildinfo
+.next/
+.vercel/
+
+# Environment files
+.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
