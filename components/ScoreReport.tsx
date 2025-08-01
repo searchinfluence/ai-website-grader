@@ -10,6 +10,9 @@ interface ScoreReportProps {
 }
 
 export default function ScoreReport({ analysis }: ScoreReportProps) {
+  // Debug logging
+  console.log('Performance Metrics Debug:', analysis.crawledContent.aiAnalysisData?.performanceMetrics);
+  
   const handleExportMarkdown = () => {
     const markdown = generateMarkdownReport(analysis);
     const filename = `ai-grader-report-${analysis.url.replace(/[^a-z0-9]/gi, '-')}-${new Date().toISOString().split('T')[0]}.md`;
@@ -476,6 +479,25 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               To enable real Core Web Vitals data, add <code>GOOGLE_PAGESPEED_API_KEY</code> to your environment variables.
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Performance Metrics Not Available */}
+      {!analysis.crawledContent.aiAnalysisData?.performanceMetrics && (
+        <div style={{
+          marginTop: '40px',
+          padding: '25px',
+          backgroundColor: '#fff3cd',
+          borderRadius: '12px',
+          border: '1px solid #ffeaa7'
+        }}>
+          <h3 style={{ color: '#856404', marginBottom: '20px' }}>⚠️ Performance Analysis</h3>
+          <p style={{ color: '#856404', margin: '10px 0' }}>
+            Performance metrics are being loaded or are temporarily unavailable.
+          </p>
+          <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+            This may be due to API rate limits or temporary service issues. The analysis will continue with pattern-based scoring.
+          </p>
         </div>
       )}
 
