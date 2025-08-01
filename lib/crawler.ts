@@ -266,6 +266,59 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
   
   // Performance analysis (async - may use free APIs)
   const performanceMetrics = await analyzePerformanceWithCaching(url, html);
+  console.log('Performance Metrics from Crawler:', performanceMetrics);
+  
+  // Ensure aiAnalysisData is always defined with performance metrics
+  const finalAIAnalysisData = aiAnalysisData ? {
+    ...aiAnalysisData,
+    performanceMetrics
+  } : {
+    detectedEntities: {
+      persons: [],
+      organizations: [],
+      locations: [],
+      brands: []
+    },
+    answerFormats: {
+      qaCount: 0,
+      listCount: 0,
+      stepByStepCount: 0,
+      definitionCount: 0
+    },
+    authoritySignals: {
+      authorBylines: [],
+      publicationDates: [],
+      credentialMentions: [],
+      authorityLinks: []
+    },
+    factualIndicators: {
+      citations: 0,
+      statistics: 0,
+      dates: [],
+      sources: [],
+      externalLinks: 0
+    },
+    botAccessibility: {
+      aiBotDirectives: {
+        gptBot: 'unspecified',
+        googleExtended: 'unspecified',
+        chatgptUser: 'unspecified',
+        claudeWeb: 'unspecified',
+        bingBot: 'unspecified',
+        ccBot: 'unspecified',
+        perplexityBot: 'unspecified'
+      },
+      metaRobotsAI: [],
+      contentAvailability: 'full'
+    },
+    voiceSearchOptimization: {
+      naturalLanguagePatterns: 0,
+      conversationalContent: 0,
+      questionFormats: 0,
+      speakableContent: false
+    },
+    performanceMetrics
+  };
 
   return {
     title,
@@ -284,55 +337,7 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
     enhancedSchemaInfo,
     markdownContent,
     uxInfo,
-    aiAnalysisData: aiAnalysisData ? {
-      ...aiAnalysisData,
-      performanceMetrics
-    } : {
-      detectedEntities: {
-        persons: [],
-        organizations: [],
-        locations: [],
-        brands: []
-      },
-      answerFormats: {
-        qaCount: 0,
-        listCount: 0,
-        stepByStepCount: 0,
-        definitionCount: 0
-      },
-      authoritySignals: {
-        authorBylines: [],
-        publicationDates: [],
-        credentialMentions: [],
-        authorityLinks: []
-      },
-      factualIndicators: {
-        citations: 0,
-        statistics: 0,
-        dates: [],
-        sources: [],
-        externalLinks: 0
-      },
-      botAccessibility: {
-        aiBotDirectives: {
-          gptBot: 'unspecified',
-          googleExtended: 'unspecified',
-          chatgptUser: 'unspecified',
-          claudeWeb: 'unspecified',
-          bingBot: 'unspecified',
-          ccBot: 'unspecified',
-          perplexityBot: 'unspecified'
-        },
-        metaRobotsAI: [],
-        contentAvailability: 'full'
-      },
-      voiceSearchOptimization: {
-        naturalLanguagePatterns: 0,
-        conversationalContent: 0,
-        questionFormats: 0,
-        speakableContent: false
-      },
-      performanceMetrics
+    aiAnalysisData: finalAIAnalysisData
     }
   };
 }

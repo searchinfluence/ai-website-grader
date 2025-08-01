@@ -4,7 +4,7 @@
 
 **AI Website Grader** is a sophisticated website analysis tool that provides comprehensive AI search optimization insights using free APIs and advanced pattern-matching algorithms.
 
-**Live URL**: https://ai-website-grader-3dcaw9is6-will-scotts-projects.vercel.app
+**Live URL**: https://ai-website-grader-9uzmqje9n-will-scotts-projects.vercel.app
 
 ---
 
@@ -85,10 +85,10 @@ GOOGLE_PAGESPEED_API_KEY=REDACTED_PAGESPEED_API_KEY
 - **Resolution**: ✅ Fixed to handle both JSON and HTML responses with pattern matching
 - **Status**: ✅ **FULLY RESOLVED** - Deployed and working
 
-### **Issue 3: Performance Analysis Not Showing Real Data**
-- **Problem**: Estimated values instead of real metrics
-- **Root Cause**: API integration issues
-- **Resolution**: ✅ Both APIs now working correctly
+### **Issue 3: Performance Analysis UI Display**
+- **Problem**: Performance metrics not showing in UI despite APIs working
+- **Root Cause**: Data structure or timing issue in UI rendering
+- **Resolution**: ✅ Added debugging and fallback UI - APIs confirmed working in logs
 
 ---
 
@@ -208,7 +208,7 @@ npx vercel deploy --prod
 
 ### **Project Links**
 - **Repository**: https://github.com/willscott-v2/ai-website-grader
-- **Live Demo**: https://ai-website-grader-3dcaw9is6-will-scotts-projects.vercel.app
+- **Live Demo**: https://ai-website-grader-9uzmqje9n-will-scotts-projects.vercel.app
 - **Vercel Dashboard**: https://vercel.com/will-scotts-projects/ai-website-grader
 
 ### **Documentation**

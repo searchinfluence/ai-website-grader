@@ -97,6 +97,9 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     crawledContent: content
   });
   
+  // Debug logging for performance metrics
+  console.log('Analysis Engine - Performance Metrics:', content.aiAnalysisData?.performanceMetrics);
+  
   return {
     url: textContent ? 'manual-input' : url,
     title: content.title,
