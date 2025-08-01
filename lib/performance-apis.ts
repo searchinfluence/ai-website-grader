@@ -71,9 +71,9 @@ export async function validateHTML(url: string, html?: string): Promise<{
       
       // Handle the W3C validator JSON response format
       if (Array.isArray(data)) {
-        const errors = data.filter((msg: any) => msg.type === 'error').length;
-        const warnings = data.filter((msg: any) => msg.type === 'warning').length;
-        const messages = data.slice(0, 10).map((msg: any) => ({
+        const errors = data.filter((msg: { type: string }) => msg.type === 'error').length;
+        const warnings = data.filter((msg: { type: string }) => msg.type === 'warning').length;
+        const messages = data.slice(0, 10).map((msg: { type: string; message?: string; extract?: string; lastLine?: number; firstLine?: number }) => ({
           type: msg.type as 'error' | 'warning' | 'info',
           message: msg.message || msg.extract || 'HTML validation issue',
           line: msg.lastLine || msg.firstLine
@@ -106,7 +106,7 @@ export async function validateHTML(url: string, html?: string): Promise<{
           }))
         };
       }
-    } catch (jsonError) {
+    } catch (_jsonError) {
       console.log('JSON parsing failed, trying HTML response');
       
       // Fallback to HTML response parsing
