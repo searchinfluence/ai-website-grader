@@ -206,6 +206,12 @@ export interface CrawledContent {
       };
       metaRobotsAI: string[];
       contentAvailability: 'full' | 'partial' | 'js-dependent';
+      botSimulation: {
+        contentExtracted: number;
+        priorityContentFound: boolean;
+        structuredDataPresent: boolean;
+        accessibilityScore: number;
+      };
     };
     
     // Voice and local search

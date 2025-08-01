@@ -134,7 +134,13 @@ export async function parseTextContent(text: string): Promise<CrawledContent> {
         perplexityBot: 'unspecified'
       },
       metaRobotsAI: [],
-      contentAvailability: 'full'
+      contentAvailability: 'full',
+      botSimulation: {
+        contentExtracted: text.split(' ').length, // Word count as content
+        priorityContentFound: true, // Manual input is always priority
+        structuredDataPresent: false,
+        accessibilityScore: 80 // High score for manual input
+      }
     },
     voiceSearchOptimization: {
       naturalLanguagePatterns: 0,
@@ -309,7 +315,13 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
           perplexityBot: 'unspecified' as const
         },
         metaRobotsAI: [],
-        contentAvailability: 'full' as const
+        contentAvailability: 'full' as const,
+        botSimulation: {
+          contentExtracted: 0,
+          priorityContentFound: false,
+          structuredDataPresent: false,
+          accessibilityScore: 0
+        }
       },
     voiceSearchOptimization: {
       naturalLanguagePatterns: 0,
@@ -552,35 +564,74 @@ function generateMarkdownContent(
 ): string {
   let markdown = `# ${title}\n\n`;
   
-  // Extract main content area - try multiple selectors
-  const mainContent = $('main, article, .content, .main-content, #content, .post-content, .entry-content, .page-content').first();
+  // Simulate real bot behavior: Start with the most important content first
+  // Real bots prioritize content based on visual hierarchy, position, and semantic importance
+  
+  // 1. Extract and prioritize main content area (like a real bot would)
+  const mainContent = $('main, article, .content, .main-content, #content, .post-content, .entry-content, .page-content, [role="main"]').first();
   const contentArea = mainContent.length > 0 ? mainContent : $('body');
   
-  // Remove navigation, footer, and other non-content elements
-  contentArea.find('nav, .nav, .navigation, .navbar, .menu, footer, .footer, .sidebar, .widget, .advertisement, .ads, script, style').remove();
+  // 2. Remove elements that real bots typically ignore or deprioritize
+  const elementsToRemove = [
+    'nav', '.nav', '.navigation', '.navbar', '.menu', '.breadcrumb',
+    'footer', '.footer', '.site-footer', '.page-footer',
+    '.sidebar', '.widget', '.advertisement', '.ads', '.ad',
+    '.social-share', '.share-buttons', '.related-posts',
+    '.comments', '.comment-section', '.disqus',
+    '.newsletter', '.subscribe', '.cta',
+    'script', 'style', '.hidden', '[style*="display: none"]',
+    '.cookie-notice', '.popup', '.modal', '.overlay'
+  ];
   
-  // Collect all content elements in document order
-  const contentElements: { type: 'heading' | 'paragraph' | 'list' | 'blockquote' | 'div'; content: string; level?: number; isOrdered?: boolean }[] = [];
+  elementsToRemove.forEach(selector => {
+    contentArea.find(selector).remove();
+  });
   
-  contentArea.find('h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, div').each((_, element) => {
+  // 3. Simulate bot content prioritization (larger text, prominent position = higher priority)
+  const contentElements: Array<{
+    type: 'heading' | 'paragraph' | 'list' | 'blockquote' | 'div' | 'table' | 'image';
+    content: string;
+    level?: number;
+    isOrdered?: boolean;
+    priority: number; // Bot priority score
+    position: number; // DOM position
+  }> = [];
+  
+  let elementIndex = 0;
+  
+  // Process elements in document order (like a real bot)
+  contentArea.find('h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, div, table, img, figure').each((_, element) => {
     const $el = $(element);
     const tagName = $el.prop('tagName')?.toLowerCase() || '';
     const text = $el.text().trim();
     
-    // Skip empty elements and elements that are children of lists
+    // Skip empty elements and nested list items
     if (!text || $el.parents('ul, ol').length > 0) return;
+    
+    // Calculate bot priority score (simulating how bots prioritize content)
+    let priority = 50; // Base priority
+    const content = text;
     
     if (tagName.startsWith('h')) {
       const level = parseInt(tagName.charAt(1));
+      priority = 100 - (level * 10); // H1 = 90, H2 = 80, etc.
       contentElements.push({
         type: 'heading',
-        content: text,
-        level
+        content,
+        level,
+        priority,
+        position: elementIndex++
       });
     } else if (tagName === 'p') {
+      // Paragraphs get priority based on length and position
+      priority = Math.min(70, 30 + (content.length / 10));
+      if (content.length > 100) priority += 10; // Longer paragraphs = more important
+      
       contentElements.push({
         type: 'paragraph',
-        content: text
+        content,
+        priority,
+        position: elementIndex++
       });
     } else if (tagName === 'ul' || tagName === 'ol') {
       const isOrdered = tagName === 'ol';
@@ -594,30 +645,83 @@ function generateMarkdownContent(
       });
       
       if (listItems.length > 0) {
+        // Lists get higher priority if they're substantial
+        priority = Math.min(75, 40 + (listItems.length * 5));
+        
         contentElements.push({
           type: 'list',
           content: listItems.join('\n'),
-          isOrdered
+          isOrdered,
+          priority,
+          position: elementIndex++
         });
       }
     } else if (tagName === 'blockquote') {
+      // Blockquotes often contain important content
+      priority = 65;
       contentElements.push({
         type: 'blockquote',
-        content: text
+        content,
+        priority,
+        position: elementIndex++
       });
+    } else if (tagName === 'table') {
+      // Tables often contain structured data
+      const cells = $el.find('td, th').length;
+      priority = Math.min(70, 30 + (cells / 2));
+      
+      const tableContent = $el.find('td, th').map((_, cell) => $(cell).text().trim()).get().join(' | ');
+      if (tableContent.length > 20) {
+        contentElements.push({
+          type: 'table',
+          content: tableContent,
+          priority,
+          position: elementIndex++
+        });
+      }
+    } else if (tagName === 'img' || tagName === 'figure') {
+      // Images with good alt text are important
+      const $img = tagName === 'img' ? $el : $el.find('img');
+      const src = $img.attr('src');
+      const alt = $img.attr('alt') || '';
+      const title = $img.attr('title') || '';
+      
+      if (src && (alt.length > 10 || title.length > 10)) {
+        priority = 60;
+        const caption = alt || title || 'Image';
+        contentElements.push({
+          type: 'image',
+          content: `![${caption}](${src})`,
+          priority,
+          position: elementIndex++
+        });
+      }
     } else if (tagName === 'div') {
-      // Only include divs that have substantial content and aren't just containers
+      // Only include divs with substantial content (like bots do)
       const childElements = $el.children().length;
-      if (text.length > 50 && childElements <= 3) {
+      if (text.length > 100 && childElements <= 5) {
+        priority = Math.min(60, 20 + (text.length / 20));
         contentElements.push({
           type: 'div',
-          content: text
+          content,
+          priority,
+          position: elementIndex++
         });
       }
     }
   });
   
-  // Convert to markdown
+  // 4. Sort by bot priority (like real bots prioritize content)
+  contentElements.sort((a, b) => {
+    // Primary sort: priority (higher = more important)
+    if (b.priority !== a.priority) {
+      return b.priority - a.priority;
+    }
+    // Secondary sort: position (earlier in DOM = more important)
+    return a.position - b.position;
+  });
+  
+  // 5. Convert to markdown (simulating bot's content extraction)
   contentElements.forEach(element => {
     if (element.type === 'heading' && element.level) {
       const prefix = '#'.repeat(element.level);
@@ -633,49 +737,126 @@ function generateMarkdownContent(
       markdown += '\n';
     } else if (element.type === 'blockquote') {
       markdown += `> ${element.content}\n\n`;
+    } else if (element.type === 'table') {
+      markdown += `**Table Data:** ${element.content}\n\n`;
+    } else if (element.type === 'image') {
+      markdown += `${element.content}\n\n`;
     } else if (element.type === 'div') {
       markdown += `${element.content}\n\n`;
     }
   });
   
-  // Add images section
-  const images = $('img[src]').map((_, img) => {
-    const $img = $(img);
-    const src = $img.attr('src');
-    const alt = $img.attr('alt') || '';
-    const title = $img.attr('title') || '';
-    return { src, alt, title };
-  }).get();
-  
-  if (images.length > 0) {
-    markdown += '## Images\n\n';
-    images.slice(0, 5).forEach(img => { // Limit to first 5 images
-      if (img.src) {
-        const caption = img.alt || img.title || 'Image';
-        markdown += `![${caption}](${img.src})\n\n`;
-      }
+  // 6. Add structured data (like bots extract)
+  const structuredData = extractStructuredData($);
+  if (structuredData.length > 0) {
+    markdown += '## Structured Data (Bot-Extracted)\n\n';
+    structuredData.forEach(item => {
+      markdown += `- **${item.type}**: ${item.content}\n`;
     });
+    markdown += '\n';
   }
   
-  // Add links section
-  const links = $('a[href]').map((_, link) => {
-    const $link = $(link);
-    const href = $link.attr('href');
-    const text = $link.text().trim();
-    return { href, text };
-  }).get();
-  
-  if (links.length > 0) {
-    markdown += '## Links\n\n';
-    links.slice(0, 15).forEach(link => { // Increased limit to 15 links
-      if (link.text && link.href && link.text.length > 2) {
-        markdown += `- [${link.text}](${link.href})\n`;
-      }
+  // 7. Add key links (like bots prioritize important links)
+  const importantLinks = extractImportantLinks($);
+  if (importantLinks.length > 0) {
+    markdown += '## Key Links (Bot-Prioritized)\n\n';
+    importantLinks.forEach(link => {
+      markdown += `- [${link.text}](${link.href})\n`;
     });
     markdown += '\n';
   }
   
   return markdown;
+}
+
+// Helper function to extract structured data (like real bots do)
+function extractStructuredData($: cheerio.CheerioAPI): Array<{type: string, content: string}> {
+  const structuredData: Array<{type: string, content: string}> = [];
+  
+  // Extract JSON-LD structured data
+  $('script[type="application/ld+json"]').each((_, script) => {
+    try {
+      const content = $(script).html();
+      if (content) {
+        const data = JSON.parse(content);
+        if (data['@type']) {
+          structuredData.push({
+            type: 'JSON-LD',
+            content: `${data['@type']}: ${data.name || data.title || 'Structured Data'}`
+          });
+        }
+      }
+    } catch {
+      // Ignore invalid JSON
+    }
+  });
+  
+  // Extract microdata
+  $('[itemtype]').each((_, element) => {
+    const itemtype = $(element).attr('itemtype');
+    const itemname = $(element).find('[itemprop="name"]').text().trim();
+    if (itemtype && itemname) {
+      structuredData.push({
+        type: 'Microdata',
+        content: `${itemtype.split('/').pop()}: ${itemname}`
+      });
+    }
+  });
+  
+  // Extract meta tags (like bots do)
+  $('meta[property^="og:"], meta[name^="twitter:"]').each((_, meta) => {
+    const property = $(meta).attr('property') || $(meta).attr('name');
+    const content = $(meta).attr('content');
+    if (property && content) {
+      structuredData.push({
+        type: 'Meta Tag',
+        content: `${property}: ${content}`
+      });
+    }
+  });
+  
+  return structuredData.slice(0, 10); // Limit to most important
+}
+
+// Helper function to extract important links (like bots prioritize)
+function extractImportantLinks($: cheerio.CheerioAPI): Array<{href: string, text: string}> {
+  const links: Array<{href: string, text: string, importance: number}> = [];
+  
+  $('a[href]').each((_, link) => {
+    const $link = $(link);
+    const href = $link.attr('href');
+    const text = $link.text().trim();
+    
+    if (href && text && text.length > 2) {
+      let importance = 50; // Base importance
+      
+      // Links in main content are more important
+      if ($link.closest('main, article, .content').length > 0) {
+        importance += 20;
+      }
+      
+      // Longer link text = more descriptive = more important
+      if (text.length > 10) importance += 10;
+      
+      // Internal links are often more important
+      if (href.startsWith('/') || href.startsWith('#')) {
+        importance += 15;
+      }
+      
+      // Links with specific classes/IDs might be important
+      if ($link.hasClass('cta') || $link.hasClass('button') || $link.attr('id')?.includes('main')) {
+        importance += 20;
+      }
+      
+      links.push({ href, text, importance });
+    }
+  });
+  
+  // Sort by importance and return top links
+  return links
+    .sort((a, b) => b.importance - a.importance)
+    .slice(0, 15)
+    .map(({ href, text }) => ({ href, text }));
 }
 
 function analyzeUXInfo($: cheerio.CheerioAPI, html: string): CrawledContent['uxInfo'] {
@@ -1100,6 +1281,12 @@ function analyzeAIBotAccessibility($: cheerio.CheerioAPI, html: string): {
   };
   metaRobotsAI: string[];
   contentAvailability: 'full' | 'partial' | 'js-dependent';
+  botSimulation: {
+    contentExtracted: number;
+    priorityContentFound: boolean;
+    structuredDataPresent: boolean;
+    accessibilityScore: number;
+  };
 } {
   const botAccessibility = {
     aiBotDirectives: {
@@ -1112,8 +1299,58 @@ function analyzeAIBotAccessibility($: cheerio.CheerioAPI, html: string): {
       perplexityBot: 'unspecified' as 'allowed' | 'disallowed' | 'unspecified'
     },
     metaRobotsAI: [] as string[],
-    contentAvailability: 'full' as 'full' | 'partial' | 'js-dependent'
+    contentAvailability: 'full' as 'full' | 'partial' | 'js-dependent',
+    botSimulation: {
+      contentExtracted: 0,
+      priorityContentFound: false,
+      structuredDataPresent: false,
+      accessibilityScore: 0
+    }
   };
+  
+  // Simulate real bot behavior: Check for content that bots would actually extract
+  const mainContent = $('main, article, .content, .main-content, #content, [role="main"]').first();
+  const contentArea = mainContent.length > 0 ? mainContent : $('body');
+  
+  // Count extractable content (like a real bot would)
+  const headings = contentArea.find('h1, h2, h3, h4, h5, h6').length;
+  const paragraphs = contentArea.find('p').length;
+  const lists = contentArea.find('ul, ol').length;
+  const images = contentArea.find('img[alt]').length;
+  const links = contentArea.find('a[href]').length;
+  
+  botAccessibility.botSimulation.contentExtracted = headings + paragraphs + lists + images + links;
+  
+  // Check for priority content (H1, main content area)
+  botAccessibility.botSimulation.priorityContentFound = 
+    contentArea.find('h1').length > 0 || 
+    mainContent.length > 0;
+  
+  // Check for structured data (like real bots prioritize)
+  const hasJsonLd = $('script[type="application/ld+json"]').length > 0;
+  const hasMicrodata = $('[itemtype]').length > 0;
+  const hasMetaTags = $('meta[property^="og:"], meta[name^="twitter:"]').length > 0;
+  
+  botAccessibility.botSimulation.structuredDataPresent = hasJsonLd || hasMicrodata || hasMetaTags;
+  
+  // Calculate accessibility score (simulating bot's ability to extract content)
+  let accessibilityScore = 0;
+  
+  // Base score for having content
+  if (botAccessibility.botSimulation.contentExtracted > 10) accessibilityScore += 30;
+  if (botAccessibility.botSimulation.contentExtracted > 50) accessibilityScore += 20;
+  
+  // Priority content bonus
+  if (botAccessibility.botSimulation.priorityContentFound) accessibilityScore += 25;
+  
+  // Structured data bonus
+  if (botAccessibility.botSimulation.structuredDataPresent) accessibilityScore += 15;
+  
+  // Content quality indicators
+  if (headings > 0) accessibilityScore += 10;
+  if (paragraphs > 5) accessibilityScore += 10;
+  
+  botAccessibility.botSimulation.accessibilityScore = Math.min(100, accessibilityScore);
   
   // Meta robots AI-specific tags
   const metaRobots = $('meta[name="robots"], meta[name="googlebot"], meta[name="bingbot"]');
@@ -1125,16 +1362,17 @@ function analyzeAIBotAccessibility($: cheerio.CheerioAPI, html: string): {
     }
   });
   
-  // Content availability analysis
+  // Enhanced content availability analysis (like real bots assess)
   const noscriptContent = $('noscript').length;
   const totalContent = html.length;
   const serverSideContent = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').length;
   
   const contentRatio = serverSideContent / totalContent;
   
-  if (contentRatio > 0.8) {
+  // More sophisticated assessment
+  if (contentRatio > 0.8 && botAccessibility.botSimulation.contentExtracted > 20) {
     botAccessibility.contentAvailability = 'full';
-  } else if (contentRatio > 0.5 || noscriptContent > 0) {
+  } else if (contentRatio > 0.5 || noscriptContent > 0 || botAccessibility.botSimulation.contentExtracted > 10) {
     botAccessibility.contentAvailability = 'partial';
   } else {
     botAccessibility.contentAvailability = 'js-dependent';
