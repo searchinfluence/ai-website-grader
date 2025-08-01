@@ -97,149 +97,191 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           </div>
 
           {/* Score Summary */}
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
-            gap: '20px', 
-            marginBottom: '40px' 
-          }}>
-            {/* AI Optimization - 25% */}
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '20px', 
-              background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%)', 
-              borderRadius: '12px',
-              border: '1px solid rgba(52, 152, 219, 0.2)',
-              borderLeft: '4px solid #10b981'
+          
+          {/* High Priority Factors Section */}
+          <div style={{ marginBottom: '30px' }}>
+            <h3 style={{ 
+              fontSize: '1.2rem', 
+              fontWeight: '600', 
+              color: 'var(--content-text)', 
+              marginBottom: '15px',
+              textAlign: 'center',
+              opacity: 0.8
             }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--info-blue)', marginBottom: '5px' }}>
-                {analysis.aiOptimization.score}%
+              High Priority Factors (71% Total Weight)
+            </h3>
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+              gap: '20px', 
+              marginBottom: '40px' 
+            }}>
+              {/* High Priority Factors (Top Row) */}
+              {/* AI Optimization - 25% */}
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '20px', 
+                background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%)', 
+                borderRadius: '12px',
+                border: '1px solid rgba(52, 152, 219, 0.2)',
+                borderLeft: '4px solid #10b981',
+                gridColumn: 'span 1'
+              }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--info-blue)', marginBottom: '5px' }}>
+                  {analysis.aiOptimization.score}%
+                </div>
+                <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                  AI Optimization
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                  25% Weight
+                </div>
               </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                AI Optimization
+              
+              {/* Content Quality - 18% */}
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '20px', 
+                background: 'linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%)', 
+                borderRadius: '12px',
+                border: '1px solid rgba(39, 174, 96, 0.2)',
+                borderLeft: '4px solid #10b981',
+                gridColumn: 'span 1'
+              }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--success-green)', marginBottom: '5px' }}>
+                  {analysis.contentQuality.score}%
+                </div>
+                <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                  Content Quality
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                  18% Weight
+                </div>
               </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
-                25% Weight
+              
+              {/* Technical Crawlability - 16% */}
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '20px', 
+                background: 'linear-gradient(135deg, rgba(230, 126, 34, 0.1) 0%, rgba(230, 126, 34, 0.05) 100%)', 
+                borderRadius: '12px',
+                border: '1px solid rgba(230, 126, 34, 0.2)',
+                borderLeft: '4px solid #10b981',
+                gridColumn: 'span 1'
+              }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--orange-accent)', marginBottom: '5px' }}>
+                  {analysis.technicalCrawlability.score}%
+                </div>
+                <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                  Technical Crawlability
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                  16% Weight
+                </div>
+              </div>
+              
+              {/* E-E-A-T Signals - 12% */}
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '20px', 
+                background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0.05) 100%)', 
+                borderRadius: '12px',
+                border: '1px solid rgba(155, 89, 182, 0.2)',
+                borderLeft: '4px solid #f59e0b',
+                gridColumn: 'span 1'
+              }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#9b59b6', marginBottom: '5px' }}>
+                  {analysis.eeatSignals.score}%
+                </div>
+                <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                  E-E-A-T Signals
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                  12% Weight
+                </div>
               </div>
             </div>
-            
-            {/* Content Quality - 18% */}
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '20px', 
-              background: 'linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%)', 
-              borderRadius: '12px',
-              border: '1px solid rgba(39, 174, 96, 0.2)',
-              borderLeft: '4px solid #10b981'
+          </div>
+
+          {/* Medium Priority Factors Section */}
+          <div style={{ marginBottom: '30px' }}>
+            <h3 style={{ 
+              fontSize: '1.2rem', 
+              fontWeight: '600', 
+              color: 'var(--content-text)', 
+              marginBottom: '15px',
+              textAlign: 'center',
+              opacity: 0.8
             }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--success-green)', marginBottom: '5px' }}>
-                {analysis.contentQuality.score}%
-              </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                Content Quality
-              </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
-                18% Weight
-              </div>
-            </div>
-            
-            {/* Technical Crawlability - 16% */}
+              Medium Priority Factors (29% Total Weight)
+            </h3>
             <div style={{ 
-              textAlign: 'center', 
-              padding: '20px', 
-              background: 'linear-gradient(135deg, rgba(230, 126, 34, 0.1) 0%, rgba(230, 126, 34, 0.05) 100%)', 
-              borderRadius: '12px',
-              border: '1px solid rgba(230, 126, 34, 0.2)',
-              borderLeft: '4px solid #10b981'
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+              gap: '20px', 
+              marginBottom: '40px' 
             }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'var(--orange-accent)', marginBottom: '5px' }}>
-                {analysis.technicalCrawlability.score}%
+              {/* Mobile Optimization - 12% */}
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '20px', 
+                background: 'linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(26, 188, 156, 0.05) 100%)', 
+                borderRadius: '12px',
+                border: '1px solid rgba(26, 188, 156, 0.2)',
+                borderLeft: '4px solid #f59e0b',
+                gridColumn: 'span 1'
+              }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#1abc9c', marginBottom: '5px' }}>
+                  {analysis.mobileOptimization.score}%
+                </div>
+                <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                  Mobile Optimization
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                  12% Weight
+                </div>
               </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                Technical Crawlability
+              
+              {/* Schema Analysis - 10% */}
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '20px', 
+                background: 'linear-gradient(135deg, rgba(52, 73, 94, 0.1) 0%, rgba(52, 73, 94, 0.05) 100%)', 
+                borderRadius: '12px',
+                border: '1px solid rgba(52, 73, 94, 0.2)',
+                borderLeft: '4px solid #f59e0b',
+                gridColumn: 'span 1'
+              }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#34495e', marginBottom: '5px' }}>
+                  {analysis.schemaAnalysis.score}%
+                </div>
+                <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                  Schema Analysis
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                  10% Weight
+                </div>
               </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
-                16% Weight
-              </div>
-            </div>
-            
-            {/* E-E-A-T Signals - 12% */}
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '20px', 
-              background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0.05) 100%)', 
-              borderRadius: '12px',
-              border: '1px solid rgba(155, 89, 182, 0.2)',
-              borderLeft: '4px solid #f59e0b'
-            }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#9b59b6', marginBottom: '5px' }}>
-                {analysis.eeatSignals.score}%
-              </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                E-E-A-T Signals
-              </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
-                12% Weight
-              </div>
-            </div>
-            
-            {/* Mobile Optimization - 12% */}
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '20px', 
-              background: 'linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(26, 188, 156, 0.05) 100%)', 
-              borderRadius: '12px',
-              border: '1px solid rgba(26, 188, 156, 0.2)',
-              borderLeft: '4px solid #f59e0b'
-            }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#1abc9c', marginBottom: '5px' }}>
-                {analysis.mobileOptimization.score}%
-              </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                Mobile Optimization
-              </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
-                12% Weight
-              </div>
-            </div>
-            
-            {/* Schema Analysis - 10% */}
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '20px', 
-              background: 'linear-gradient(135deg, rgba(52, 73, 94, 0.1) 0%, rgba(52, 73, 94, 0.05) 100%)', 
-              borderRadius: '12px',
-              border: '1px solid rgba(52, 73, 94, 0.2)',
-              borderLeft: '4px solid #f59e0b'
-            }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#34495e', marginBottom: '5px' }}>
-                {analysis.schemaAnalysis.score}%
-              </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                Schema Analysis
-              </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
-                10% Weight
-              </div>
-            </div>
-            
-            {/* Technical SEO - 7% */}
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '20px', 
-              background: 'linear-gradient(135deg, rgba(149, 165, 166, 0.1) 0%, rgba(149, 165, 166, 0.05) 100%)', 
-              borderRadius: '12px',
-              border: '1px solid rgba(149, 165, 166, 0.2)',
-              borderLeft: '4px solid #6b7280'
-            }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#95a5a6', marginBottom: '5px' }}>
-                {analysis.technicalSEO.score}%
-              </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                Technical SEO
-              </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
-                7% Weight
+              
+              {/* Technical SEO - 7% */}
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '20px', 
+                background: 'linear-gradient(135deg, rgba(149, 165, 166, 0.1) 0%, rgba(149, 165, 166, 0.05) 100%)', 
+                borderRadius: '12px',
+                border: '1px solid rgba(149, 165, 166, 0.2)',
+                borderLeft: '4px solid #6b7280',
+                gridColumn: 'span 1'
+              }}>
+                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#95a5a6', marginBottom: '5px' }}>
+                  {analysis.technicalSEO.score}%
+                </div>
+                <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                  Technical SEO
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted-text)', marginTop: '5px' }}>
+                  7% Weight
+                </div>
               </div>
             </div>
           </div>
