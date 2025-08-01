@@ -51,6 +51,34 @@ next-env.d.ts
 *.swo
 *~
 
+# Additional IDE and editor files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+*.code-workspace
+.atom/
+.brackets.json
+.sublime-project
+.sublime-workspace
+*.sublime-project
+*.sublime-workspace
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+*.iws
+*.ipr
+*.iml
+
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+.vimrc
+
 # OS generated files
 .DS_Store
 .DS_Store?
@@ -183,6 +211,99 @@ pagespeed_results.json
 temp.html
 *.json.bak
 *.tmp
+
+# Test-generated files and analysis outputs
+page-markdown-*.md
+*-higher-education-seo.md
+test-results/
+analysis-outputs/
+crawl-results/
+*.test.md
+*.analysis.md
+
+# Development and testing artifacts
+*.test.json
+*.debug.json
+*.log.json
+test-*.json
+debug-*.json
+temp-*.html
+temp-*.json
+temp-*.md
+
+# API response dumps (for debugging)
+api-responses/
+response-dumps/
+*.response.json
+*.api.json
+
+# Screenshots and visual test files
+screenshots/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+test-images/
+
+# Performance test files
+performance-results/
+lighthouse-results/
+pagespeed-results/
+*.lighthouse.json
+*.pagespeed.json
+
+# Temporary development files
+dev-*.md
+dev-*.json
+dev-*.html
+*.dev.md
+*.dev.json
+*.dev.html
+
+# Development tools and utilities
+.eslintcache
+.prettierignore
+.prettierrc
+.editorconfig
+.stylelintrc
+.stylelintignore
+
+# Testing frameworks
+jest.config.js
+jest.setup.js
+cypress/
+cypress.json
+cypress.config.js
+playwright.config.js
+test-results/
+playwright-report/
+test-results.xml
+coverage.xml
+
+# Build and deployment tools
+.netlify/
+.cache/
+dist/
+build/
+out/
+.next/
+.vercel/
+
+# Package manager files
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+.npmrc
+.yarnrc
+.yarnrc.yml
+
+# Local development configurations
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
 
 # Documentation files (internal use only)
 # These files have been removed from the public repository
