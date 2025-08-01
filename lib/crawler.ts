@@ -338,7 +338,7 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
     markdownContent,
     uxInfo,
     aiAnalysisData: finalAIAnalysisData
-    }
+  }
   };
 }
 
