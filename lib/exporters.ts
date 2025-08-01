@@ -187,6 +187,42 @@ ${analysis.contentStructure.recommendations.map(rec => `- **${rec.priority.toUpp
 - **Multimedia:** ${round(analysis.contentStructure.multimedia)}%
 - **Readability:** ${round(analysis.contentStructure.readability)}%
 
+## Performance Analysis (${analysis.crawledContent.aiAnalysisData?.performanceMetrics?.performanceScore ? round(analysis.crawledContent.aiAnalysisData.performanceMetrics.performanceScore) : 'N/A'}%)
+
+*Real performance metrics from Google PageSpeed Insights and W3C HTML Validator*
+
+### Core Web Vitals:
+${analysis.crawledContent.aiAnalysisData?.performanceMetrics?.coreWebVitals ? `
+- **Performance Score:** ${round(analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.score)}/100
+- **LCP (Largest Contentful Paint):** ${analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.lcp}ms
+- **FID (First Input Delay):** ${analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.fid}ms
+- **CLS (Cumulative Layout Shift):** ${analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.cls}
+` : '- Real Core Web Vitals data not available'}
+
+### HTML Validation (W3C):
+${analysis.crawledContent.aiAnalysisData?.performanceMetrics?.htmlValidation ? `
+- **Status:** ${analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.isValid ? '✅ Valid' : '❌ Invalid'}
+- **Errors:** ${analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.errors}
+- **Warnings:** ${analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.warnings}
+${analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.length > 0 ? `
+- **Sample Issues:**
+${analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.slice(0, 5).map(msg => `  - ${msg.type.toUpperCase()}: ${msg.message}${msg.line ? ` (Line ${msg.line})` : ''}`).join('\n')}
+${analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.length > 5 ? `  - ... and ${analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.length - 5} more issues` : ''}
+` : ''}
+` : '- HTML validation data not available'}
+
+### Accessibility Analysis:
+${analysis.crawledContent.aiAnalysisData?.performanceMetrics?.accessibilityScore !== undefined ? `
+- **Score:** ${round(analysis.crawledContent.aiAnalysisData.performanceMetrics.accessibilityScore)}/100
+- **Analysis:** Based on alt text coverage, ARIA attributes, semantic HTML, and form labels
+` : '- Accessibility data not available'}
+
+### Combined Performance Score:
+${analysis.crawledContent.aiAnalysisData?.performanceMetrics?.performanceScore ? `
+- **Overall Score:** ${round(analysis.crawledContent.aiAnalysisData.performanceMetrics.performanceScore)}/100
+- **Weighting:** 40% Core Web Vitals, 30% HTML Validity, 30% Accessibility
+` : '- Combined performance score not available'}
+
 ## Priority Content Improvements
 
 *Strategic improvements recommended by [Search Influence](https://www.searchinfluence.com/) - AI SEO Experts*

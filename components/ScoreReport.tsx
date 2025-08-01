@@ -404,7 +404,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           borderRadius: '12px',
           border: '1px solid #90ee90'
         }}>
-          <h3 style={{ color: '#228b22', marginBottom: '20px' }}>⚡ Performance Analysis (Free APIs)</h3>
+          <h3 style={{ color: '#228b22', marginBottom: '20px', fontWeight: 'bold', fontSize: '1.4rem' }}>⚡ Performance Analysis</h3>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
             {/* Core Web Vitals */}
@@ -428,19 +428,52 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 <p style={{ color: '#333' }}><strong>Status:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.isValid ? '✅ Valid' : '❌ Invalid'}</p>
                 <p style={{ color: '#333' }}><strong>Errors:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.errors}</p>
                 <p style={{ color: '#333' }}><strong>Warnings:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.warnings}</p>
-                {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.length > 0 && (
-                  <details style={{ marginTop: '10px' }}>
-                    <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>View Issues</summary>
-                    <ul style={{ fontSize: '12px', marginTop: '5px' }}>
-                      {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.slice(0, 3).map((msg, idx) => (
-                        <li key={idx} style={{ color: msg.type === 'error' ? '#d32f2f' : '#f57c00' }}>
-                          {msg.type.toUpperCase()}: {msg.message}
-                          {msg.line && ` (Line ${msg.line})`}
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                )}
+                
+                {/* HTML Validation Details */}
+                <details style={{ marginTop: '10px' }}>
+                  <summary style={{ 
+                    cursor: 'pointer', 
+                    fontWeight: 'bold', 
+                    color: '#d32f2f',
+                    fontSize: '13px',
+                    padding: '5px 0'
+                  }}>
+                    🔍 View Validation Details ({analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.errors} errors, {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.warnings} warnings)
+                  </summary>
+                  <div style={{ 
+                    marginTop: '8px', 
+                    padding: '10px', 
+                    backgroundColor: '#fff5f5', 
+                    borderRadius: '6px', 
+                    border: '1px solid #fed7d7',
+                    maxHeight: '200px',
+                    overflowY: 'auto'
+                  }}>
+                    {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.length > 0 ? (
+                      <ul style={{ fontSize: '12px', margin: '0', paddingLeft: '15px' }}>
+                        {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.slice(0, 10).map((msg, idx) => (
+                          <li key={idx} style={{ 
+                            color: msg.type === 'error' ? '#d32f2f' : '#f57c00',
+                            marginBottom: '5px',
+                            lineHeight: '1.4'
+                          }}>
+                            <strong>{msg.type.toUpperCase()}:</strong> {msg.message}
+                            {msg.line && ` <span style="color: #666;">(Line ${msg.line})</span>`}
+                          </li>
+                        ))}
+                        {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.length > 10 && (
+                          <li style={{ color: '#666', fontStyle: 'italic' }}>
+                            ... and {analysis.crawledContent.aiAnalysisData.performanceMetrics.htmlValidation.messages.length - 10} more issues
+                          </li>
+                        )}
+                      </ul>
+                    ) : (
+                      <p style={{ color: '#666', fontStyle: 'italic', margin: '0' }}>
+                        No detailed validation messages available
+                      </p>
+                    )}
+                  </div>
+                </details>
               </div>
             )}
             
@@ -467,17 +500,25 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             )}
           </div>
           
-          <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#e8f5e8', borderRadius: '8px' }}>
-            <h4>🆓 Free API Information</h4>
-            <p style={{ fontSize: '14px', margin: '5px 0' }}>
-              <strong>W3C HTML Validator:</strong> Free validation service (no signup required)
-            </p>
-            <p style={{ fontSize: '14px', margin: '5px 0' }}>
-              <strong>Google PageSpeed Insights:</strong> Optional free API (25,000 requests/day)
-            </p>
-            <p style={{ fontSize: '12px', color: '#333', marginTop: '10px' }}>
-              ✅ Google PageSpeed Insights API key is configured and providing real Core Web Vitals data.
-            </p>
+          <div style={{ marginTop: '20px', padding: '20px', backgroundColor: '#d4edda', borderRadius: '8px', border: '2px solid #28a745' }}>
+            <h4 style={{ color: '#155724', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '15px' }}>🆓 API Status & Information</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
+              <div style={{ padding: '10px', backgroundColor: '#ffffff', borderRadius: '6px', border: '1px solid #c3e6cb' }}>
+                <p style={{ fontSize: '14px', margin: '5px 0', color: '#155724' }}>
+                  <strong>W3C HTML Validator:</strong> ✅ Free validation service (no signup required)
+                </p>
+              </div>
+              <div style={{ padding: '10px', backgroundColor: '#ffffff', borderRadius: '6px', border: '1px solid #c3e6cb' }}>
+                <p style={{ fontSize: '14px', margin: '5px 0', color: '#155724' }}>
+                  <strong>Google PageSpeed Insights:</strong> ✅ Optional free API (25,000 requests/day)
+                </p>
+              </div>
+            </div>
+            <div style={{ marginTop: '15px', padding: '12px', backgroundColor: '#c3e6cb', borderRadius: '6px', border: '1px solid #28a745' }}>
+              <p style={{ fontSize: '14px', color: '#155724', fontWeight: 'bold', margin: '0' }}>
+                ✅ Google PageSpeed Insights API key is configured and providing real Core Web Vitals data.
+              </p>
+            </div>
           </div>
         </div>
       )}
