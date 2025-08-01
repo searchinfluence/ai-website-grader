@@ -1,4 +1,4 @@
-# AI Website Grader - Search Influence
+# AI Website Grader v2.0 - Search Influence
 
 A comprehensive web application that analyzes websites for their readiness in AI-powered search engines, chat interfaces, and modern search algorithms. Built with Next.js 15, TypeScript, and a modern design system.
 
@@ -263,6 +263,6 @@ This project is licensed under the MIT License.
 
 ---
 
-**AI Website Grader** - Powered by Search Influence • Optimizing content for the AI-powered search future.
+**AI Website Grader v2.0** - Powered by Search Influence • Optimizing content for the AI-powered search future.
 
 Visit [Search Influence](https://www.searchinfluence.com) for AI-driven SEO and digital advertising solutions.

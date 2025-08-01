@@ -1,10 +1,10 @@
-# AI Website Grader - Handoff Document
+# AI Website Grader v2.0 - Handoff Document
 
 ## 🎯 **Project Overview**
 
-**AI Website Grader** is a sophisticated website analysis tool that provides comprehensive AI search optimization insights using free APIs and advanced pattern-matching algorithms.
+**AI Website Grader v2.0** is a sophisticated website analysis tool that provides comprehensive AI search optimization insights using free APIs and advanced pattern-matching algorithms.
 
-**Live URL**: https://ai-website-grader-nytclm87k-will-scotts-projects.vercel.app
+**Live URL**: https://ai-grader.searchinfluence.com/
 
 **Status**: ✅ **UI Cleanup Complete** - Optimized spacing, enhanced design consistency, updated documentation
 
@@ -212,7 +212,7 @@ npx vercel deploy --prod
 
 ### **Project Links**
 - **Repository**: https://github.com/willscott-v2/ai-website-grader
-- **Live Demo**: https://ai-website-grader-nytclm87k-will-scotts-projects.vercel.app
+- **Live Demo**: https://ai-grader.searchinfluence.com/
 - **Vercel Dashboard**: https://vercel.com/will-scotts-projects/ai-website-grader
 
 ### **Documentation**

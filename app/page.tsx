@@ -372,7 +372,9 @@ export default function Home() {
                 Visit Search Influence
               </a>
               <span>•</span>
-              <span>AI Website Grader v1.0</span>
+              <a href="https://github.com/willscott-v2/ai-website-grader" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange-accent)', textDecoration: 'none' }}>
+                AI Website Grader v2.0
+              </a>
               <span>•</span>
               <a href="https://ai-grader.searchinfluence.com" target="_blank" rel="noopener noreferrer">
                 AI Website Grader
