@@ -721,7 +721,21 @@ function generateMarkdownContent(
     return b.priority - a.priority;
   });
   
-  // 5. Convert to markdown (simulating bot's content extraction)
+  // 5. Add Navigation Context section (like bots analyze site structure)
+  const navigationContext = extractNavigationContext($);
+  if (navigationContext) {
+    markdown += `## Navigation Context (Bot-Analyzed)\n\n${navigationContext}\n\n`;
+  }
+  
+  // 6. Add Technical SEO Signals section (like bots detect technical issues)
+  const technicalSignals = extractTechnicalSignals($);
+  if (technicalSignals) {
+    markdown += `## Technical SEO Signals (Bot-Detected)\n\n${technicalSignals}\n\n`;
+  }
+  
+  // 7. Add main content section (like bots extract primary content)
+  markdown += `## Main Content (Bot-Extracted)\n\n`;
+  
   contentElements.forEach(element => {
     if (element.type === 'heading' && element.level) {
       const prefix = '#'.repeat(element.level);
@@ -746,7 +760,7 @@ function generateMarkdownContent(
     }
   });
   
-  // 6. Add structured data (like bots extract)
+  // 8. Add structured data (like bots extract)
   const structuredData = extractStructuredData($);
   if (structuredData.length > 0) {
     markdown += '## Structured Data (Bot-Extracted)\n\n';
@@ -756,7 +770,7 @@ function generateMarkdownContent(
     markdown += '\n';
   }
   
-  // 7. Add key links (like bots prioritize important links)
+  // 9. Add key links (like bots prioritize important links)
   const importantLinks = extractImportantLinks($);
   if (importantLinks.length > 0) {
     markdown += '## Key Links (Bot-Prioritized)\n\n';
@@ -857,6 +871,147 @@ function extractImportantLinks($: cheerio.CheerioAPI): Array<{href: string, text
     .sort((a, b) => b.importance - a.importance)
     .slice(0, 15)
     .map(({ href, text }) => ({ href, text }));
+}
+
+// Helper function to extract navigation context (like bots analyze site structure)
+function extractNavigationContext($: cheerio.CheerioAPI): string {
+  const sections: string[] = [];
+  
+  // Analyze main navigation
+  const mainNav = $('nav, .nav, .navigation, header nav');
+  if (mainNav.length > 0) {
+    const navItems: string[] = [];
+    mainNav.find('a').each((_, link) => {
+      const text = $(link).text().trim();
+      if (text && text.length > 2 && text.length < 30) {
+        navItems.push(text);
+      }
+    });
+    if (navItems.length > 0) {
+      sections.push(`**Main Navigation**: ${navItems.slice(0, 8).join(', ')}`);
+    }
+  }
+  
+  // Analyze breadcrumbs
+  const breadcrumbs = $('.breadcrumb, .breadcrumbs, [aria-label*="breadcrumb"]');
+  if (breadcrumbs.length > 0) {
+    const breadcrumbItems: string[] = [];
+    breadcrumbs.find('a, span').each((_, item) => {
+      const text = $(item).text().trim();
+      if (text && text.length > 1 && text.length < 20) {
+        breadcrumbItems.push(text);
+      }
+    });
+    if (breadcrumbItems.length > 0) {
+      sections.push(`**Breadcrumb Navigation**: ${breadcrumbItems.join(' > ')}`);
+    }
+  }
+  
+  // Analyze footer navigation
+  const footerNav = $('footer, .footer');
+  if (footerNav.length > 0) {
+    const footerLinks: string[] = [];
+    footerNav.find('a').each((_, link) => {
+      const text = $(link).text().trim();
+      if (text && text.length > 2 && text.length < 25) {
+        footerLinks.push(text);
+      }
+    });
+    if (footerLinks.length > 0) {
+      sections.push(`**Footer Navigation**: ${footerLinks.slice(0, 6).join(', ')}`);
+    }
+  }
+  
+  // Analyze internal linking
+  const internalLinks = $('a[href^="/"], a[href^="./"], a[href^="../"]').length;
+  const externalLinks = $('a[href^="http"]').length;
+  if (internalLinks > 0) {
+    sections.push(`**Internal Links**: ${internalLinks} detected`);
+  }
+  if (externalLinks > 0) {
+    sections.push(`**External Links**: ${externalLinks} detected`);
+  }
+  
+  return sections.length > 0 ? sections.join('\n\n') : '';
+}
+
+// Helper function to extract technical SEO signals (like bots detect technical issues)
+function extractTechnicalSignals($: cheerio.CheerioAPI): string {
+  const signals: string[] = [];
+  
+  // Meta tags analysis
+  const title = $('title').text().trim();
+  const metaDescription = $('meta[name="description"]').attr('content');
+  const ogTitle = $('meta[property="og:title"]').attr('content');
+  const ogDescription = $('meta[property="og:description"]').attr('content');
+  
+  if (title) {
+    signals.push(`**Title Tag**: ✅ Present (${title.length} characters)`);
+  } else {
+    signals.push(`**Title Tag**: ❌ Missing`);
+  }
+  
+  if (metaDescription) {
+    signals.push(`**Meta Description**: ✅ Present (${metaDescription.length} characters)`);
+  } else {
+    signals.push(`**Meta Description**: ❌ Missing`);
+  }
+  
+  if (ogTitle || ogDescription) {
+    signals.push(`**Open Graph Tags**: ✅ Present`);
+  } else {
+    signals.push(`**Open Graph Tags**: ❌ Missing`);
+  }
+  
+  // Structured data analysis
+  const jsonLd = $('script[type="application/ld+json"]').length;
+  const microdata = $('[itemtype]').length;
+  
+  if (jsonLd > 0) {
+    signals.push(`**JSON-LD Structured Data**: ✅ ${jsonLd} script(s) detected`);
+  } else {
+    signals.push(`**JSON-LD Structured Data**: ❌ Not detected`);
+  }
+  
+  if (microdata > 0) {
+    signals.push(`**Microdata**: ✅ ${microdata} item(s) detected`);
+  } else {
+    signals.push(`**Microdata**: ❌ Not detected`);
+  }
+  
+  // Canonical and hreflang
+  const canonical = $('link[rel="canonical"]').attr('href');
+  const hreflang = $('link[rel="alternate"][hreflang]').length;
+  
+  if (canonical) {
+    signals.push(`**Canonical URL**: ✅ Present`);
+  } else {
+    signals.push(`**Canonical URL**: ❌ Missing`);
+  }
+  
+  if (hreflang > 0) {
+    signals.push(`**Hreflang Tags**: ✅ ${hreflang} language(s) detected`);
+  } else {
+    signals.push(`**Hreflang Tags**: ❌ Not detected`);
+  }
+  
+  // Robots and sitemap
+  const robots = $('meta[name="robots"]').attr('content');
+  const sitemap = $('link[rel="sitemap"]').length || $('a[href*="sitemap"]').length;
+  
+  if (robots) {
+    signals.push(`**Robots Meta**: ✅ "${robots}"`);
+  } else {
+    signals.push(`**Robots Meta**: ❌ Not specified`);
+  }
+  
+  if (sitemap > 0) {
+    signals.push(`**Sitemap Reference**: ✅ Detected`);
+  } else {
+    signals.push(`**Sitemap Reference**: ❌ Not detected`);
+  }
+  
+  return signals.length > 0 ? signals.join('\n\n') : '';
 }
 
 function analyzeUXInfo($: cheerio.CheerioAPI, html: string): CrawledContent['uxInfo'] {
