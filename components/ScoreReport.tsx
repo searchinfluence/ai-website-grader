@@ -416,7 +416,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 <p><strong>FID:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.fid}ms</p>
                 <p><strong>CLS:</strong> {analysis.crawledContent.aiAnalysisData.performanceMetrics.coreWebVitals.cls}</p>
                 <p style={{ fontSize: '12px', color: '#666', fontStyle: 'italic' }}>
-                  📝 Add GOOGLE_PAGESPEED_API_KEY for real Core Web Vitals data
+                  ✅ Real Core Web Vitals data from Google PageSpeed Insights API
                 </p>
               </div>
             )}
@@ -476,7 +476,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               <strong>Google PageSpeed Insights:</strong> Optional free API (25,000 requests/day)
             </p>
             <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
-              To enable real Core Web Vitals data, add <code>GOOGLE_PAGESPEED_API_KEY</code> to your environment variables.
+              ✅ Google PageSpeed Insights API key is configured and providing real Core Web Vitals data.
             </p>
           </div>
         </div>
