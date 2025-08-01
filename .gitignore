@@ -308,6 +308,8 @@ pnpm-lock.yaml
 # Documentation files (internal use only)
 # These files have been removed from the public repository
 HANDOFF_DOCUMENT_v2.0.md
+HANDOFF_DOCUMENT_v3.0.md
+WEIGHTING_SYSTEM.md
 ENHANCEMENT_DISCUSSION.md
 ANALYTICS_SETUP.md
 EMAIL_ANNOUNCEMENT.md
