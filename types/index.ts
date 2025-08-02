@@ -48,6 +48,7 @@ export interface AIOptimization extends AnalysisScore {
   semanticStructure: number;
   answerPotential: number;
   contentClarity: number;
+  industryBonus: number; // Industry expertise bonus
   
   // Legacy metrics (maintained for compatibility)
   chunkability: number;
