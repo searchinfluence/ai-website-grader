@@ -2676,7 +2676,11 @@ export function analyzeAICitationPotential(content: CrawledContent): number {
     /(proven|effective|successful) (method|approach|strategy)/gi,
     /(our traffic is up|we're consistently showing|we couldn't be happier)/gi,
     /(blows my mind|veritable wealth|super lucky)/gi,
-    /(decades of experience|years of experience)/gi
+    /(decades of experience|years of experience)/gi,
+    /(ai answers|chatgpt|claude|perplexity)/gi,
+    /(generative engine|gen engine optimization)/gi,
+    /(marketing consultancy|consulting agency)/gi,
+    /(brand strategy|seo strategy|geo strategy)/gi
   ];
   
   quotablePatterns.forEach(pattern => {
@@ -2695,7 +2699,8 @@ export function analyzeAICitationPotential(content: CrawledContent): number {
     /why is|why does|why should|why would/gi,
     /when to|when should|when is|when does/gi,
     /frequently asked|common questions|people ask/gi,
-    /whether you need|if you could|what if/gi
+    /whether you need|if you could|what if/gi,
+    /(ai marketing|seo consulting|geo optimization)/gi
   ];
   
   qaFormats.forEach(pattern => {
@@ -2715,7 +2720,9 @@ export function analyzeAICitationPotential(content: CrawledContent): number {
     /pros and cons|comparison|versus/gi,
     /key (features|benefits|points|takeaways)/gi,
     /(marketing strategy|brand strategy|seo|geo)/gi,
-    /(consulting|consultant|agency|specialist)/gi
+    /(consulting|consultant|agency|specialist)/gi,
+    /(case study|success story|client results)/gi,
+    /(testimonial|review|feedback)/gi
   ];
   
   structuredContent.forEach(pattern => {
@@ -2726,6 +2733,12 @@ export function analyzeAICitationPotential(content: CrawledContent): number {
       console.log(`📋 Structured content: ${pattern} (+${points} points, ${matches.length} matches)`);
     }
   });
+  
+  // AI Marketing Agency Bonus
+  if (content.url.includes('.agency') || content.url.includes('.consulting')) {
+    score += 15;
+    console.log('🏢 AI Marketing Agency bonus: +15 points');
+  }
   
   const finalScore = Math.min(100, score);
   console.log(`🤖 AI Citation Potential Final Score: ${finalScore}`);
@@ -2753,7 +2766,9 @@ export function analyzeContentAuthority(content: CrawledContent): number {
     /(board certified|licensed professional|accredited)/gi,
     /(consultant|consulting|agency)/gi,
     /(wealth of|expertise|knowledge)/gi,
-    /(podcast|interview|speaker)/gi
+    /(podcast|interview|speaker)/gi,
+    /(marketing consultant|seo specialist|geo expert)/gi,
+    /(brand strategy|seo strategy|geo strategy)/gi
   ];
   
   expertiseIndicators.forEach(pattern => {
@@ -2773,7 +2788,8 @@ export function analyzeContentAuthority(content: CrawledContent): number {
     /peer.reviewed|academic|scholarly/gi,
     /(university|institute|journal) of/gi,
     /(case study|success story|client results)/gi,
-    /(testimonial|review|feedback) from/gi
+    /(testimonial|review|feedback) from/gi,
+    /(client results|traffic increase|growth)/gi
   ];
   
   citationIndicators.forEach(pattern => {
@@ -2793,7 +2809,9 @@ export function analyzeContentAuthority(content: CrawledContent): number {
     /portfolio|our work|projects completed/gi,
     /(award|recognition|featured) (in|by)/gi,
     /(traffic is up|showing up in|finding me online)/gi,
-    /(next level|blows my mind|super lucky)/gi
+    /(next level|blows my mind|super lucky)/gi,
+    /(ai answers|chatgpt|claude|perplexity)/gi,
+    /(generative engine|gen engine optimization)/gi
   ];
   
   resultsIndicators.forEach(pattern => {
@@ -2808,8 +2826,15 @@ export function analyzeContentAuthority(content: CrawledContent): number {
   // Professional domain bonus
   if (content.url.includes('.agency') || content.url.includes('.consulting') || 
       content.url.includes('.law') || content.url.includes('.cpa')) {
+    score += 20;
+    console.log('🏢 Professional domain bonus: +20 points');
+  }
+  
+  // AI Marketing Agency specific bonus
+  if (fullText.includes('ai marketing') || fullText.includes('seo consulting') || 
+      fullText.includes('geo optimization') || fullText.includes('generative engine')) {
     score += 15;
-    console.log('🏢 Professional domain bonus: +15 points');
+    console.log('🤖 AI Marketing Agency bonus: +15 points');
   }
   
   const finalScore = Math.min(100, score);
