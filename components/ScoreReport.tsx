@@ -43,15 +43,15 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
       {/* Header */}
       <div className="results">
         <div className="results-header">
-          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <h1 style={{ fontSize: '2.5rem', fontWeight: '800', margin: '0 0 10px 0', color: 'var(--white)' }}>
+          <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+            <h1 style={{ fontSize: '1.8rem', fontWeight: '800', margin: '0 0 5px 0', color: 'var(--white)' }}>
               AI Website Grader Report
             </h1>
-            <p style={{ fontSize: '1rem', color: 'var(--white)', margin: 0 }}>
+            <p style={{ fontSize: '0.8rem', color: 'var(--white)', margin: 0 }}>
               Powered by Search Influence - AI SEO Experts
             </p>
           </div>
-          <p style={{ textAlign: 'center', margin: 0, opacity: 0.9 }}>
+          <p style={{ textAlign: 'center', margin: 0, opacity: 0.9, fontSize: '0.75rem' }}>
             Analysis completed on {new Date(analysis.timestamp).toLocaleDateString()}
           </p>
         </div>
@@ -61,32 +61,32 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           <div style={{ 
             background: 'var(--background-gray)', 
             borderRadius: '12px', 
-            padding: '30px', 
-            marginBottom: '30px' 
+            padding: '15px', 
+            marginBottom: '15px' 
           }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '30px', alignItems: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '20px', alignItems: 'center' }}>
               <div>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: '600', color: 'var(--content-text)', margin: '0 0 15px 0' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--content-text)', margin: '0 0 10px 0' }}>
                   Website Information
                 </h3>
-                <p style={{ color: 'var(--secondary-content)', margin: '5px 0' }}>
+                <p style={{ color: 'var(--secondary-content)', margin: '3px 0', fontSize: '0.85rem' }}>
                   <span style={{ fontWeight: '600' }}>URL:</span> {analysis.url}
                 </p>
-                <p style={{ color: 'var(--secondary-content)', margin: '5px 0' }}>
+                <p style={{ color: 'var(--secondary-content)', margin: '3px 0', fontSize: '0.85rem' }}>
                   <span style={{ fontWeight: '600' }}>Title:</span> {analysis.title}
                 </p>
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ 
-                  fontSize: '3rem', 
+                  fontSize: '2.5rem', 
                   fontWeight: '800', 
                   color: getOverallScoreColor(analysis.overallScore),
-                  marginBottom: '5px'
+                  marginBottom: '3px'
                 }}>
                   {analysis.overallScore}%
                 </div>
                 <div style={{ 
-                  fontSize: '0.9rem', 
+                  fontSize: '0.8rem', 
                   color: 'var(--muted-text)', 
                   textTransform: 'capitalize' 
                 }}>
@@ -99,12 +99,12 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           {/* Score Summary */}
           
           {/* High Priority Factors Section */}
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '8px' }}>
             <h3 style={{ 
-              fontSize: '1.1rem', 
+              fontSize: '0.9rem', 
               fontWeight: '600', 
               color: 'var(--content-text)', 
-              marginBottom: '10px',
+              marginBottom: '6px',
               textAlign: 'center',
               opacity: 0.8
             }}>
@@ -113,15 +113,15 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', 
-              gap: '10px', 
-              marginBottom: '25px',
+              gap: '6px', 
+              marginBottom: '10px',
               maxWidth: '100%',
               overflow: 'hidden'
             }}>
               {/* AI Optimization - 25% */}
               <div style={{ 
                 textAlign: 'center', 
-                padding: '10px', 
+                padding: '6px', 
                 background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%)', 
                 borderRadius: '12px',
                 border: '1px solid rgba(52, 152, 219, 0.2)',
@@ -129,13 +129,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: '700', color: 'var(--info-blue)', marginBottom: '3px' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--info-blue)', marginBottom: '1px' }}>
                   {analysis.aiOptimization.score}%
                 </div>
-                <div style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--content-text)' }}>
                   AI Optimization
                 </div>
-                <div style={{ fontSize: '0.55rem', color: 'var(--muted-text)', marginTop: '3px' }}>
+                <div style={{ fontSize: '0.45rem', color: 'var(--muted-text)', marginTop: '1px' }}>
                   25% Weight
                 </div>
               </div>
@@ -143,7 +143,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               {/* Content Quality - 18% */}
               <div style={{ 
                 textAlign: 'center', 
-                padding: '10px', 
+                padding: '6px', 
                 background: 'linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%)', 
                 borderRadius: '12px',
                 border: '1px solid rgba(39, 174, 96, 0.2)',
@@ -151,13 +151,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: '700', color: 'var(--success-green)', marginBottom: '3px' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--success-green)', marginBottom: '1px' }}>
                   {analysis.contentQuality.score}%
                 </div>
-                <div style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--content-text)' }}>
                   Content Quality
                 </div>
-                <div style={{ fontSize: '0.55rem', color: 'var(--muted-text)', marginTop: '3px' }}>
+                <div style={{ fontSize: '0.45rem', color: 'var(--muted-text)', marginTop: '1px' }}>
                   18% Weight
                 </div>
               </div>
@@ -165,7 +165,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               {/* Technical Crawlability - 16% */}
               <div style={{ 
                 textAlign: 'center', 
-                padding: '10px', 
+                padding: '6px', 
                 background: 'linear-gradient(135deg, rgba(230, 126, 34, 0.1) 0%, rgba(230, 126, 34, 0.05) 100%)', 
                 borderRadius: '12px',
                 border: '1px solid rgba(230, 126, 34, 0.2)',
@@ -173,13 +173,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: '700', color: 'var(--orange-accent)', marginBottom: '3px' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--orange-accent)', marginBottom: '1px' }}>
                   {analysis.technicalCrawlability.score}%
                 </div>
-                <div style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--content-text)' }}>
                   Technical Crawlability
                 </div>
-                <div style={{ fontSize: '0.55rem', color: 'var(--muted-text)', marginTop: '3px' }}>
+                <div style={{ fontSize: '0.45rem', color: 'var(--muted-text)', marginTop: '1px' }}>
                   16% Weight
                 </div>
               </div>
@@ -187,7 +187,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               {/* E-E-A-T Signals - 12% */}
               <div style={{ 
                 textAlign: 'center', 
-                padding: '10px', 
+                padding: '6px', 
                 background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0.05) 100%)', 
                 borderRadius: '12px',
                 border: '1px solid rgba(155, 89, 182, 0.2)',
@@ -195,13 +195,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: '700', color: '#9b59b6', marginBottom: '3px' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#9b59b6', marginBottom: '1px' }}>
                   {analysis.eeatSignals.score}%
                 </div>
-                <div style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--content-text)' }}>
                   E-E-A-T Signals
                 </div>
-                <div style={{ fontSize: '0.55rem', color: 'var(--muted-text)', marginTop: '3px' }}>
+                <div style={{ fontSize: '0.45rem', color: 'var(--muted-text)', marginTop: '1px' }}>
                   12% Weight
                 </div>
               </div>
@@ -209,12 +209,12 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           </div>
 
           {/* Medium Priority Factors Section */}
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '8px' }}>
             <h3 style={{ 
-              fontSize: '1.1rem', 
+              fontSize: '0.9rem', 
               fontWeight: '600', 
               color: 'var(--content-text)', 
-              marginBottom: '10px',
+              marginBottom: '6px',
               textAlign: 'center',
               opacity: 0.8
             }}>
@@ -223,15 +223,15 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: 'repeat(2, 1fr)', 
-              gap: '10px', 
-              marginBottom: '10px',
+              gap: '6px', 
+              marginBottom: '6px',
               maxWidth: '100%',
               overflow: 'hidden'
             }}>
               {/* Mobile Optimization - 12% */}
               <div style={{ 
                 textAlign: 'center', 
-                padding: '10px', 
+                padding: '6px', 
                 background: 'linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(26, 188, 156, 0.05) 100%)', 
                 borderRadius: '12px',
                 border: '1px solid rgba(26, 188, 156, 0.2)',
@@ -239,13 +239,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: '700', color: '#1abc9c', marginBottom: '3px' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1abc9c', marginBottom: '1px' }}>
                   {analysis.mobileOptimization.score}%
                 </div>
-                <div style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--content-text)' }}>
                   Mobile Optimization
                 </div>
-                <div style={{ fontSize: '0.55rem', color: 'var(--muted-text)', marginTop: '3px' }}>
+                <div style={{ fontSize: '0.45rem', color: 'var(--muted-text)', marginTop: '1px' }}>
                   12% Weight
                 </div>
               </div>
@@ -253,7 +253,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               {/* Schema Analysis - 10% */}
               <div style={{ 
                 textAlign: 'center', 
-                padding: '10px', 
+                padding: '6px', 
                 background: 'linear-gradient(135deg, rgba(52, 73, 94, 0.1) 0%, rgba(52, 73, 94, 0.05) 100%)', 
                 borderRadius: '12px',
                 border: '1px solid rgba(52, 73, 94, 0.2)',
@@ -261,13 +261,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: '700', color: '#34495e', marginBottom: '3px' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#34495e', marginBottom: '1px' }}>
                   {analysis.schemaAnalysis.score}%
                 </div>
-                <div style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--content-text)' }}>
                   Schema Analysis
                 </div>
-                <div style={{ fontSize: '0.55rem', color: 'var(--muted-text)', marginTop: '3px' }}>
+                <div style={{ fontSize: '0.45rem', color: 'var(--muted-text)', marginTop: '1px' }}>
                   10% Weight
                 </div>
               </div>
@@ -277,15 +277,15 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: '1fr', 
-              gap: '10px', 
-              marginBottom: '25px',
+              gap: '6px', 
+              marginBottom: '10px',
               maxWidth: '100%',
               overflow: 'hidden'
             }}>
               {/* Technical SEO - 7% */}
               <div style={{ 
                 textAlign: 'center', 
-                padding: '10px', 
+                padding: '6px', 
                 background: 'linear-gradient(135deg, rgba(149, 165, 166, 0.1) 0%, rgba(149, 165, 166, 0.05) 100%)', 
                 borderRadius: '12px',
                 border: '1px solid rgba(149, 165, 166, 0.2)',
@@ -293,13 +293,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: '700', color: '#95a5a6', marginBottom: '3px' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#95a5a6', marginBottom: '1px' }}>
                   {analysis.technicalSEO.score}%
                 </div>
-                <div style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                <div style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--content-text)' }}>
                   Technical SEO
                 </div>
-                <div style={{ fontSize: '0.55rem', color: 'var(--muted-text)', marginTop: '3px' }}>
+                <div style={{ fontSize: '0.45rem', color: 'var(--muted-text)', marginTop: '1px' }}>
                   7% Weight
                 </div>
               </div>
