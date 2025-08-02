@@ -70,6 +70,34 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     eeatSignals: eeatSignals.score
   });
   
+  // Generate debug information for transparency
+  const debugInfo = {
+    detectedSchemas: extractDetectedSchemas(content),
+    eeatBreakdown: {
+      expertise: eeatSignals.expertiseExperience,
+      authority: eeatSignals.authoritativeness,
+      trust: eeatSignals.trustworthiness,
+      factualAccuracy: eeatSignals.factualAccuracy
+    },
+    contentAnalysis: {
+      wordCount: content.paragraphs.join(' ').split(/\s+/).length,
+      topicCoverage: analyzeTopicCoverage(content),
+      intentAlignment: analyzeIntentAlignment(content)
+    },
+    aiOptimizationBreakdown: {
+      semanticStructure: aiOptimization.semanticStructure,
+      answerPotential: aiOptimization.answerPotential,
+      contentClarity: aiOptimization.contentClarity
+    },
+    schemaAnalysis: {
+      schemaPresence: schemaAnalysis.schemaPresence,
+      schemaValidation: schemaAnalysis.schemaValidation,
+      richSnippetPotential: schemaAnalysis.richSnippetPotential,
+      structuredDataCompleteness: schemaAnalysis.structuredDataCompleteness,
+      jsonLdImplementation: schemaAnalysis.jsonLdImplementation
+    }
+  };
+  
   // Generate content improvements
   const contentImprovements = generateContentImprovements({
     url: textContent ? 'manual-input' : url,
@@ -89,6 +117,7 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
   
   // Debug logging for performance metrics
   console.log('Analysis Engine - Performance Metrics:', content.aiAnalysisData?.performanceMetrics);
+  console.log('Analysis Engine - Debug Info:', debugInfo);
   
   return {
     url: textContent ? 'manual-input' : url,
@@ -103,7 +132,8 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     schemaAnalysis,
     eeatSignals,
     contentImprovements,
-    crawledContent: content
+    crawledContent: content,
+    debugInfo // Add debug information to the response
   };
 }
 
@@ -351,4 +381,66 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
   }
 
   return improvements;
+} 
+
+// Helper functions for debug information
+function extractDetectedSchemas(content: CrawledContent): string[] {
+  const htmlContent = content.html.toLowerCase();
+  const schemaTypes = [
+    { pattern: /"@type":\s*"organization"/i, name: 'Organization' },
+    { pattern: /"@type":\s*"service"/i, name: 'Service' },
+    { pattern: /"@type":\s*"faqpage"/i, name: 'FAQ' },
+    { pattern: /"@type":\s*"localbusiness"/i, name: 'LocalBusiness' },
+    { pattern: /"@type":\s*"webpage"/i, name: 'WebPage' },
+    { pattern: /"@type":\s*"breadcrumblist"/i, name: 'Breadcrumb' },
+    { pattern: /"@type":\s*"article"/i, name: 'Article' },
+    { pattern: /"@type":\s*"website"/i, name: 'Website' },
+    { pattern: /"@type":\s*"person"/i, name: 'Person' },
+    { pattern: /"@type":\s*"review"/i, name: 'Review' },
+    { pattern: /"@type":\s*"howto"/i, name: 'HowTo' }
+  ];
+  
+  return schemaTypes
+    .filter(schema => schema.pattern.test(htmlContent))
+    .map(schema => schema.name);
+}
+
+function analyzeTopicCoverage(content: CrawledContent): number {
+  const text = content.paragraphs.join(' ').toLowerCase();
+  const topicCoverage = [
+    /student recruitment/gi,
+    /enrollment/gi,
+    /higher education/gi,
+    /college|university/gi,
+    /seo (strategy|services)/gi,
+    /organic search/gi,
+    /keyword research/gi,
+    /content marketing/gi,
+    /prospective students/gi,
+    /student search behavior/gi,
+    /enrollment goals/gi,
+    /higher ed challenges/gi,
+    /institutional goals/gi
+  ];
+  
+  return topicCoverage.filter(pattern => pattern.test(text)).length;
+}
+
+function analyzeIntentAlignment(content: CrawledContent): number {
+  const text = content.paragraphs.join(' ').toLowerCase();
+  const intentIndicators = [
+    /prospective students/gi,
+    /student search behavior/gi,
+    /enrollment goals/gi,
+    /higher ed challenges/gi,
+    /institutional goals/gi,
+    /college marketing/gi,
+    /university seo/gi,
+    /student recruitment/gi,
+    /enrollment marketing/gi,
+    /higher education marketing/gi
+  ];
+  
+  const intentScore = intentIndicators.filter(pattern => pattern.test(text)).length;
+  return Math.min(100, intentScore * 10);
 } 

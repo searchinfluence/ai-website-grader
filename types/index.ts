@@ -235,6 +235,32 @@ export interface WebsiteAnalysis {
   eeatSignals: EEATSignals;
   contentImprovements: ContentImprovement[];
   crawledContent: CrawledContent;
+  debugInfo?: {
+    detectedSchemas: string[];
+    eeatBreakdown: {
+      expertise: number;
+      authority: number;
+      trust: number;
+      factualAccuracy: number;
+    };
+    contentAnalysis: {
+      wordCount: number;
+      topicCoverage: number;
+      intentAlignment: number;
+    };
+    aiOptimizationBreakdown: {
+      semanticStructure: number;
+      answerPotential: number;
+      contentClarity: number;
+    };
+    schemaAnalysis: {
+      schemaPresence: number;
+      schemaValidation: number;
+      richSnippetPotential: number;
+      structuredDataCompleteness: number;
+      jsonLdImplementation: number;
+    };
+  };
 }
 
 export interface ContentImprovement {
