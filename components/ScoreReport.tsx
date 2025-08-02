@@ -288,7 +288,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         </div>
       </div>
 
-      {/* Detailed Analysis */}
+      {/* NEW: 6-Factor Hybrid AI Search Detailed Analysis */}
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
@@ -296,138 +296,165 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         marginTop: '40px',
         maxWidth: '100%'
       }}>
-        {/* AI Optimization - 25% */}
+        {/* AI Citation Potential - 25% */}
         <ScoreCard
-          title="AI Optimization"
-          score={analysis.aiOptimization.score}
-          status={analysis.aiOptimization.status}
-          findings={analysis.aiOptimization.findings}
-          recommendations={analysis.aiOptimization.recommendations.map(rec => {
-            if (typeof rec === 'string') return rec;
-            const priority = rec.priority === 'high' ? '🔴 HIGH' : rec.priority === 'medium' ? '🟡 MEDIUM' : '🟢 LOW';
-            let result = `${priority}: ${rec.text}`;
-            if (rec.expectedImpact && rec.timeToImplement) {
-              result += ` (Impact: ${rec.expectedImpact}, Time: ${rec.timeToImplement})`;
-            }
-            return result;
-          })}
+          title="AI Citation Potential"
+          score={analysis.hybridAnalysis?.factors.aiCitationPotential || analysis.aiOptimization.score}
+          status={analysis.hybridAnalysis?.factors.aiCitationPotential >= 80 ? 'excellent' : 
+                 analysis.hybridAnalysis?.factors.aiCitationPotential >= 60 ? 'good' :
+                 analysis.hybridAnalysis?.factors.aiCitationPotential >= 40 ? 'needs-improvement' : 'poor'}
+          findings={[
+            'Evaluates content for AI citation and quotable statements',
+            'Measures Q&A format and conversational patterns',
+            'Assesses factual density and source credibility',
+            'Analyzes content structure for AI comprehension'
+          ]}
+          recommendations={[
+            '🔴 HIGH: Add more quotable statements and specific answers',
+            '🔴 HIGH: Include Q&A format with clear questions and answers',
+            '🟡 MEDIUM: Add more factual statements with percentages and data',
+            '🟡 MEDIUM: Improve content structure for AI comprehension'
+          ]}
           details={{
-            'Semantic Structure': analysis.aiOptimization.semanticStructure,
-            'Answer Potential': analysis.aiOptimization.answerPotential,
-            'Content Clarity': analysis.aiOptimization.contentClarity,
-            'Content Chunkability': analysis.aiOptimization.chunkability,
-            'Q&A Format': analysis.aiOptimization.qaFormat,
-            'Entity Recognition': analysis.aiOptimization.entityRecognition,
-            'Factual Density': analysis.aiOptimization.factualDensity,
-            'Semantic Clarity': analysis.aiOptimization.semanticClarity
+            'Quotable Statements': Math.round((analysis.hybridAnalysis?.factors.aiCitationPotential || 0) * 0.4),
+            'Q&A Format': Math.round((analysis.hybridAnalysis?.factors.aiCitationPotential || 0) * 0.3),
+            'Factual Density': Math.round((analysis.hybridAnalysis?.factors.aiCitationPotential || 0) * 0.2),
+            'Source Credibility': Math.round((analysis.hybridAnalysis?.factors.aiCitationPotential || 0) * 0.1)
           }}
         />
 
-        {/* Content Quality - 18% */}
+        {/* Content Authority & Trust - 20% */}
         <ScoreCard
-          title="Content Quality"
-          score={analysis.contentQuality.score}
-          status={analysis.contentQuality.status}
-          findings={analysis.contentQuality.findings}
-          recommendations={analysis.contentQuality.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
+          title="Content Authority & Trust"
+          score={analysis.hybridAnalysis?.factors.contentAuthority || analysis.eeatSignals.score}
+          status={analysis.hybridAnalysis?.factors.contentAuthority >= 80 ? 'excellent' : 
+                 analysis.hybridAnalysis?.factors.contentAuthority >= 60 ? 'good' :
+                 analysis.hybridAnalysis?.factors.contentAuthority >= 40 ? 'needs-improvement' : 'poor'}
+          findings={[
+            'Evaluates expertise demonstration and thought leadership',
+            'Measures case studies and proven results',
+            'Assesses industry recognition and credentials',
+            'Analyzes content depth and comprehensive coverage'
+          ]}
+          recommendations={[
+            '🔴 HIGH: Add more case studies and proven results',
+            '🔴 HIGH: Include detailed expertise credentials and experience',
+            '🟡 MEDIUM: Add industry recognition and awards',
+            '🟡 MEDIUM: Improve content depth and comprehensive coverage'
+          ]}
           details={{
-            longTailKeywords: analysis.contentQuality.longTailKeywords,
-            comprehensiveCoverage: analysis.contentQuality.comprehensiveCoverage,
-            relevanceToUserIntent: analysis.contentQuality.relevanceToUserIntent,
-            accuracyAndCurrency: analysis.contentQuality.accuracyAndCurrency,
-            naturalLanguage: analysis.contentQuality.naturalLanguage
+            'Expertise Demonstration': Math.round((analysis.hybridAnalysis?.factors.contentAuthority || 0) * 0.4),
+            'Case Studies': Math.round((analysis.hybridAnalysis?.factors.contentAuthority || 0) * 0.3),
+            'Industry Recognition': Math.round((analysis.hybridAnalysis?.factors.contentAuthority || 0) * 0.2),
+            'Content Depth': Math.round((analysis.hybridAnalysis?.factors.contentAuthority || 0) * 0.1)
           }}
         />
 
-        {/* Technical Crawlability - 16% */}
+        {/* Technical Performance - 18% */}
         <ScoreCard
-          title="Technical Crawlability"
-          score={analysis.technicalCrawlability.score}
-          status={analysis.technicalCrawlability.status}
-          findings={analysis.technicalCrawlability.findings}
-          recommendations={analysis.technicalCrawlability.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
+          title="Technical Performance"
+          score={analysis.hybridAnalysis?.factors.technicalPerformance || analysis.technicalSEO.score}
+          status={analysis.hybridAnalysis?.factors.technicalPerformance >= 80 ? 'excellent' : 
+                 analysis.hybridAnalysis?.factors.technicalPerformance >= 60 ? 'good' :
+                 analysis.hybridAnalysis?.factors.technicalPerformance >= 40 ? 'needs-improvement' : 'poor'}
+          findings={[
+            'Evaluates Core Web Vitals and page speed',
+            'Measures HTTPS security and mobile optimization',
+            'Assesses technical crawlability and accessibility',
+            'Analyzes server response and loading performance'
+          ]}
+          recommendations={[
+            '🔴 HIGH: Improve Core Web Vitals (LCP, FID, CLS)',
+            '🔴 HIGH: Optimize page speed and loading performance',
+            '🟡 MEDIUM: Ensure HTTPS security and mobile optimization',
+            '🟡 MEDIUM: Improve technical crawlability and accessibility'
+          ]}
           details={{
-            robotsAccess: analysis.technicalCrawlability.robotsAccess,
-            botAccessibility: analysis.technicalCrawlability.botAccessibility,
-            contentDelivery: analysis.technicalCrawlability.contentDelivery,
-            javascriptDependency: analysis.technicalCrawlability.javascriptDependency,
-            loadSpeed: analysis.technicalCrawlability.loadSpeed
+            'Core Web Vitals': Math.round((analysis.hybridAnalysis?.factors.technicalPerformance || 0) * 0.4),
+            'Page Speed': Math.round((analysis.hybridAnalysis?.factors.technicalPerformance || 0) * 0.3),
+            'Security': Math.round((analysis.hybridAnalysis?.factors.technicalPerformance || 0) * 0.2),
+            'Crawlability': Math.round((analysis.hybridAnalysis?.factors.technicalPerformance || 0) * 0.1)
           }}
         />
 
-        {/* E-E-A-T Signals - 12% */}
+        {/* Traditional SEO - 15% */}
         <ScoreCard
-          title="E-E-A-T Signals"
-          score={analysis.eeatSignals.score}
-          status={analysis.eeatSignals.status}
-          findings={analysis.eeatSignals.findings}
-          recommendations={analysis.eeatSignals.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
+          title="Traditional SEO"
+          score={analysis.hybridAnalysis?.factors.traditionalSEO || analysis.technicalSEO.score}
+          status={analysis.hybridAnalysis?.factors.traditionalSEO >= 80 ? 'excellent' : 
+                 analysis.hybridAnalysis?.factors.traditionalSEO >= 60 ? 'good' :
+                 analysis.hybridAnalysis?.factors.traditionalSEO >= 40 ? 'needs-improvement' : 'poor'}
+          findings={[
+            'Evaluates title optimization and meta descriptions',
+            'Measures URL structure and internal linking',
+            'Assesses keyword optimization and content relevance',
+            'Analyzes sitemap and technical SEO elements'
+          ]}
+          recommendations={[
+            '🔴 HIGH: Optimize title tags and meta descriptions',
+            '🔴 HIGH: Improve URL structure and internal linking',
+            '🟡 MEDIUM: Enhance keyword optimization and content relevance',
+            '🟡 MEDIUM: Add comprehensive sitemap and technical SEO'
+          ]}
           details={{
-            expertiseExperience: analysis.eeatSignals.expertiseExperience,
-            authoritativeness: analysis.eeatSignals.authoritativeness,
-            trustworthiness: analysis.eeatSignals.trustworthiness,
-            factualAccuracy: analysis.eeatSignals.factualAccuracy
+            'Title Optimization': Math.round((analysis.hybridAnalysis?.factors.traditionalSEO || 0) * 0.3),
+            'URL Structure': Math.round((analysis.hybridAnalysis?.factors.traditionalSEO || 0) * 0.25),
+            'Keyword Optimization': Math.round((analysis.hybridAnalysis?.factors.traditionalSEO || 0) * 0.25),
+            'Technical Elements': Math.round((analysis.hybridAnalysis?.factors.traditionalSEO || 0) * 0.2)
           }}
         />
 
-        {/* Mobile Optimization - 12% */}
+        {/* Mobile & UX - 12% */}
         <ScoreCard
-          title="Mobile Optimization"
-          score={analysis.mobileOptimization.score}
-          status={analysis.mobileOptimization.status}
-          findings={analysis.mobileOptimization.findings}
-          recommendations={analysis.mobileOptimization.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
+          title="Mobile & UX"
+          score={analysis.hybridAnalysis?.factors.mobileUX || analysis.mobileOptimization.score}
+          status={analysis.hybridAnalysis?.factors.mobileUX >= 80 ? 'excellent' : 
+                 analysis.hybridAnalysis?.factors.mobileUX >= 60 ? 'good' :
+                 analysis.hybridAnalysis?.factors.mobileUX >= 40 ? 'needs-improvement' : 'poor'}
+          findings={[
+            'Evaluates mobile page speed and usability',
+            'Measures touch targets and responsive design',
+            'Assesses viewport configuration and mobile optimization',
+            'Analyzes user experience and accessibility'
+          ]}
+          recommendations={[
+            '🔴 HIGH: Optimize mobile page speed and usability',
+            '🔴 HIGH: Improve touch targets and responsive design',
+            '🟡 MEDIUM: Configure viewport and mobile optimization',
+            '🟡 MEDIUM: Enhance user experience and accessibility'
+          ]}
           details={{
-            mobilePageSpeed: analysis.mobileOptimization.mobilePageSpeed,
-            touchTargets: analysis.mobileOptimization.touchTargets,
-            viewportConfiguration: analysis.mobileOptimization.viewportConfiguration,
-            mobileUsability: analysis.mobileOptimization.mobileUsability,
-            responsiveDesign: analysis.mobileOptimization.responsiveDesign
+            'Mobile Speed': Math.round((analysis.hybridAnalysis?.factors.mobileUX || 0) * 0.3),
+            'Touch Targets': Math.round((analysis.hybridAnalysis?.factors.mobileUX || 0) * 0.25),
+            'Responsive Design': Math.round((analysis.hybridAnalysis?.factors.mobileUX || 0) * 0.25),
+            'User Experience': Math.round((analysis.hybridAnalysis?.factors.mobileUX || 0) * 0.2)
           }}
         />
 
-        {/* Schema Analysis - 10% */}
+        {/* Content Completeness - 10% */}
         <ScoreCard
-          title="Schema Analysis"
-          score={analysis.schemaAnalysis.score}
-          status={analysis.schemaAnalysis.status}
-          findings={analysis.schemaAnalysis.findings}
-          recommendations={analysis.schemaAnalysis.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
+          title="Content Completeness"
+          score={analysis.hybridAnalysis?.factors.contentCompleteness || analysis.contentQuality.score}
+          status={analysis.hybridAnalysis?.factors.contentCompleteness >= 80 ? 'excellent' : 
+                 analysis.hybridAnalysis?.factors.contentCompleteness >= 60 ? 'good' :
+                 analysis.hybridAnalysis?.factors.contentCompleteness >= 40 ? 'needs-improvement' : 'poor'}
+          findings={[
+            'Evaluates content depth and comprehensive coverage',
+            'Measures word count and content quality',
+            'Assesses relevance to user intent and search queries',
+            'Analyzes content structure and readability'
+          ]}
+          recommendations={[
+            '🔴 HIGH: Increase content depth and comprehensive coverage',
+            '🔴 HIGH: Improve word count and content quality',
+            '🟡 MEDIUM: Enhance relevance to user intent and search queries',
+            '🟡 MEDIUM: Optimize content structure and readability'
+          ]}
           details={{
-            schemaPresence: analysis.schemaAnalysis.schemaPresence,
-            schemaValidation: analysis.schemaAnalysis.schemaValidation,
-            richSnippetPotential: analysis.schemaAnalysis.richSnippetPotential,
-            structuredDataCompleteness: analysis.schemaAnalysis.structuredDataCompleteness,
-            jsonLdImplementation: analysis.schemaAnalysis.jsonLdImplementation
-          }}
-        />
-
-        {/* Technical SEO - 7% */}
-        <ScoreCard
-          title="Technical SEO"
-          score={analysis.technicalSEO.score}
-          status={analysis.technicalSEO.status}
-          findings={analysis.technicalSEO.findings}
-          recommendations={analysis.technicalSEO.recommendations.map(rec => 
-            typeof rec === 'string' ? rec : `${rec.priority.toUpperCase()}: ${rec.text}`
-          )}
-          details={{
-            headingStructure: analysis.technicalSEO.headingStructure,
-            metaInfo: analysis.technicalSEO.metaInfo,
-            altText: analysis.technicalSEO.altText,
-            links: analysis.technicalSEO.links,
-            schemaMarkup: analysis.technicalSEO.schemaMarkup,
-            pageSpeed: analysis.technicalSEO.pageSpeed
+            'Content Depth': Math.round((analysis.hybridAnalysis?.factors.contentCompleteness || 0) * 0.4),
+            'Word Count': Math.round((analysis.hybridAnalysis?.factors.contentCompleteness || 0) * 0.3),
+            'User Intent': Math.round((analysis.hybridAnalysis?.factors.contentCompleteness || 0) * 0.2),
+            'Readability': Math.round((analysis.hybridAnalysis?.factors.contentCompleteness || 0) * 0.1)
           }}
         />
       </div>
