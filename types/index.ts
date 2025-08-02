@@ -1,6 +1,6 @@
 export interface AnalysisScore {
   score: number; // 0-100
-  status: 'excellent' | 'good' | 'needs-improvement' | 'poor';
+  status: 'excellent' | 'good' | 'needs-improvement' | 'poor' | 'critical';
   findings: string[];
   recommendations: RecommendationItem[];
 }
@@ -44,12 +44,10 @@ export interface ContentQuality extends AnalysisScore {
 }
 
 export interface AIOptimization extends AnalysisScore {
-  // Core AI digestibility metrics
-  aiContentDigestibility: number;
+  // Clean AI-focused metrics (no overlaps)
+  semanticStructure: number;
   answerPotential: number;
-  factualAccuracy: number;
-  topicalAuthority: number;
-  contentFreshness: number;
+  contentClarity: number;
   
   // Legacy metrics (maintained for compatibility)
   chunkability: number;
@@ -65,6 +63,7 @@ export interface EEATSignals extends AnalysisScore {
   expertiseExperience: number;
   authoritativeness: number;
   trustworthiness: number;
+  factualAccuracy: number;
 }
 
 export interface MobileOptimization extends AnalysisScore {

@@ -3,7 +3,7 @@ import { CheckCircle, AlertCircle, XCircle, Info } from 'lucide-react';
 interface ScoreCardProps {
   title: string;
   score: number;
-  status: 'excellent' | 'good' | 'needs-improvement' | 'poor';
+  status: 'excellent' | 'good' | 'needs-improvement' | 'poor' | 'critical';
   findings: string[];
   recommendations: string[];
   details?: Record<string, number>;
@@ -30,6 +30,8 @@ export default function ScoreCard({
         return { bg: 'rgba(230, 126, 34, 0.1)', border: 'rgba(230, 126, 34, 0.3)', text: 'var(--orange-accent)' };
       case 'poor':
         return { bg: 'rgba(231, 76, 60, 0.1)', border: 'rgba(231, 76, 60, 0.3)', text: 'var(--error-red)' };
+      case 'critical':
+        return { bg: 'rgba(142, 68, 173, 0.1)', border: 'rgba(142, 68, 173, 0.3)', text: 'var(--error-red)' };
       default:
         return { bg: 'rgba(149, 165, 166, 0.1)', border: 'rgba(149, 165, 166, 0.3)', text: 'var(--dark-gray)' };
     }
@@ -44,6 +46,8 @@ export default function ScoreCard({
       case 'needs-improvement':
         return <AlertCircle size={18} />;
       case 'poor':
+        return <XCircle size={18} />;
+      case 'critical':
         return <XCircle size={18} />;
       default:
         return <Info size={18} />;

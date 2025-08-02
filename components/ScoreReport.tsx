@@ -338,11 +338,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             return result;
           })}
           details={{
-            'AI Content Digestibility': analysis.aiOptimization.aiContentDigestibility,
+            'Semantic Structure': analysis.aiOptimization.semanticStructure,
             'Answer Potential': analysis.aiOptimization.answerPotential,
-            'Factual Accuracy': analysis.aiOptimization.factualAccuracy,
-            'Topical Authority': analysis.aiOptimization.topicalAuthority,
-            'Content Freshness': analysis.aiOptimization.contentFreshness,
+            'Content Clarity': analysis.aiOptimization.contentClarity,
             'Content Chunkability': analysis.aiOptimization.chunkability,
             'Q&A Format': analysis.aiOptimization.qaFormat,
             'Entity Recognition': analysis.aiOptimization.entityRecognition,
@@ -399,7 +397,8 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           details={{
             expertiseExperience: analysis.eeatSignals.expertiseExperience,
             authoritativeness: analysis.eeatSignals.authoritativeness,
-            trustworthiness: analysis.eeatSignals.trustworthiness
+            trustworthiness: analysis.eeatSignals.trustworthiness,
+            factualAccuracy: analysis.eeatSignals.factualAccuracy
           }}
         />
 

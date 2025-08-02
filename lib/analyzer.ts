@@ -261,24 +261,18 @@ export function analyzeAIOptimization(content: CrawledContent): AIOptimization {
     ));
   }
   
-  // NEW: Enhanced AI metrics using advanced pattern analysis
-  const aiContentDigestibility = analyzeAIContentDigestibility(content);
+  // NEW: Clean AI-focused metrics (no overlaps with other factors)
+  const semanticStructure = analyzeSemanticStructure(content);
   const answerPotential = analyzeAnswerPotential(content);
-  const factualAccuracy = analyzeFactualAccuracy(content);
-  const topicalAuthority = analyzeTopicalAuthority(content);
-  const contentFreshness = analyzeContentFreshness(content);
+  const contentClarity = analyzeContentClarity(content);
   
-  // Enhanced scoring with new AI search factors (weighted toward new metrics)
-  const enhancedScore = Math.round((
-    aiContentDigestibility * 0.25 +
-    answerPotential * 0.20 +
-    factualAccuracy * 0.15 +
-    topicalAuthority * 0.15 +
-    contentFreshness * 0.10 +
-    (chunkability + qaFormat + entityRecognition + factualDensity + semanticClarity) * 0.15 / 5
+  // Clean AI-focused scoring (removed overlaps)
+  const score = Math.round((
+    semanticStructure * 0.45 +
+    answerPotential * 0.35 +
+    contentClarity * 0.20
   ));
   
-  const score = enhancedScore;
   const status = getScoreStatus(score);
   
   return {
@@ -286,12 +280,10 @@ export function analyzeAIOptimization(content: CrawledContent): AIOptimization {
     status,
     findings,
     recommendations,
-    // New enhanced metrics
-    aiContentDigestibility,
+    // Clean AI-focused metrics (no overlaps)
+    semanticStructure,
     answerPotential,
-    factualAccuracy,
-    topicalAuthority,
-    contentFreshness,
+    contentClarity,
     // Legacy metrics (maintained for compatibility)
     chunkability,
     qaFormat,
@@ -331,7 +323,7 @@ export function analyzeEEATSignals(content: CrawledContent): EEATSignals {
     ));
   }
   
-  // Analyze trustworthiness (25% weight)
+  // Analyze trustworthiness (20% weight)
   const trustworthiness = analyzeTrustworthiness(content);
   if (trustworthiness < 70) {
     findings.push('Trustworthiness and transparency need improvement');
@@ -343,11 +335,24 @@ export function analyzeEEATSignals(content: CrawledContent): EEATSignals {
     ));
   }
   
-  // Calculate weighted score
+  // NEW: Analyze factual accuracy (10% weight) - moved from AI Optimization
+  const factualAccuracy = analyzeFactualAccuracy(content);
+  if (factualAccuracy < 70) {
+    findings.push('Content lacks sufficient factual accuracy indicators');
+    recommendations.push(createRecommendation(
+      'Improve factual accuracy and citations',
+      'medium',
+      'factual-accuracy',
+      '1. Add citations and references\n2. Include data sources and statistics\n3. Cite authoritative sources\n4. Add publication dates\n5. Include expert quotes and research'
+    ));
+  }
+  
+  // Calculate weighted score with new weights
   const score = Math.round(
-    expertiseExperience * 0.40 +
+    expertiseExperience * 0.35 +
     authoritativeness * 0.35 +
-    trustworthiness * 0.25
+    trustworthiness * 0.20 +
+    factualAccuracy * 0.10
   );
   const status = getScoreStatus(score);
   
@@ -358,7 +363,8 @@ export function analyzeEEATSignals(content: CrawledContent): EEATSignals {
     recommendations,
     expertiseExperience,
     authoritativeness,
-    trustworthiness
+    trustworthiness,
+    factualAccuracy
   };
 }
 
@@ -1248,11 +1254,12 @@ function createRecommendation(
   };
 }
 
-function getScoreStatus(score: number): 'excellent' | 'good' | 'needs-improvement' | 'poor' {
-  if (score >= 80) return 'excellent';
-  if (score >= 60) return 'good';
-  if (score >= 40) return 'needs-improvement';
-  return 'poor';
+function getScoreStatus(score: number): 'excellent' | 'good' | 'needs-improvement' | 'poor' | 'critical' {
+  if (score >= 85) return 'excellent';
+  if (score >= 70) return 'good';
+  if (score >= 50) return 'needs-improvement';
+  if (score >= 25) return 'poor';
+  return 'critical';
 }
 
 // Helper functions for Mobile Optimization analysis
@@ -1871,6 +1878,83 @@ function analyzeContentFreshness(content: CrawledContent): number {
   return Math.min(100, score);
 }
 
+// NEW: Clean AI-focused analysis functions
+function analyzeSemanticStructure(content: CrawledContent): number {
+  let score = 0;
+  
+  // Enhanced heading analysis
+  const headings = content.headings || [];
+  const h1Count = headings.filter(h => h.level === 1).length;
+  const h2Count = headings.filter(h => h.level === 2).length;
+  const h3Count = headings.filter(h => h.level === 3).length;
+  
+  if (h1Count === 1) score += 15; // Exactly one H1
+  else score -= 10; // Penalty for multiple/missing H1
+  
+  if (h2Count >= 3 && h2Count <= 8) score += 15; // Good H2 structure
+  if (h3Count > 0) score += 10; // Has subsections
+  
+  // HTML validation impact
+  const htmlErrors = content.aiAnalysisData?.performanceMetrics?.htmlValidation?.errors || 0;
+  if (htmlErrors === 0) score += 20;
+  else if (htmlErrors < 10) score += 10;
+  else if (htmlErrors < 50) score += 5;
+  else score -= 15; // Major penalty for 275+ errors like freeman.tulane.edu
+  
+  // Semantic HTML elements
+  const semanticElements = ['article', 'section', 'nav', 'main', 'aside', 'header', 'footer'];
+  const semanticCount = semanticElements.filter(el => 
+    content.html.toLowerCase().includes(`<${el}`)
+  ).length;
+  score += Math.min(20, semanticCount * 3);
+  
+  // Content organization
+  const avgParagraphLength = content.paragraphs?.length 
+    ? content.paragraphs.reduce((sum, p) => sum + p.length, 0) / content.paragraphs.length
+    : 0;
+    
+  if (avgParagraphLength > 50 && avgParagraphLength < 200) score += 15; // Good paragraph length
+  else if (avgParagraphLength <= 50) score -= 10; // Too short (like freeman.tulane.edu at 5.5)
+  
+  return Math.max(0, Math.min(100, score));
+}
+
+function analyzeContentClarity(content: CrawledContent): number {
+  let score = 0;
+  
+  const text = content.paragraphs.join(' ').toLowerCase();
+  
+  // Analyze semantic clarity
+  const clarityIndicators = ['clearly', 'specifically', 'exactly', 'precisely', 'defined'];
+  const clarityCount = clarityIndicators.filter(indicator => 
+    content.paragraphs.some(p => p.toLowerCase().includes(indicator))
+  ).length;
+  score += Math.min(25, clarityCount * 5);
+  
+  // Analyze entity recognition
+  const entityPatterns = [/[A-Z][a-z]+ [A-Z][a-z]+/, /[A-Z]{2,}/, /\d{4}/];
+  const entityCount = entityPatterns.reduce((count, pattern) => 
+    count + content.paragraphs.filter(p => pattern.test(p)).length, 0
+  );
+  score += Math.min(25, entityCount * 3);
+  
+  // Analyze language clarity
+  const ambiguousPatterns = ['it', 'this', 'that', 'these', 'those', 'thing', 'stuff'];
+  const ambiguousCount = ambiguousPatterns.reduce((count, word) => 
+    count + (text.match(new RegExp(`\\b${word}\\b`, 'g'))?.length || 0), 0
+  );
+  score -= Math.min(20, ambiguousCount * 2); // Penalty for ambiguous language
+  
+  // Analyze technical term definition
+  const definitionPatterns = ['means', 'refers to', 'is defined as', 'consists of', 'comprises'];
+  const definitionCount = definitionPatterns.reduce((count, pattern) => 
+    count + (text.match(new RegExp(pattern, 'gi'))?.length || 0), 0
+  );
+  score += Math.min(30, definitionCount * 6);
+  
+  return Math.max(0, Math.min(100, score));
+}
+
 // Helper functions for Site Structure analysis
 function analyzeNavigationQuality(content: CrawledContent): number {
   const html = content.html.toLowerCase();
@@ -2050,23 +2134,24 @@ function analyzeAuthoritativeness(content: CrawledContent): number {
   
   const text = content.paragraphs.join(' ').toLowerCase();
   
-  // Domain authority signals
-  const authorityIndicators = [
-    'authority', 'leading', 'premier', 'top', 'best', 'expert',
-    'recognized', 'award-winning', 'accredited', 'certified'
-  ];
-  const authorityCount = authorityIndicators.filter(indicator => text.includes(indicator)).length;
-  score += Math.min(25, authorityCount * 5);
+  // NEW: Institutional Authority Bonus
+  const domain = content.url.toLowerCase();
+  if (domain.includes('.edu')) {
+    score += 25; // Educational institution bonus
+  } else if (domain.includes('.gov')) {
+    score += 30; // Government institution bonus
+  } else if (domain.includes('.org')) {
+    score += 15; // Non-profit organization bonus
+  }
   
-  // Industry recognition
-  const recognitionIndicators = [
-    'award', 'recognition', 'honor', 'achievement', 'distinction',
-    'featured', 'highlighted', 'spotlight', 'accolade'
-  ];
-  const recognitionCount = recognitionIndicators.filter(indicator => text.includes(indicator)).length;
-  score += Math.min(20, recognitionCount * 5);
+  // Domain age and authority (simulated)
+  // In a real implementation, this would check domain registration date
+  const domainAge = 5; // Simulated domain age
+  if (domainAge >= 10) score += 20;
+  else if (domainAge >= 5) score += 15;
+  else if (domainAge >= 2) score += 10;
   
-  // External validation
+  // External recognition
   const externalIndicators = [
     'cited by', 'referenced in', 'mentioned in', 'featured in',
     'published in', 'appeared in', 'quoted in'
@@ -2081,6 +2166,14 @@ function analyzeAuthoritativeness(content: CrawledContent): number {
   ];
   const qualityLinkCount = qualityLinkIndicators.filter(indicator => linkText.includes(indicator)).length;
   score += Math.min(15, qualityLinkCount * 3);
+  
+  // Industry recognition
+  const recognitionIndicators = [
+    'award', 'recognition', 'honor', 'achievement', 'distinction',
+    'featured', 'highlighted', 'spotlight', 'accolade'
+  ];
+  const recognitionCount = recognitionIndicators.filter(indicator => text.includes(indicator)).length;
+  score += Math.min(20, recognitionCount * 5);
   
   return Math.min(100, score);
 }
