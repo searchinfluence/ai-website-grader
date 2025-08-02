@@ -227,6 +227,19 @@ export interface WebsiteAnalysis {
   title: string;
   overallScore: number;
   timestamp: string;
+  // NEW: Hybrid AI Search Analysis
+  hybridAnalysis?: {
+    finalScore: number;
+    factors: {
+      aiCitationPotential: number;
+      contentAuthority: number;
+      technicalPerformance: number;
+      traditionalSEO: number;
+      mobileUX: number;
+      contentCompleteness: number;
+    };
+  };
+  // Legacy scores for detailed insights
   technicalSEO: TechnicalSEO;
   technicalCrawlability: TechnicalCrawlability;
   contentQuality: ContentQuality;
@@ -260,6 +273,15 @@ export interface WebsiteAnalysis {
       richSnippetPotential: number;
       structuredDataCompleteness: number;
       jsonLdImplementation: number;
+    };
+    // NEW: Hybrid AI Search Breakdown
+    hybridAISearchBreakdown?: {
+      aiCitationPotential: number;
+      contentAuthority: number;
+      technicalPerformance: number;
+      traditionalSEO: number;
+      mobileUX: number;
+      contentCompleteness: number;
     };
   };
 }

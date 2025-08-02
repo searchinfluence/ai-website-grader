@@ -2650,3 +2650,460 @@ function analyzeTrustworthiness(content: CrawledContent): number {
   
   return Math.min(100, score);
 }
+
+// =====================================
+// 6-FACTOR HYBRID AI SEARCH SCORING SYSTEM
+// =====================================
+
+// 1. AI Citation Potential Analysis (25% weight)
+export function analyzeAICitationPotential(content: CrawledContent): number {
+  let score = 0;
+  const text = content.paragraphs.join(' ').toLowerCase();
+  console.log('🤖 Analyzing AI Citation Potential');
+  
+  // QUOTABLE STATEMENTS (40 points max)
+  const quotablePatterns = [
+    /the answer is|the solution is|the key is/gi,
+    /research shows|studies indicate|data reveals/gi,
+    /according to|experts recommend|best practice/gi,
+    /\d+% (of|show|indicate|report)/gi,
+    /(proven|effective|successful) (method|approach|strategy)/gi
+  ];
+  
+  quotablePatterns.forEach(pattern => {
+    const matches = text.match(pattern) || [];
+    if (matches.length > 0) {
+      const points = Math.min(8, matches.length * 4);
+      score += points;
+      console.log(`✅ Quotable pattern: ${pattern} (+${points} points)`);
+    }
+  });
+  
+  // Q&A FORMAT (35 points max)
+  const qaFormats = [
+    /what is|what are|what does|what can/gi,
+    /how to|how do|how can|how should/gi,
+    /why is|why does|why should|why would/gi,
+    /when to|when should|when is|when does/gi,
+    /frequently asked|common questions|people ask/gi
+  ];
+  
+  qaFormats.forEach(pattern => {
+    const matches = text.match(pattern) || [];
+    if (matches.length > 0) {
+      const points = Math.min(7, matches.length * 3);
+      score += points;
+      console.log(`❓ Q&A pattern: ${pattern} (+${points} points)`);
+    }
+  });
+  
+  // STRUCTURED DATA (25 points max)
+  const structuredContent = [
+    /^\d+\./gm,
+    /step \d+|first|second|third|finally/gi,
+    /benefits include|advantages are|types of/gi,
+    /pros and cons|comparison|versus/gi,
+    /key (features|benefits|points|takeaways)/gi
+  ];
+  
+  structuredContent.forEach(pattern => {
+    const matches = text.match(pattern) || [];
+    if (matches.length > 0) {
+      const points = Math.min(5, matches.length * 2);
+      score += points;
+      console.log(`📋 Structured content: ${pattern} (+${points} points)`);
+    }
+  });
+  
+  const finalScore = Math.min(100, score);
+  console.log(`🤖 AI Citation Potential Final Score: ${finalScore}`);
+  return finalScore;
+}
+
+// 2. Content Authority Analysis (20% weight)
+export function analyzeContentAuthority(content: CrawledContent): number {
+  let score = 0;
+  const text = content.paragraphs.join(' ').toLowerCase();
+  console.log('🏆 Analyzing Content Authority');
+  
+  // EXPERT CREDENTIALS (40 points max)
+  const expertiseIndicators = [
+    /\d+ years? (of )?experience/gi,
+    /(certified|licensed|accredited|qualified)/gi,
+    /(expert|specialist|authority|professional) (in|on|at)/gi,
+    /(degree|certification|training|education) (in|from)/gi,
+    /(board certified|licensed professional|accredited)/gi
+  ];
+  
+  expertiseIndicators.forEach(pattern => {
+    const matches = text.match(pattern) || [];
+    if (matches.length > 0) {
+      const points = Math.min(8, matches.length * 5);
+      score += points;
+      console.log(`👨‍💼 Expertise indicator: ${pattern} (+${points} points)`);
+    }
+  });
+  
+  // SOURCE CITATIONS (30 points max)
+  const citationIndicators = [
+    /according to (research|study|report|survey)/gi,
+    /(published|cited|referenced) (in|by)/gi,
+    /(source|citation|study|research):/gi,
+    /peer.reviewed|academic|scholarly/gi,
+    /(university|institute|journal) of/gi
+  ];
+  
+  citationIndicators.forEach(pattern => {
+    const matches = text.match(pattern) || [];
+    if (matches.length > 0) {
+      const points = Math.min(6, matches.length * 3);
+      score += points;
+      console.log(`📚 Citation indicator: ${pattern} (+${points} points)`);
+    }
+  });
+  
+  // PROVEN RESULTS (30 points max)
+  const resultsIndicators = [
+    /case study|success story|client results/gi,
+    /\d+% (increase|improvement|growth|reduction)/gi,
+    /(testimonial|review|feedback) from/gi,
+    /portfolio|our work|projects completed/gi,
+    /(award|recognition|featured) (in|by)/gi
+  ];
+  
+  resultsIndicators.forEach(pattern => {
+    const matches = text.match(pattern) || [];
+    if (matches.length > 0) {
+      const points = Math.min(6, matches.length * 3);
+      score += points;
+      console.log(`📈 Results indicator: ${pattern} (+${points} points)`);
+    }
+  });
+  
+  // Professional domain bonus
+  if (content.url.includes('.agency') || content.url.includes('.consulting') || 
+      content.url.includes('.law') || content.url.includes('.cpa')) {
+    score += 15;
+    console.log('🏢 Professional domain bonus: +15 points');
+  }
+  
+  const finalScore = Math.min(100, score);
+  console.log(`🏆 Content Authority Final Score: ${finalScore}`);
+  return finalScore;
+}
+
+// 3. Technical Performance Analysis (18% weight)
+export function analyzeTechnicalPerformance(content: CrawledContent): number {
+  let score = 0;
+  console.log('⚡ Analyzing Technical Performance');
+  
+  // HTTPS Security
+  if (content.url.startsWith('https://')) {
+    score += 10;
+    console.log('🔒 HTTPS secure: +10 points');
+  } else {
+    score -= 15;
+    console.log('❌ No HTTPS: -15 points');
+  }
+  
+  // Core Web Vitals (if available)
+  if (content.aiAnalysisData?.performanceMetrics?.coreWebVitals) {
+    const cwv = content.aiAnalysisData.performanceMetrics.coreWebVitals;
+    if (cwv.lcp <= 2500) {
+      score += 15;
+      console.log('🚀 Good LCP: +15 points');
+    } else if (cwv.lcp <= 4000) {
+      score += 8;
+      console.log('⚠️ Fair LCP: +8 points');
+    }
+    
+    if (cwv.fid <= 100) {
+      score += 10;
+      console.log('⚡ Good FID: +10 points');
+    } else if (cwv.fid <= 300) {
+      score += 5;
+      console.log('⚠️ Fair FID: +5 points');
+    }
+    
+    if (cwv.cls <= 0.1) {
+      score += 10;
+      console.log('📐 Good CLS: +10 points');
+    } else if (cwv.cls <= 0.25) {
+      score += 5;
+      console.log('⚠️ Fair CLS: +5 points');
+    }
+  }
+  
+  // HTML Structure
+  const h1Count = content.headings.filter(h => h.level === 1).length;
+  const h2Count = content.headings.filter(h => h.level === 2).length;
+  
+  if (h1Count === 1) {
+    score += 15;
+    console.log('📋 Single H1: +15 points');
+  } else {
+    score -= 10;
+    console.log('❌ Multiple/missing H1: -10 points');
+  }
+  
+  if (h2Count >= 2) {
+    score += 10;
+    console.log(`📋 Good H2 structure (${h2Count}): +10 points`);
+  }
+  
+  // HTML Validation
+  const htmlErrors = content.aiAnalysisData?.performanceMetrics?.htmlValidation?.errors || 0;
+  if (htmlErrors < 20) {
+    score += 10;
+    console.log(`✅ Clean HTML (${htmlErrors} errors): +10 points`);
+  } else if (htmlErrors >= 50) {
+    score -= 15;
+    console.log(`❌ Many HTML errors (${htmlErrors}): -15 points`);
+  }
+  
+  // Schema markup bonus
+  const schemaContent = content.schemaMarkup.join(' ').toLowerCase();
+  if (schemaContent.includes('organization')) score += 5;
+  if (schemaContent.includes('faq')) score += 5;
+  if (schemaContent.includes('article')) score += 5;
+  
+  const finalScore = Math.max(0, Math.min(100, score));
+  console.log(`⚡ Technical Performance Final Score: ${finalScore}`);
+  return finalScore;
+}
+
+// 4. Traditional SEO Analysis (15% weight)
+export function analyzeTraditionalSEO(content: CrawledContent): number {
+  let score = 0;
+  console.log('📊 Analyzing Traditional SEO');
+  
+  // Title Tag
+  if (content.title) {
+    if (content.title.length >= 30 && content.title.length <= 60) {
+      score += 25;
+      console.log(`📝 Good title length (${content.title.length}): +25 points`);
+    } else if (content.title.length > 0) {
+      score += 15;
+      console.log(`📝 Has title but suboptimal length: +15 points`);
+    }
+  } else {
+    score -= 25;
+    console.log('❌ Missing title tag: -25 points');
+  }
+  
+  // Meta Description
+  if (content.metaDescription) {
+    if (content.metaDescription.length >= 120 && content.metaDescription.length <= 160) {
+      score += 20;
+      console.log(`📝 Good meta description: +20 points`);
+    } else if (content.metaDescription.length > 0) {
+      score += 10;
+      console.log(`📝 Has meta description: +10 points`);
+    }
+  }
+  
+  // Header Structure
+  const h1Count = content.headings.filter(h => h.level === 1).length;
+  const h2Count = content.headings.filter(h => h.level === 2).length;
+  
+  if (h1Count === 1) {
+    score += 15;
+  } else {
+    score -= 10;
+  }
+  
+  if (h2Count >= 2 && h2Count <= 8) {
+    score += 15;
+  }
+  
+  // Internal Links
+  const internalLinks = content.links.filter(link => link.internal);
+  if (internalLinks.length >= 5) {
+    score += 10;
+    console.log(`🔗 Good internal linking (${internalLinks.length}): +10 points`);
+  } else if (internalLinks.length >= 2) {
+    score += 5;
+  }
+  
+  // Image Alt Text
+  const imagesWithAlt = content.images.filter(img => img.alt && img.alt.trim().length > 0);
+  const altTextCoverage = content.images.length > 0 ? (imagesWithAlt.length / content.images.length) * 100 : 100;
+  
+  if (altTextCoverage >= 90) {
+    score += 10;
+  } else if (altTextCoverage >= 70) {
+    score += 5;
+  }
+  
+  const finalScore = Math.max(0, Math.min(100, score));
+  console.log(`📊 Traditional SEO Final Score: ${finalScore}`);
+  return finalScore;
+}
+
+// 5. Mobile & UX Analysis (12% weight)
+export function analyzeMobileUserExperience(content: CrawledContent): number {
+  let score = 0;
+  console.log('📱 Analyzing Mobile & UX');
+  
+  // Mobile Responsiveness
+  if (content.mobileInfo?.mobileOptimizedCSS) {
+    score += 30;
+    console.log('📱 Mobile responsive: +30 points');
+  } else {
+    score -= 40;
+    console.log('❌ Not mobile responsive: -40 points');
+  }
+  
+  // Touch Targets
+  if (content.mobileInfo?.hasTouchableElements) {
+    score += 20;
+    console.log('👆 Good touch targets: +20 points');
+  }
+  
+  // Viewport Configuration
+  if (content.mobileInfo?.hasViewportMeta) {
+    score += 15;
+    console.log('📐 Viewport configured: +15 points');
+  }
+  
+  // Mobile Performance
+  const mobilePageSpeed = content.mobileInfo?.mobileOptimizedCSS ? 85 : 60;
+  if (mobilePageSpeed >= 80) {
+    score += 20;
+  } else if (mobilePageSpeed >= 60) {
+    score += 15;
+  } else if (mobilePageSpeed >= 40) {
+    score += 10;
+  }
+  
+  // UX Elements
+  const text = content.paragraphs.join(' ').toLowerCase();
+  if (text.includes('contact') || text.includes('phone') || text.includes('email')) score += 5;
+  if (content.headings.length > 2) score += 5;
+  if (text.includes('learn more') || text.includes('get started') || text.includes('contact us')) score += 5;
+  
+  const finalScore = Math.max(0, Math.min(100, score));
+  console.log(`📱 Mobile & UX Final Score: ${finalScore}`);
+  return finalScore;
+}
+
+// 6. Content Completeness Analysis (10% weight)
+export function analyzeContentCompleteness(content: CrawledContent): number {
+  let score = 0;
+  const text = content.paragraphs.join(' ');
+  const wordCount = text.split(/\s+/).length;
+  console.log('📝 Analyzing Content Completeness');
+  
+  // Word Count Scoring
+  if (wordCount >= 2000) {
+    score += 40;
+    console.log(`📝 Excellent word count (${wordCount}): +40 points`);
+  } else if (wordCount >= 1200) {
+    score += 30;
+    console.log(`📝 Good word count (${wordCount}): +30 points`);
+  } else if (wordCount >= 800) {
+    score += 20;
+    console.log(`📝 Fair word count (${wordCount}): +20 points`);
+  } else if (wordCount >= 400) {
+    score += 10;
+    console.log(`📝 Minimal word count (${wordCount}): +10 points`);
+  } else {
+    score -= 10;
+    console.log(`❌ Thin content (${wordCount}): -10 points`);
+  }
+  
+  // Comprehensive Coverage
+  const coverageIndicators = [
+    /overview|introduction|background/gi,
+    /benefits|advantages|pros/gi,
+    /examples|case studies|illustrations/gi,
+    /conclusion|summary|takeaways/gi,
+    /next steps|recommendations/gi
+  ];
+  
+  coverageIndicators.forEach(pattern => {
+    if (text.match(pattern)) {
+      score += 8;
+      console.log(`📋 Coverage indicator found: +8 points`);
+    }
+  });
+  
+  // Content Freshness
+  const currentYear = new Date().getFullYear();
+  if (text.includes(currentYear.toString())) {
+    score += 15;
+    console.log(`📅 Current year mentioned: +15 points`);
+  }
+  
+  const freshnessIndicators = [
+    /updated|revised|current/gi,
+    /latest|recent|new/gi,
+    /as of|effective/gi
+  ];
+  
+  freshnessIndicators.forEach(pattern => {
+    const matches = text.match(pattern) || [];
+    if (matches.length > 0) {
+      score += 5;
+      console.log(`🔄 Freshness indicator: +5 points`);
+    }
+  });
+  
+  const finalScore = Math.min(100, score);
+  console.log(`📝 Content Completeness Final Score: ${finalScore}`);
+  return finalScore;
+}
+
+// Main Hybrid AI Search Scoring Function
+export function calculateHybridAISearchScore(content: CrawledContent): {
+  finalScore: number;
+  factors: {
+    aiCitationPotential: number;
+    contentAuthority: number;
+    technicalPerformance: number;
+    traditionalSEO: number;
+    mobileUX: number;
+    contentCompleteness: number;
+  };
+} {
+  console.log('🚀 Starting Hybrid AI Search Analysis');
+  
+  // Calculate each factor
+  const citationPotential = analyzeAICitationPotential(content);     // 25%
+  const contentAuthority = analyzeContentAuthority(content);         // 20%
+  const technicalPerformance = analyzeTechnicalPerformance(content); // 18%
+  const traditionalSEO = analyzeTraditionalSEO(content);            // 15%
+  const mobileUX = analyzeMobileUserExperience(content);            // 12%
+  const contentCompleteness = analyzeContentCompleteness(content);   // 10%
+  
+  const finalScore = Math.round((
+    citationPotential * 0.25 +
+    contentAuthority * 0.20 +
+    technicalPerformance * 0.18 +
+    traditionalSEO * 0.15 +
+    mobileUX * 0.12 +
+    contentCompleteness * 0.10
+  ));
+  
+  console.log('📊 Hybrid Scoring Breakdown:', {
+    citationPotential,
+    contentAuthority,
+    technicalPerformance,
+    traditionalSEO,
+    mobileUX,
+    contentCompleteness,
+    finalScore
+  });
+  
+  return {
+    finalScore,
+    factors: {
+      aiCitationPotential: citationPotential,
+      contentAuthority: contentAuthority,
+      technicalPerformance: technicalPerformance,
+      traditionalSEO: traditionalSEO,
+      mobileUX: mobileUX,
+      contentCompleteness: contentCompleteness
+    }
+  };
+}

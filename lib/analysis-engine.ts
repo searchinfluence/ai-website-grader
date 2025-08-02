@@ -7,7 +7,15 @@ import {
   analyzeTechnicalCrawlability,
   analyzeMobileOptimization,
   analyzeSchemaAnalysis,
-  analyzeEEATSignals
+  analyzeEEATSignals,
+  // NEW: Hybrid AI Search Analysis Functions
+  calculateHybridAISearchScore,
+  analyzeAICitationPotential,
+  analyzeContentAuthority,
+  analyzeTechnicalPerformance,
+  analyzeTraditionalSEO,
+  analyzeMobileUserExperience,
+  analyzeContentCompleteness
 } from './analyzer';
 // Performance analysis functions are used in the crawler module
 
@@ -40,7 +48,12 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     throw new Error(`Failed to analyze website: ${errorMessage}`);
   }
   
-  // Run all analyses in parallel for better performance
+  // NEW: Use Hybrid AI Search Scoring System
+  console.log('🚀 Starting 6-Factor Hybrid AI Search Analysis');
+  
+  const hybridAnalysis = calculateHybridAISearchScore(content);
+  
+  // Keep legacy analyses for compatibility and detailed insights
   const [
     technicalSEO,
     technicalCrawlability,
@@ -58,17 +71,6 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     Promise.resolve(analyzeSchemaAnalysis(content)),
     Promise.resolve(analyzeEEATSignals(content))
   ]);
-  
-  // Calculate weighted overall score
-  const overallScore = calculateOverallScore({
-    technicalSEO: technicalSEO.score,
-    technicalCrawlability: technicalCrawlability.score,
-    contentQuality: contentQuality.score,
-    aiOptimization: aiOptimization.score,
-    mobileOptimization: mobileOptimization.score,
-    schemaAnalysis: schemaAnalysis.score,
-    eeatSignals: eeatSignals.score
-  });
   
   // Generate debug information for transparency
   const debugInfo = {
@@ -95,35 +97,29 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
       richSnippetPotential: schemaAnalysis.richSnippetPotential,
       structuredDataCompleteness: schemaAnalysis.structuredDataCompleteness,
       jsonLdImplementation: schemaAnalysis.jsonLdImplementation
+    },
+    // NEW: Hybrid AI Search Breakdown
+    hybridAISearchBreakdown: {
+      aiCitationPotential: hybridAnalysis.factors.aiCitationPotential,
+      contentAuthority: hybridAnalysis.factors.contentAuthority,
+      technicalPerformance: hybridAnalysis.factors.technicalPerformance,
+      traditionalSEO: hybridAnalysis.factors.traditionalSEO,
+      mobileUX: hybridAnalysis.factors.mobileUX,
+      contentCompleteness: hybridAnalysis.factors.contentCompleteness
     }
   };
   
-  // Generate content improvements
-  const contentImprovements = generateContentImprovements({
-    url: textContent ? 'manual-input' : url,
-    title: content.title,
-    overallScore,
-    timestamp: new Date().toISOString(),
-    technicalSEO,
-    technicalCrawlability,
-    contentQuality,
-    aiOptimization,
-    mobileOptimization,
-    schemaAnalysis,
-    eeatSignals,
-    contentImprovements: [],
-    crawledContent: content
-  });
-  
-  // Debug logging for performance metrics
-  console.log('Analysis Engine - Performance Metrics:', content.aiAnalysisData?.performanceMetrics);
-  console.log('Analysis Engine - Debug Info:', debugInfo);
+  // Create content improvements based on hybrid analysis
+  const contentImprovements = generateHybridContentImprovements(hybridAnalysis, content);
   
   return {
-    url: textContent ? 'manual-input' : url,
-    title: content.title,
-    overallScore,
+    url,
+    title: content.title || 'Website Analysis',
+    overallScore: hybridAnalysis.finalScore, // Use hybrid score as primary
     timestamp: new Date().toISOString(),
+    // NEW: Include hybrid analysis results
+    hybridAnalysis: hybridAnalysis,
+    // Legacy scores for detailed insights
     technicalSEO,
     technicalCrawlability,
     contentQuality,
@@ -133,7 +129,7 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
     eeatSignals,
     contentImprovements,
     crawledContent: content,
-    debugInfo // Add debug information to the response
+    debugInfo
   };
 }
 
@@ -382,6 +378,101 @@ export function generateContentImprovements(analysis: WebsiteAnalysis): ContentI
 
   return improvements;
 } 
+
+// NEW: Generate content improvements based on hybrid analysis
+function generateHybridContentImprovements(hybridAnalysis: {
+  finalScore: number;
+  factors: {
+    aiCitationPotential: number;
+    contentAuthority: number;
+    technicalPerformance: number;
+    traditionalSEO: number;
+    mobileUX: number;
+    contentCompleteness: number;
+  };
+}, content: CrawledContent): ContentImprovement[] {
+  const improvements: ContentImprovement[] = [];
+  
+  // AI Citation Potential improvements
+  if (hybridAnalysis.factors.aiCitationPotential < 70) {
+    improvements.push({
+      section: 'AI Citation Potential',
+      current: 'Content lacks quotable statements and Q&A format',
+      improved: 'Add specific, quotable statements like "The key is..." or "Research shows..." and include FAQ sections with clear questions and answers.',
+      reasoning: 'AI search engines prioritize content that can be directly quoted and answers specific questions.',
+      priority: 'high',
+      implementation: '1. Add FAQ sections\n2. Include quotable statistics\n3. Use clear Q&A format\n4. Add "According to research..." statements',
+      estimatedImpact: 'high'
+    });
+  }
+  
+  // Content Authority improvements
+  if (hybridAnalysis.factors.contentAuthority < 70) {
+    improvements.push({
+      section: 'Content Authority & Trust',
+      current: 'Limited demonstration of expertise and credentials',
+      improved: 'Add expert credentials, case studies, client testimonials, and proven results with specific metrics.',
+      reasoning: 'Professional expertise and proven results build trust and authority for AI search engines.',
+      priority: 'high',
+      implementation: '1. Add expert credentials\n2. Include case studies\n3. Add client testimonials\n4. Show specific results and metrics',
+      estimatedImpact: 'high'
+    });
+  }
+  
+  // Technical Performance improvements
+  if (hybridAnalysis.factors.technicalPerformance < 70) {
+    improvements.push({
+      section: 'Technical Performance',
+      current: 'Technical issues affecting performance and accessibility',
+      improved: 'Fix HTML validation errors, optimize Core Web Vitals, ensure HTTPS security, and implement proper schema markup.',
+      reasoning: 'Technical performance directly impacts search rankings and user experience.',
+      priority: 'medium',
+      implementation: '1. Fix HTML validation errors\n2. Optimize Core Web Vitals\n3. Ensure HTTPS security\n4. Add schema markup',
+      estimatedImpact: 'medium'
+    });
+  }
+  
+  // Traditional SEO improvements
+  if (hybridAnalysis.factors.traditionalSEO < 70) {
+    improvements.push({
+      section: 'Traditional SEO',
+      current: 'Basic SEO elements need optimization',
+      improved: 'Optimize title tags, meta descriptions, heading structure, internal linking, and image alt text.',
+      reasoning: 'Traditional SEO fundamentals remain important for search engine visibility.',
+      priority: 'medium',
+      implementation: '1. Optimize title tags (30-60 characters)\n2. Write compelling meta descriptions\n3. Improve heading structure\n4. Add internal links\n5. Add alt text to images',
+      estimatedImpact: 'medium'
+    });
+  }
+  
+  // Mobile & UX improvements
+  if (hybridAnalysis.factors.mobileUX < 70) {
+    improvements.push({
+      section: 'Mobile & User Experience',
+      current: 'Mobile optimization and UX issues',
+      improved: 'Ensure mobile responsiveness, optimize touch targets, configure viewport, and improve user experience elements.',
+      reasoning: 'Mobile-first indexing and user experience are critical for modern search rankings.',
+      priority: 'medium',
+      implementation: '1. Ensure mobile responsiveness\n2. Optimize touch targets\n3. Configure viewport properly\n4. Add contact information\n5. Improve navigation',
+      estimatedImpact: 'medium'
+    });
+  }
+  
+  // Content Completeness improvements
+  if (hybridAnalysis.factors.contentCompleteness < 70) {
+    improvements.push({
+      section: 'Content Completeness',
+      current: 'Content is too thin or lacks comprehensive coverage',
+      improved: 'Expand content to at least 1200 words, include comprehensive coverage of the topic, and add current information.',
+      reasoning: 'Comprehensive, detailed content satisfies user intent and demonstrates expertise.',
+      priority: 'high',
+      implementation: '1. Expand to 1200+ words\n2. Add comprehensive coverage\n3. Include current information\n4. Add examples and case studies\n5. Include next steps',
+      estimatedImpact: 'high'
+    });
+  }
+  
+  return improvements;
+}
 
 // Helper functions for debug information
 function extractDetectedSchemas(content: CrawledContent): string[] {

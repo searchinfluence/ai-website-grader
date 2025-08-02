@@ -96,9 +96,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             </div>
           </div>
 
-          {/* Score Summary */}
-          
-          {/* High Priority Factors Section */}
+          {/* NEW: 6-Factor Hybrid AI Search Scoring System */}
           <div style={{ marginBottom: '8px' }}>
             <h3 style={{ 
               fontSize: '1.35rem', 
@@ -108,7 +106,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               textAlign: 'center',
               opacity: 0.8
             }}>
-              High Priority Factors (71% Total Weight)
+              6-Factor Hybrid AI Search Scoring System
             </h3>
             <div style={{ 
               display: 'grid', 
@@ -118,7 +116,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               maxWidth: '100%',
               overflow: 'hidden'
             }}>
-              {/* AI Optimization - 25% */}
+              {/* AI Citation Potential - 25% */}
               <div style={{ 
                 textAlign: 'center', 
                 padding: '6px', 
@@ -130,17 +128,17 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 wordWrap: 'break-word'
               }}>
                 <div style={{ fontSize: '1.65rem', fontWeight: '700', color: 'var(--info-blue)', marginBottom: '1px' }}>
-                  {analysis.aiOptimization.score}%
+                  {analysis.hybridAnalysis?.factors.aiCitationPotential || analysis.aiOptimization.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  AI Optimization
+                  AI Citation Potential
                 </div>
                 <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
                   25% Weight
                 </div>
               </div>
               
-              {/* Content Quality - 18% */}
+              {/* Content Authority & Trust - 20% */}
               <div style={{ 
                 textAlign: 'center', 
                 padding: '6px', 
@@ -152,17 +150,17 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 wordWrap: 'break-word'
               }}>
                 <div style={{ fontSize: '1.65rem', fontWeight: '700', color: 'var(--success-green)', marginBottom: '1px' }}>
-                  {analysis.contentQuality.score}%
+                  {analysis.hybridAnalysis?.factors.contentAuthority || analysis.eeatSignals.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  Content Quality
+                  Content Authority & Trust
                 </div>
                 <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
-                  18% Weight
+                  20% Weight
                 </div>
               </div>
               
-              {/* Technical Crawlability - 16% */}
+              {/* Technical Performance - 18% */}
               <div style={{ 
                 textAlign: 'center', 
                 padding: '6px', 
@@ -174,17 +172,17 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 wordWrap: 'break-word'
               }}>
                 <div style={{ fontSize: '1.65rem', fontWeight: '700', color: 'var(--orange-accent)', marginBottom: '1px' }}>
-                  {analysis.technicalCrawlability.score}%
+                  {analysis.hybridAnalysis?.factors.technicalPerformance || analysis.technicalSEO.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  Technical Crawlability
+                  Technical Performance
                 </div>
                 <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
-                  16% Weight
+                  18% Weight
                 </div>
               </div>
               
-              {/* E-E-A-T Signals - 12% */}
+              {/* Traditional SEO - 15% */}
               <div style={{ 
                 textAlign: 'center', 
                 padding: '6px', 
@@ -196,114 +194,90 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 wordWrap: 'break-word'
               }}>
                 <div style={{ fontSize: '1.65rem', fontWeight: '700', color: '#9b59b6', marginBottom: '1px' }}>
-                  {analysis.eeatSignals.score}%
+                  {analysis.hybridAnalysis?.factors.traditionalSEO || analysis.technicalSEO.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  E-E-A-T Signals
+                  Traditional SEO
                 </div>
                 <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
-                  12% Weight
+                  15% Weight
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Medium Priority Factors Section */}
-          <div style={{ marginBottom: '8px' }}>
-            <h3 style={{ 
-              fontSize: '1.35rem', 
-              fontWeight: '600', 
-              color: 'var(--content-text)', 
-              marginBottom: '6px',
-              textAlign: 'center',
-              opacity: 0.8
-            }}>
-              Medium Priority Factors (29% Total Weight)
-            </h3>
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(2, 1fr)', 
-              gap: '6px', 
-              marginBottom: '6px',
-              maxWidth: '100%',
-              overflow: 'hidden'
-            }}>
-              {/* Mobile Optimization - 12% */}
+              
+              {/* Mobile & UX - 12% */}
               <div style={{ 
                 textAlign: 'center', 
                 padding: '6px', 
-                background: 'linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(26, 188, 156, 0.05) 100%)', 
+                background: 'linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%)', 
                 borderRadius: '12px',
-                border: '1px solid rgba(26, 188, 156, 0.2)',
+                border: '1px solid rgba(231, 76, 60, 0.2)',
                 borderLeft: '4px solid #f59e0b',
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
-                <div style={{ fontSize: '1.65rem', fontWeight: '700', color: '#1abc9c', marginBottom: '1px' }}>
-                  {analysis.mobileOptimization.score}%
+                <div style={{ fontSize: '1.65rem', fontWeight: '700', color: 'var(--error-red)', marginBottom: '1px' }}>
+                  {analysis.hybridAnalysis?.factors.mobileUX || analysis.mobileOptimization.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  Mobile Optimization
+                  Mobile & UX
                 </div>
                 <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
                   12% Weight
                 </div>
               </div>
               
-              {/* Schema Analysis - 10% */}
+              {/* Content Completeness - 10% */}
               <div style={{ 
                 textAlign: 'center', 
                 padding: '6px', 
-                background: 'linear-gradient(135deg, rgba(52, 73, 94, 0.1) 0%, rgba(52, 73, 94, 0.05) 100%)', 
+                background: 'linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(46, 204, 113, 0.05) 100%)', 
                 borderRadius: '12px',
-                border: '1px solid rgba(52, 73, 94, 0.2)',
+                border: '1px solid rgba(46, 204, 113, 0.2)',
                 borderLeft: '4px solid #f59e0b',
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
-                <div style={{ fontSize: '1.65rem', fontWeight: '700', color: '#34495e', marginBottom: '1px' }}>
-                  {analysis.schemaAnalysis.score}%
+                <div style={{ fontSize: '1.65rem', fontWeight: '700', color: '#2ecc71', marginBottom: '1px' }}>
+                  {analysis.hybridAnalysis?.factors.contentCompleteness || analysis.contentQuality.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  Schema Analysis
+                  Content Completeness
                 </div>
                 <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
                   10% Weight
                 </div>
               </div>
             </div>
-            
-            {/* Technical SEO - Full Width Bottom Row */}
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '1fr', 
-              gap: '6px', 
+          </div>
+
+          {/* Hybrid AI Search Analysis Summary */}
+          <div style={{ 
+            background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(39, 174, 96, 0.05) 100%)', 
+            borderRadius: '12px', 
+            padding: '15px', 
+            marginBottom: '15px',
+            border: '1px solid rgba(52, 152, 219, 0.1)'
+          }}>
+            <h3 style={{ 
+              fontSize: '1.2rem', 
+              fontWeight: '600', 
+              color: 'var(--content-text)', 
               marginBottom: '10px',
-              maxWidth: '100%',
-              overflow: 'hidden'
+              textAlign: 'center'
             }}>
-              {/* Technical SEO - 7% */}
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '6px', 
-                background: 'linear-gradient(135deg, rgba(149, 165, 166, 0.1) 0%, rgba(149, 165, 166, 0.05) 100%)', 
-                borderRadius: '12px',
-                border: '1px solid rgba(149, 165, 166, 0.2)',
-                borderLeft: '4px solid #6b7280',
-                minWidth: '0',
-                wordWrap: 'break-word'
-              }}>
-                <div style={{ fontSize: '1.65rem', fontWeight: '700', color: '#95a5a6', marginBottom: '1px' }}>
-                  {analysis.technicalSEO.score}%
-                </div>
-                <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  Technical SEO
-                </div>
-                <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
-                  7% Weight
-                </div>
-              </div>
-            </div>
+              🚀 Hybrid AI Search Analysis Summary
+            </h3>
+            <p style={{ 
+              color: 'var(--secondary-content)', 
+              fontSize: '1rem', 
+              lineHeight: '1.5',
+              textAlign: 'center',
+              margin: '0'
+            }}>
+              This analysis uses our 6-Factor Hybrid AI Search Scoring System, designed to evaluate websites 
+              for modern AI-powered search engines. The system balances AI citation potential, content authority, 
+              technical performance, traditional SEO, mobile UX, and content completeness.
+            </p>
           </div>
 
           {/* Export Buttons */}
