@@ -97,6 +97,40 @@ Want to try it immediately? Click the button below to deploy your own instance:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/willscott-v2/ai-website-grader)
 
+## 🚀 Deployment
+
+### Direct Deployment (Recommended)
+For immediate feedback and build error visibility:
+
+```bash
+# Deploy with automatic commit and push
+npm run deploy
+
+# Or with custom commit message
+npm run deploy "Your commit message"
+
+# Direct deployment only (no git operations)
+npm run deploy:prod
+```
+
+### Manual Deployment
+```bash
+# Commit and push changes
+git add .
+git commit -m "Your changes"
+git push origin main
+
+# Trigger direct Vercel deployment
+vercel --prod
+```
+
+### Deployment Script
+The `deploy.sh` script automatically:
+- Commits all changes (with optional custom message)
+- Pushes to GitHub
+- Triggers direct Vercel deployment
+- Shows build progress and errors in console
+
 ## 🏗️ Project Structure
 
 ```

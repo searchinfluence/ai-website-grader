@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf .next out build dist"
+    "clean": "rm -rf .next out build dist",
+    "deploy": "./deploy.sh",
+    "deploy:prod": "vercel --prod"
   },
   "dependencies": {
     "cheerio": "^1.1.2",
