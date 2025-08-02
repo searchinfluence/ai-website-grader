@@ -316,12 +316,11 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
 
       {/* Detailed Analysis */}
       <div style={{ 
-        display: 'flex', 
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
         gap: '20px',
         marginTop: '40px',
-        justifyContent: 'center'
+        maxWidth: '100%'
       }}>
         {/* AI Optimization - 25% */}
         <ScoreCard
