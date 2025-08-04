@@ -300,9 +300,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         <ScoreCard
           title="AI Citation Potential"
           score={analysis.hybridAnalysis?.factors.aiCitationPotential || analysis.aiOptimization.score}
-          status={analysis.hybridAnalysis?.factors.aiCitationPotential >= 80 ? 'excellent' : 
-                 analysis.hybridAnalysis?.factors.aiCitationPotential >= 60 ? 'good' :
-                 analysis.hybridAnalysis?.factors.aiCitationPotential >= 40 ? 'needs-improvement' : 'poor'}
+          status={(analysis.hybridAnalysis?.factors.aiCitationPotential || 0) >= 80 ? 'excellent' : 
+                 (analysis.hybridAnalysis?.factors.aiCitationPotential || 0) >= 60 ? 'good' :
+                 (analysis.hybridAnalysis?.factors.aiCitationPotential || 0) >= 40 ? 'needs-improvement' : 'poor'}
           findings={[
             'Evaluates content for AI citation and quotable statements',
             'Measures Q&A format and conversational patterns',
@@ -327,9 +327,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         <ScoreCard
           title="Content Authority & Trust"
           score={analysis.hybridAnalysis?.factors.contentAuthority || analysis.eeatSignals.score}
-          status={analysis.hybridAnalysis?.factors.contentAuthority >= 80 ? 'excellent' : 
-                 analysis.hybridAnalysis?.factors.contentAuthority >= 60 ? 'good' :
-                 analysis.hybridAnalysis?.factors.contentAuthority >= 40 ? 'needs-improvement' : 'poor'}
+          status={(analysis.hybridAnalysis?.factors.contentAuthority || 0) >= 80 ? 'excellent' : 
+                 (analysis.hybridAnalysis?.factors.contentAuthority || 0) >= 60 ? 'good' :
+                 (analysis.hybridAnalysis?.factors.contentAuthority || 0) >= 40 ? 'needs-improvement' : 'poor'}
           findings={[
             'Evaluates expertise demonstration and thought leadership',
             'Measures case studies and proven results',
@@ -354,9 +354,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         <ScoreCard
           title="Technical Performance"
           score={analysis.hybridAnalysis?.factors.technicalPerformance || analysis.technicalSEO.score}
-          status={analysis.hybridAnalysis?.factors.technicalPerformance >= 80 ? 'excellent' : 
-                 analysis.hybridAnalysis?.factors.technicalPerformance >= 60 ? 'good' :
-                 analysis.hybridAnalysis?.factors.technicalPerformance >= 40 ? 'needs-improvement' : 'poor'}
+          status={(analysis.hybridAnalysis?.factors.technicalPerformance || 0) >= 80 ? 'excellent' : 
+                 (analysis.hybridAnalysis?.factors.technicalPerformance || 0) >= 60 ? 'good' :
+                 (analysis.hybridAnalysis?.factors.technicalPerformance || 0) >= 40 ? 'needs-improvement' : 'poor'}
           findings={[
             'Evaluates Core Web Vitals and page speed',
             'Measures HTTPS security and mobile optimization',
@@ -381,9 +381,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         <ScoreCard
           title="Traditional SEO"
           score={analysis.hybridAnalysis?.factors.traditionalSEO || analysis.technicalSEO.score}
-          status={analysis.hybridAnalysis?.factors.traditionalSEO >= 80 ? 'excellent' : 
-                 analysis.hybridAnalysis?.factors.traditionalSEO >= 60 ? 'good' :
-                 analysis.hybridAnalysis?.factors.traditionalSEO >= 40 ? 'needs-improvement' : 'poor'}
+          status={(analysis.hybridAnalysis?.factors.traditionalSEO || 0) >= 80 ? 'excellent' : 
+                 (analysis.hybridAnalysis?.factors.traditionalSEO || 0) >= 60 ? 'good' :
+                 (analysis.hybridAnalysis?.factors.traditionalSEO || 0) >= 40 ? 'needs-improvement' : 'poor'}
           findings={[
             'Evaluates title optimization and meta descriptions',
             'Measures URL structure and internal linking',
@@ -405,12 +405,12 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         />
 
         {/* Mobile & UX - 12% */}
-        <ScoreCard
+                <ScoreCard
           title="Mobile & UX"
           score={analysis.hybridAnalysis?.factors.mobileUX || analysis.mobileOptimization.score}
-          status={analysis.hybridAnalysis?.factors.mobileUX >= 80 ? 'excellent' : 
-                 analysis.hybridAnalysis?.factors.mobileUX >= 60 ? 'good' :
-                 analysis.hybridAnalysis?.factors.mobileUX >= 40 ? 'needs-improvement' : 'poor'}
+          status={(analysis.hybridAnalysis?.factors.mobileUX || 0) >= 80 ? 'excellent' :
+                 (analysis.hybridAnalysis?.factors.mobileUX || 0) >= 60 ? 'good' :
+                 (analysis.hybridAnalysis?.factors.mobileUX || 0) >= 40 ? 'needs-improvement' : 'poor'}
           findings={[
             'Evaluates mobile page speed and usability',
             'Measures touch targets and responsive design',
@@ -432,12 +432,12 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         />
 
         {/* Content Completeness - 10% */}
-        <ScoreCard
+                <ScoreCard
           title="Content Completeness"
           score={analysis.hybridAnalysis?.factors.contentCompleteness || analysis.contentQuality.score}
-          status={analysis.hybridAnalysis?.factors.contentCompleteness >= 80 ? 'excellent' : 
-                 analysis.hybridAnalysis?.factors.contentCompleteness >= 60 ? 'good' :
-                 analysis.hybridAnalysis?.factors.contentCompleteness >= 40 ? 'needs-improvement' : 'poor'}
+          status={(analysis.hybridAnalysis?.factors.contentCompleteness || 0) >= 80 ? 'excellent' :
+                 (analysis.hybridAnalysis?.factors.contentCompleteness || 0) >= 60 ? 'good' :
+                 (analysis.hybridAnalysis?.factors.contentCompleteness || 0) >= 40 ? 'needs-improvement' : 'poor'}
           findings={[
             'Evaluates content depth and comprehensive coverage',
             'Measures word count and content quality',

@@ -257,3 +257,9 @@ playwright-report/
 .stylelintrc
 .stylelintignore
 .sentryclirc
+
+# =============================================================================
+# AI Comparison Testing (add these lines)
+# =============================================================================
+test-ai-comparison.js
+analysis-log.json
