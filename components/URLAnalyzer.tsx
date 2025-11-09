@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { Search, FileText, Loader2, AlertCircle } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
-import { useGoogleAnalytics } from './GoogleAnalytics';
+import { useGoogleTagManager } from './GoogleTagManager';
 
 interface URLAnalyzerProps {
   onAnalysisComplete: (analysis: WebsiteAnalysis) => void;
@@ -17,7 +17,7 @@ export default function URLAnalyzer({ onAnalysisComplete, onAnalysisStart, isLoa
   const [textContent, setTextContent] = useState('');
   const [error, setError] = useState<string | null>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const { trackAnalysis, trackAnalysisComplete, trackError } = useGoogleAnalytics();
+  const { trackAnalysis, trackAnalysisComplete, trackError } = useGoogleTagManager();
 
   const validateUrl = (url: string): boolean => {
     try {

@@ -4,7 +4,7 @@ import { WebsiteAnalysis } from '@/types';
 import ScoreCard from './ScoreCard';
 import ExportButtons from './ExportButtons';
 import { generateMarkdownReport, downloadMarkdown } from '@/lib/exporters';
-import { useGoogleAnalytics } from './GoogleAnalytics';
+import { useGoogleTagManager } from './GoogleTagManager';
 
 interface ScoreReportProps {
   analysis: WebsiteAnalysis;
@@ -13,7 +13,7 @@ interface ScoreReportProps {
 export default function ScoreReport({ analysis }: ScoreReportProps) {
   // Debug logging
   console.log('Performance Metrics Debug:', analysis.crawledContent.aiAnalysisData?.performanceMetrics);
-  const { trackExport } = useGoogleAnalytics();
+  const { trackExport } = useGoogleTagManager();
   
   const handleExportMarkdown = () => {
     // Track markdown export

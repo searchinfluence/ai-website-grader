@@ -1,11 +1,14 @@
 import * as cheerio from 'cheerio';
 import { CrawledContent } from '@/types';
-import { 
-  analyzePerformanceMetrics, 
-  performanceCache, 
-  createCacheKey, 
-  shouldUseCache 
+import {
+  analyzePerformanceMetrics,
+  performanceCache,
+  createCacheKey,
+  shouldUseCache
 } from './performance-apis';
+
+// Consistent User-Agent for all requests
+const USER_AGENT = 'AI-Website-Grader/2.0 (+https://ai-grader.searchinfluence.com/; contact@searchinfluence.com)';
 
 export async function crawlWebsite(url: string): Promise<CrawledContent> {
   // Validate and normalize URL
@@ -19,7 +22,9 @@ export async function crawlWebsite(url: string): Promise<CrawledContent> {
     const response = await fetch(normalizedUrl, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'AI-Website-Grader/1.0 (+https://example.com/bot)',
+        'User-Agent': USER_AGENT,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
       },
     });
     
@@ -391,7 +396,12 @@ function estimateLoadTime(html: string, imageCount: number): number {
 async function fetchRobotsInfo(url: string): Promise<CrawledContent['robotsInfo']> {
   try {
     const robotsUrl = new URL('/robots.txt', url).toString();
-    const response = await fetch(robotsUrl);
+    const response = await fetch(robotsUrl, {
+      headers: {
+        'User-Agent': USER_AGENT,
+        'Accept': 'text/plain,*/*',
+      },
+    });
     
     if (!response.ok) {
       return {

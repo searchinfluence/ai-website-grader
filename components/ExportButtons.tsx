@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { FileText, FileDown, Loader2, Printer } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
 import { generatePDFReport, generateMarkdownReport } from '@/lib/exporters';
-import { useGoogleAnalytics } from './GoogleAnalytics';
+import { useGoogleTagManager } from './GoogleTagManager';
 
 interface ExportButtonsProps {
   analysis: WebsiteAnalysis;
@@ -13,7 +13,7 @@ interface ExportButtonsProps {
 
 export default function ExportButtons({ analysis, onExportMarkdown }: ExportButtonsProps) {
   const [isExportingPDF, setIsExportingPDF] = useState(false);
-  const { trackExport } = useGoogleAnalytics();
+  const { trackExport } = useGoogleTagManager();
 
   const handleExportPDF = async () => {
     setIsExportingPDF(true);
