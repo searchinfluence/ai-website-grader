@@ -400,7 +400,7 @@ export default function Home() {
               </a>
               <span>•</span>
               <a href="https://github.com/willscott-v2/ai-website-grader" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange-accent)', textDecoration: 'none' }}>
-                AI Website Grader v2.0.0
+                AI Website Grader v3.0.0
               </a>
               <span>•</span>
               <a href="https://ai-grader.searchinfluence.com" target="_blank" rel="noopener noreferrer">
