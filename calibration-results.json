@@ -1,0 +1,74 @@
+{
+  "timestamp": "2025-11-09T21:18:57.966Z",
+  "summary": {
+    "avgScore": 84.44444444444444,
+    "highScores": 3,
+    "totalPerfectScores": 10,
+    "schemaIssues": 0
+  },
+  "results": [
+    {
+      "url": "https://diviner.agency/",
+      "overallScore": 81,
+      "perfectScores": 0,
+      "schemaIssue": false,
+      "warnings": 0
+    },
+    {
+      "url": "https://www.grossmanlaw.net/",
+      "overallScore": 82,
+      "perfectScores": 0,
+      "schemaIssue": false,
+      "warnings": 0
+    },
+    {
+      "url": "https://highereducationseo.com/higher-ed-seo-why-it-matters-now-how-to-nail-it/",
+      "overallScore": 95,
+      "perfectScores": 2,
+      "schemaIssue": false,
+      "warnings": 1
+    },
+    {
+      "url": "https://wfrancklemd.com/breast/breast-augmentation/",
+      "overallScore": 80,
+      "perfectScores": 1,
+      "schemaIssue": false,
+      "warnings": 0
+    },
+    {
+      "url": "https://freeman.tulane.edu/",
+      "overallScore": 71,
+      "perfectScores": 2,
+      "schemaIssue": false,
+      "warnings": 0
+    },
+    {
+      "url": "https://www.searchinfluence.com/services/higher-education-seo/",
+      "overallScore": 94,
+      "perfectScores": 2,
+      "schemaIssue": false,
+      "warnings": 1
+    },
+    {
+      "url": "https://upcea.edu/digital-marketing-strategy-higher-education-seo-paid-ads/",
+      "overallScore": 90,
+      "perfectScores": 1,
+      "schemaIssue": false,
+      "warnings": 1
+    },
+    {
+      "url": "https://www.oho.com/blog/seo-checklist-higher-education",
+      "overallScore": 81,
+      "perfectScores": 1,
+      "schemaIssue": false,
+      "warnings": 1
+    },
+    {
+      "url": "https://gofishdigital.com/services/owned/higher-education/",
+      "overallScore": 86,
+      "perfectScores": 1,
+      "schemaIssue": false,
+      "warnings": 0
+    }
+  ]
+}
