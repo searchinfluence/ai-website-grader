@@ -88,8 +88,27 @@ export default function Home() {
       {/* Resources Section */}
       <ResourcesSection />
 
+      {/* About Section Header */}
+      <div style={{
+        background: 'var(--lighter-blue)',
+        paddingTop: '60px',
+        paddingBottom: '20px'
+      }}>
+        <div className="container">
+          <h2 style={{
+            fontSize: '2rem',
+            fontWeight: '600',
+            color: 'var(--white)',
+            textAlign: 'center',
+            margin: '0',
+          }}>
+            About The AI Website Grader
+          </h2>
+        </div>
+      </div>
+
       {/* Features Section */}
-      <div className="features">
+      <div className="features" style={{ paddingTop: '40px' }}>
         <div className="container">
           <div className="feature">
             <div className="feature-icon">🎯</div>
