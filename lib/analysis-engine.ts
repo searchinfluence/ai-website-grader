@@ -112,14 +112,25 @@ export async function analyzeWebsite(url: string, textContent?: string): Promise
   // Create content improvements based on hybrid analysis
   const contentImprovements = generateHybridContentImprovements(hybridAnalysis, content);
   
+  // Calculate overall score using the 7-factor weighted system
+  const overallScore = calculateOverallScore({
+    technicalSEO: technicalSEO.score,
+    technicalCrawlability: technicalCrawlability.score,
+    contentQuality: contentQuality.score,
+    aiOptimization: aiOptimization.score,
+    mobileOptimization: mobileOptimization.score,
+    schemaAnalysis: schemaAnalysis.score,
+    eeatSignals: eeatSignals.score
+  });
+
   return {
     url,
     title: content.title || 'Website Analysis',
-    overallScore: hybridAnalysis.finalScore, // Use hybrid score as primary
+    overallScore: overallScore, // Use 7-factor weighted calculation
     timestamp: new Date().toISOString(),
-    // NEW: Include hybrid analysis results
+    // Hybrid analysis results (for backward compatibility in debug data)
     hybridAnalysis: hybridAnalysis,
-    // Legacy scores for detailed insights
+    // 7-factor scores for detailed insights
     technicalSEO,
     technicalCrawlability,
     contentQuality,

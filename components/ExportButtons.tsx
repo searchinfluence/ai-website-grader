@@ -231,10 +231,15 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
                 <td class="score">${round(analysis.schemaAnalysis.score)}%</td>
                 <td class="status">${analysis.schemaAnalysis.status}</td>
               </tr>
+              <tr>
+                <td><strong>Technical Crawlability</strong></td>
+                <td class="score">${round(analysis.technicalCrawlability.score)}%</td>
+                <td class="status">${analysis.technicalCrawlability.status}</td>
+              </tr>
             </tbody>
           </table>
         </div>
-        
+
         <div class="section">
           <h2>AI Optimization (${round(analysis.aiOptimization.score)}%)</h2>
           <p><em>Optimized for AI search engines by Search Influence - AI SEO Experts</em></p>
@@ -351,9 +356,97 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             </ul>
           </div>
         </div>
-        
 
-        
+        <div class="section">
+          <h2>Mobile Optimization (${round(analysis.mobileOptimization.score)}%)</h2>
+          <p><em>Mobile-first optimization by Search Influence - AI SEO Experts</em></p>
+
+          <div class="findings">
+            <h3>Key Findings:</h3>
+            <ul>
+              ${analysis.mobileOptimization.findings.map(finding => `<li>${finding}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="recommendations">
+            <h3>Recommendations:</h3>
+            <ul>
+              ${analysis.mobileOptimization.recommendations.map(rec => `<li>${rec.text ? rec.text : rec}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="detailed-scores">
+            <h3>Detailed Scores:</h3>
+            <ul>
+              <li><strong>Mobile Page Speed:</strong> ${round(analysis.mobileOptimization.mobilePageSpeed)}%</li>
+              <li><strong>Touch Targets:</strong> ${round(analysis.mobileOptimization.touchTargets)}%</li>
+              <li><strong>Viewport Configuration:</strong> ${round(analysis.mobileOptimization.viewportConfiguration)}%</li>
+              <li><strong>Mobile Usability:</strong> ${round(analysis.mobileOptimization.mobileUsability)}%</li>
+              <li><strong>Responsive Design:</strong> ${round(analysis.mobileOptimization.responsiveDesign)}%</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Schema Analysis (${round(analysis.schemaAnalysis.score)}%)</h2>
+          <p><em>Structured data optimization by Search Influence - AI SEO Experts</em></p>
+
+          <div class="findings">
+            <h3>Key Findings:</h3>
+            <ul>
+              ${analysis.schemaAnalysis.findings.map(finding => `<li>${finding}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="recommendations">
+            <h3>Recommendations:</h3>
+            <ul>
+              ${analysis.schemaAnalysis.recommendations.map(rec => `<li>${rec.text ? rec.text : rec}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="detailed-scores">
+            <h3>Detailed Scores:</h3>
+            <ul>
+              <li><strong>Schema Presence:</strong> ${round(analysis.schemaAnalysis.schemaPresence)}%</li>
+              <li><strong>Schema Validation:</strong> ${round(analysis.schemaAnalysis.schemaValidation)}%</li>
+              <li><strong>Rich Snippet Potential:</strong> ${round(analysis.schemaAnalysis.richSnippetPotential)}%</li>
+              <li><strong>Structured Data Completeness:</strong> ${round(analysis.schemaAnalysis.structuredDataCompleteness)}%</li>
+              <li><strong>JSON-LD Implementation:</strong> ${round(analysis.schemaAnalysis.jsonLdImplementation)}%</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Technical Crawlability (${round(analysis.technicalCrawlability.score)}%)</h2>
+          <p><em>AI bot accessibility analysis by Search Influence - AI SEO Experts</em></p>
+
+          <div class="findings">
+            <h3>Key Findings:</h3>
+            <ul>
+              ${analysis.technicalCrawlability.findings.map(finding => `<li>${finding}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="recommendations">
+            <h3>Recommendations:</h3>
+            <ul>
+              ${analysis.technicalCrawlability.recommendations.map(rec => `<li>${rec.text ? rec.text : rec}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="detailed-scores">
+            <h3>Detailed Scores:</h3>
+            <ul>
+              <li><strong>Robots Access:</strong> ${round(analysis.technicalCrawlability.robotsAccess)}%</li>
+              <li><strong>Bot Accessibility:</strong> ${round(analysis.technicalCrawlability.botAccessibility)}%</li>
+              <li><strong>Content Delivery:</strong> ${round(analysis.technicalCrawlability.contentDelivery)}%</li>
+              <li><strong>JavaScript Dependency:</strong> ${round(analysis.technicalCrawlability.javascriptDependency)}%</li>
+              <li><strong>Load Speed:</strong> ${round(analysis.technicalCrawlability.loadSpeed)}%</li>
+            </ul>
+          </div>
+        </div>
+
         ${analysis.contentImprovements.length > 0 ? `
         <div class="section improvements">
           <h2>Priority Content Improvements</h2>

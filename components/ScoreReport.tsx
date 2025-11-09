@@ -96,187 +96,189 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             </div>
           </div>
 
-          {/* NEW: 6-Factor Hybrid AI Search Scoring System */}
+          {/* Score Overview Cards */}
           <div style={{ marginBottom: '8px' }}>
-            <h3 style={{ 
-              fontSize: '1.35rem', 
-              fontWeight: '600', 
-              color: 'var(--content-text)', 
+            <h3 style={{
+              fontSize: '1.35rem',
+              fontWeight: '600',
+              color: 'var(--content-text)',
               marginBottom: '6px',
               textAlign: 'center',
               opacity: 0.8
             }}>
-              6-Factor Hybrid AI Search Scoring System
+              Analysis Score Breakdown
             </h3>
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', 
-              gap: '6px', 
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: '6px',
               marginBottom: '10px',
               maxWidth: '100%',
               overflow: 'hidden'
             }}>
-              {/* AI Citation Potential - 25% */}
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '6px', 
-                background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%)', 
+              {/* AI Optimization */}
+              <div style={{
+                textAlign: 'center',
+                padding: '6px',
+                background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%)',
                 borderRadius: '12px',
                 border: '1px solid rgba(52, 152, 219, 0.2)',
-                borderLeft: '4px solid #10b981',
+                borderLeft: '4px solid #3498db',
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
                 <div style={{ fontSize: '1.65rem', fontWeight: '700', color: 'var(--info-blue)', marginBottom: '1px' }}>
-                  {analysis.hybridAnalysis?.factors.aiCitationPotential || analysis.aiOptimization.score}%
+                  {analysis.aiOptimization.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  AI Citation Potential
-                </div>
-                <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
-                  25% Weight
+                  AI Optimization
                 </div>
               </div>
-              
-              {/* Content Authority & Trust - 20% */}
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '6px', 
-                background: 'linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%)', 
+
+              {/* E-E-A-T Signals */}
+              <div style={{
+                textAlign: 'center',
+                padding: '6px',
+                background: 'linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%)',
                 borderRadius: '12px',
                 border: '1px solid rgba(39, 174, 96, 0.2)',
-                borderLeft: '4px solid #10b981',
+                borderLeft: '4px solid #27ae60',
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
                 <div style={{ fontSize: '1.65rem', fontWeight: '700', color: 'var(--success-green)', marginBottom: '1px' }}>
-                  {analysis.hybridAnalysis?.factors.contentAuthority || analysis.eeatSignals.score}%
+                  {analysis.eeatSignals.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  Content Authority & Trust
-                </div>
-                <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
-                  20% Weight
+                  E-E-A-T Signals
                 </div>
               </div>
-              
-              {/* Technical Performance - 18% */}
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '6px', 
-                background: 'linear-gradient(135deg, rgba(230, 126, 34, 0.1) 0%, rgba(230, 126, 34, 0.05) 100%)', 
+
+              {/* Technical SEO */}
+              <div style={{
+                textAlign: 'center',
+                padding: '6px',
+                background: 'linear-gradient(135deg, rgba(230, 126, 34, 0.1) 0%, rgba(230, 126, 34, 0.05) 100%)',
                 borderRadius: '12px',
                 border: '1px solid rgba(230, 126, 34, 0.2)',
-                borderLeft: '4px solid #10b981',
+                borderLeft: '4px solid #e67e22',
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
                 <div style={{ fontSize: '1.65rem', fontWeight: '700', color: 'var(--orange-accent)', marginBottom: '1px' }}>
-                  {analysis.hybridAnalysis?.factors.technicalPerformance || analysis.technicalSEO.score}%
+                  {analysis.technicalSEO.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  Technical Performance
-                </div>
-                <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
-                  18% Weight
+                  Technical SEO
                 </div>
               </div>
-              
-              {/* Traditional SEO - 15% */}
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '6px', 
-                background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0.05) 100%)', 
+
+              {/* Content Quality */}
+              <div style={{
+                textAlign: 'center',
+                padding: '6px',
+                background: 'linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0.05) 100%)',
                 borderRadius: '12px',
                 border: '1px solid rgba(155, 89, 182, 0.2)',
-                borderLeft: '4px solid #f59e0b',
+                borderLeft: '4px solid #9b59b6',
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
                 <div style={{ fontSize: '1.65rem', fontWeight: '700', color: '#9b59b6', marginBottom: '1px' }}>
-                  {analysis.hybridAnalysis?.factors.traditionalSEO || analysis.technicalSEO.score}%
+                  {analysis.contentQuality.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  Traditional SEO
-                </div>
-                <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
-                  15% Weight
+                  Content Quality
                 </div>
               </div>
-              
-              {/* Mobile & UX - 12% */}
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '6px', 
-                background: 'linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%)', 
+
+              {/* Mobile Optimization */}
+              <div style={{
+                textAlign: 'center',
+                padding: '6px',
+                background: 'linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%)',
                 borderRadius: '12px',
                 border: '1px solid rgba(231, 76, 60, 0.2)',
-                borderLeft: '4px solid #f59e0b',
+                borderLeft: '4px solid #e74c3c',
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
                 <div style={{ fontSize: '1.65rem', fontWeight: '700', color: 'var(--error-red)', marginBottom: '1px' }}>
-                  {analysis.hybridAnalysis?.factors.mobileUX || analysis.mobileOptimization.score}%
+                  {analysis.mobileOptimization.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  Mobile & UX
-                </div>
-                <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
-                  12% Weight
+                  Mobile Optimization
                 </div>
               </div>
-              
-              {/* Content Completeness - 10% */}
-              <div style={{ 
-                textAlign: 'center', 
-                padding: '6px', 
-                background: 'linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(46, 204, 113, 0.05) 100%)', 
+
+              {/* Schema Analysis */}
+              <div style={{
+                textAlign: 'center',
+                padding: '6px',
+                background: 'linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(46, 204, 113, 0.05) 100%)',
                 borderRadius: '12px',
                 border: '1px solid rgba(46, 204, 113, 0.2)',
-                borderLeft: '4px solid #f59e0b',
+                borderLeft: '4px solid #2ecc71',
                 minWidth: '0',
                 wordWrap: 'break-word'
               }}>
                 <div style={{ fontSize: '1.65rem', fontWeight: '700', color: '#2ecc71', marginBottom: '1px' }}>
-                  {analysis.hybridAnalysis?.factors.contentCompleteness || analysis.contentQuality.score}%
+                  {analysis.schemaAnalysis.score}%
                 </div>
                 <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
-                  Content Completeness
+                  Schema Analysis
                 </div>
-                <div style={{ fontSize: '0.675rem', color: 'var(--muted-text)', marginTop: '1px' }}>
-                  10% Weight
+              </div>
+
+              {/* Technical Crawlability */}
+              <div style={{
+                textAlign: 'center',
+                padding: '6px',
+                background: 'linear-gradient(135deg, rgba(52, 73, 94, 0.1) 0%, rgba(52, 73, 94, 0.05) 100%)',
+                borderRadius: '12px',
+                border: '1px solid rgba(52, 73, 94, 0.2)',
+                borderLeft: '4px solid #34495e',
+                minWidth: '0',
+                wordWrap: 'break-word'
+              }}>
+                <div style={{ fontSize: '1.65rem', fontWeight: '700', color: '#34495e', marginBottom: '1px' }}>
+                  {analysis.technicalCrawlability.score}%
+                </div>
+                <div style={{ fontSize: '0.975rem', fontWeight: '600', color: 'var(--content-text)' }}>
+                  Technical Crawlability
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Hybrid AI Search Analysis Summary */}
-          <div style={{ 
-            background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(39, 174, 96, 0.05) 100%)', 
-            borderRadius: '12px', 
-            padding: '15px', 
+          {/* Analysis Summary */}
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(39, 174, 96, 0.05) 100%)',
+            borderRadius: '12px',
+            padding: '15px',
             marginBottom: '15px',
             border: '1px solid rgba(52, 152, 219, 0.1)'
           }}>
-            <h3 style={{ 
-              fontSize: '1.2rem', 
-              fontWeight: '600', 
-              color: 'var(--content-text)', 
+            <h3 style={{
+              fontSize: '1.2rem',
+              fontWeight: '600',
+              color: 'var(--content-text)',
               marginBottom: '10px',
               textAlign: 'center'
             }}>
-              🚀 Hybrid AI Search Analysis Summary
+              🚀 AI Search Optimization Analysis
             </h3>
-            <p style={{ 
-              color: 'var(--secondary-content)', 
-              fontSize: '1rem', 
+            <p style={{
+              color: 'var(--secondary-content)',
+              fontSize: '1rem',
               lineHeight: '1.5',
               textAlign: 'center',
               margin: '0'
             }}>
-              This analysis uses our 6-Factor Hybrid AI Search Scoring System, designed to evaluate websites 
-              for modern AI-powered search engines. The system balances AI citation potential, content authority, 
-              technical performance, traditional SEO, mobile UX, and content completeness.
+              This analysis evaluates your website for modern AI-powered search engines and chat interfaces.
+              We assess AI optimization, content authority (E-E-A-T), technical performance, content quality,
+              mobile experience, structured data, and bot accessibility to determine your visibility in AI overviews
+              and voice search results.
             </p>
           </div>
 
@@ -288,173 +290,137 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         </div>
       </div>
 
-      {/* NEW: 6-Factor Hybrid AI Search Detailed Analysis */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-        gap: '20px',
-        marginTop: '40px',
-        maxWidth: '100%'
-      }}>
-        {/* AI Citation Potential - 25% */}
+      {/* Detailed Analysis Cards */}
+      <div
+        className="score-cards-grid"
+        style={{
+          marginTop: '40px',
+          maxWidth: '100%'
+        }}
+      >
+        {/* AI Optimization */}
         <ScoreCard
-          title="AI Citation Potential"
-          score={analysis.hybridAnalysis?.factors.aiCitationPotential || analysis.aiOptimization.score}
-          status={(analysis.hybridAnalysis?.factors.aiCitationPotential || 0) >= 80 ? 'excellent' : 
-                 (analysis.hybridAnalysis?.factors.aiCitationPotential || 0) >= 60 ? 'good' :
-                 (analysis.hybridAnalysis?.factors.aiCitationPotential || 0) >= 40 ? 'needs-improvement' : 'poor'}
-          findings={[
-            'Evaluates content for AI citation and quotable statements',
-            'Measures Q&A format and conversational patterns',
-            'Assesses factual density and source credibility',
-            'Analyzes content structure for AI comprehension'
-          ]}
-          recommendations={[
-            '🔴 HIGH: Add more quotable statements and specific answers',
-            '🔴 HIGH: Include Q&A format with clear questions and answers',
-            '🟡 MEDIUM: Add more factual statements with percentages and data',
-            '🟡 MEDIUM: Improve content structure for AI comprehension'
-          ]}
+          title="AI Optimization"
+          score={analysis.aiOptimization.score}
+          status={analysis.aiOptimization.status}
+          findings={analysis.aiOptimization.findings}
+          recommendations={analysis.aiOptimization.recommendations.map(rec =>
+            `${rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢'} ${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
-            'Quotable Statements': Math.round((analysis.hybridAnalysis?.factors.aiCitationPotential || 0) * 0.4),
-            'Q&A Format': Math.round((analysis.hybridAnalysis?.factors.aiCitationPotential || 0) * 0.3),
-            'Factual Density': Math.round((analysis.hybridAnalysis?.factors.aiCitationPotential || 0) * 0.2),
-            'Source Credibility': Math.round((analysis.hybridAnalysis?.factors.aiCitationPotential || 0) * 0.1)
+            'Chunkability': analysis.aiOptimization.chunkability,
+            'Q&A Format': analysis.aiOptimization.qaFormat,
+            'Entity Recognition': analysis.aiOptimization.entityRecognition,
+            'Factual Density': analysis.aiOptimization.factualDensity,
+            'Semantic Clarity': analysis.aiOptimization.semanticClarity
           }}
         />
 
-        {/* Content Authority & Trust - 20% */}
+        {/* E-E-A-T Signals */}
         <ScoreCard
-          title="Content Authority & Trust"
-          score={analysis.hybridAnalysis?.factors.contentAuthority || analysis.eeatSignals.score}
-          status={(analysis.hybridAnalysis?.factors.contentAuthority || 0) >= 80 ? 'excellent' : 
-                 (analysis.hybridAnalysis?.factors.contentAuthority || 0) >= 60 ? 'good' :
-                 (analysis.hybridAnalysis?.factors.contentAuthority || 0) >= 40 ? 'needs-improvement' : 'poor'}
-          findings={[
-            'Evaluates expertise demonstration and thought leadership',
-            'Measures case studies and proven results',
-            'Assesses industry recognition and credentials',
-            'Analyzes content depth and comprehensive coverage'
-          ]}
-          recommendations={[
-            '🔴 HIGH: Add more case studies and proven results',
-            '🔴 HIGH: Include detailed expertise credentials and experience',
-            '🟡 MEDIUM: Add industry recognition and awards',
-            '🟡 MEDIUM: Improve content depth and comprehensive coverage'
-          ]}
+          title="E-E-A-T Signals"
+          score={analysis.eeatSignals.score}
+          status={analysis.eeatSignals.status}
+          findings={analysis.eeatSignals.findings}
+          recommendations={analysis.eeatSignals.recommendations.map(rec =>
+            `${rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢'} ${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
-            'Expertise Demonstration': Math.round((analysis.hybridAnalysis?.factors.contentAuthority || 0) * 0.4),
-            'Case Studies': Math.round((analysis.hybridAnalysis?.factors.contentAuthority || 0) * 0.3),
-            'Industry Recognition': Math.round((analysis.hybridAnalysis?.factors.contentAuthority || 0) * 0.2),
-            'Content Depth': Math.round((analysis.hybridAnalysis?.factors.contentAuthority || 0) * 0.1)
+            'Expertise & Experience': analysis.eeatSignals.expertiseExperience,
+            'Authoritativeness': analysis.eeatSignals.authoritativeness,
+            'Trustworthiness': analysis.eeatSignals.trustworthiness,
+            'Factual Accuracy': analysis.eeatSignals.factualAccuracy
           }}
         />
 
-        {/* Technical Performance - 18% */}
+        {/* Technical SEO */}
         <ScoreCard
-          title="Technical Performance"
-          score={analysis.hybridAnalysis?.factors.technicalPerformance || analysis.technicalSEO.score}
-          status={(analysis.hybridAnalysis?.factors.technicalPerformance || 0) >= 80 ? 'excellent' : 
-                 (analysis.hybridAnalysis?.factors.technicalPerformance || 0) >= 60 ? 'good' :
-                 (analysis.hybridAnalysis?.factors.technicalPerformance || 0) >= 40 ? 'needs-improvement' : 'poor'}
-          findings={[
-            'Evaluates Core Web Vitals and page speed',
-            'Measures HTTPS security and mobile optimization',
-            'Assesses technical crawlability and accessibility',
-            'Analyzes server response and loading performance'
-          ]}
-          recommendations={[
-            '🔴 HIGH: Improve Core Web Vitals (LCP, FID, CLS)',
-            '🔴 HIGH: Optimize page speed and loading performance',
-            '🟡 MEDIUM: Ensure HTTPS security and mobile optimization',
-            '🟡 MEDIUM: Improve technical crawlability and accessibility'
-          ]}
+          title="Technical SEO"
+          score={analysis.technicalSEO.score}
+          status={analysis.technicalSEO.status}
+          findings={analysis.technicalSEO.findings}
+          recommendations={analysis.technicalSEO.recommendations.map(rec =>
+            `${rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢'} ${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
-            'Core Web Vitals': Math.round((analysis.hybridAnalysis?.factors.technicalPerformance || 0) * 0.4),
-            'Page Speed': Math.round((analysis.hybridAnalysis?.factors.technicalPerformance || 0) * 0.3),
-            'Security': Math.round((analysis.hybridAnalysis?.factors.technicalPerformance || 0) * 0.2),
-            'Crawlability': Math.round((analysis.hybridAnalysis?.factors.technicalPerformance || 0) * 0.1)
+            'Heading Structure': analysis.technicalSEO.headingStructure,
+            'Meta Info': analysis.technicalSEO.metaInfo,
+            'Alt Text': analysis.technicalSEO.altText,
+            'Links': analysis.technicalSEO.links,
+            'Schema Markup': analysis.technicalSEO.schemaMarkup,
+            'Page Speed': analysis.technicalSEO.pageSpeed
           }}
         />
 
-        {/* Traditional SEO - 15% */}
+        {/* Content Quality */}
         <ScoreCard
-          title="Traditional SEO"
-          score={analysis.hybridAnalysis?.factors.traditionalSEO || analysis.technicalSEO.score}
-          status={(analysis.hybridAnalysis?.factors.traditionalSEO || 0) >= 80 ? 'excellent' : 
-                 (analysis.hybridAnalysis?.factors.traditionalSEO || 0) >= 60 ? 'good' :
-                 (analysis.hybridAnalysis?.factors.traditionalSEO || 0) >= 40 ? 'needs-improvement' : 'poor'}
-          findings={[
-            'Evaluates title optimization and meta descriptions',
-            'Measures URL structure and internal linking',
-            'Assesses keyword optimization and content relevance',
-            'Analyzes sitemap and technical SEO elements'
-          ]}
-          recommendations={[
-            '🔴 HIGH: Optimize title tags and meta descriptions',
-            '🔴 HIGH: Improve URL structure and internal linking',
-            '🟡 MEDIUM: Enhance keyword optimization and content relevance',
-            '🟡 MEDIUM: Add comprehensive sitemap and technical SEO'
-          ]}
+          title="Content Quality"
+          score={analysis.contentQuality.score}
+          status={analysis.contentQuality.status}
+          findings={analysis.contentQuality.findings}
+          recommendations={analysis.contentQuality.recommendations.map(rec =>
+            `${rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢'} ${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
-            'Title Optimization': Math.round((analysis.hybridAnalysis?.factors.traditionalSEO || 0) * 0.3),
-            'URL Structure': Math.round((analysis.hybridAnalysis?.factors.traditionalSEO || 0) * 0.25),
-            'Keyword Optimization': Math.round((analysis.hybridAnalysis?.factors.traditionalSEO || 0) * 0.25),
-            'Technical Elements': Math.round((analysis.hybridAnalysis?.factors.traditionalSEO || 0) * 0.2)
+            'Long-tail Keywords': analysis.contentQuality.longTailKeywords,
+            'Comprehensive Coverage': analysis.contentQuality.comprehensiveCoverage,
+            'Relevance to User Intent': analysis.contentQuality.relevanceToUserIntent,
+            'Accuracy and Currency': analysis.contentQuality.accuracyAndCurrency,
+            'Natural Language': analysis.contentQuality.naturalLanguage
           }}
         />
 
-        {/* Mobile & UX - 12% */}
-                <ScoreCard
-          title="Mobile & UX"
-          score={analysis.hybridAnalysis?.factors.mobileUX || analysis.mobileOptimization.score}
-          status={(analysis.hybridAnalysis?.factors.mobileUX || 0) >= 80 ? 'excellent' :
-                 (analysis.hybridAnalysis?.factors.mobileUX || 0) >= 60 ? 'good' :
-                 (analysis.hybridAnalysis?.factors.mobileUX || 0) >= 40 ? 'needs-improvement' : 'poor'}
-          findings={[
-            'Evaluates mobile page speed and usability',
-            'Measures touch targets and responsive design',
-            'Assesses viewport configuration and mobile optimization',
-            'Analyzes user experience and accessibility'
-          ]}
-          recommendations={[
-            '🔴 HIGH: Optimize mobile page speed and usability',
-            '🔴 HIGH: Improve touch targets and responsive design',
-            '🟡 MEDIUM: Configure viewport and mobile optimization',
-            '🟡 MEDIUM: Enhance user experience and accessibility'
-          ]}
+        {/* Mobile Optimization */}
+        <ScoreCard
+          title="Mobile Optimization"
+          score={analysis.mobileOptimization.score}
+          status={analysis.mobileOptimization.status}
+          findings={analysis.mobileOptimization.findings}
+          recommendations={analysis.mobileOptimization.recommendations.map(rec =>
+            `${rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢'} ${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
-            'Mobile Speed': Math.round((analysis.hybridAnalysis?.factors.mobileUX || 0) * 0.3),
-            'Touch Targets': Math.round((analysis.hybridAnalysis?.factors.mobileUX || 0) * 0.25),
-            'Responsive Design': Math.round((analysis.hybridAnalysis?.factors.mobileUX || 0) * 0.25),
-            'User Experience': Math.round((analysis.hybridAnalysis?.factors.mobileUX || 0) * 0.2)
+            'Mobile Page Speed': analysis.mobileOptimization.mobilePageSpeed,
+            'Touch Targets': analysis.mobileOptimization.touchTargets,
+            'Viewport Configuration': analysis.mobileOptimization.viewportConfiguration,
+            'Mobile Usability': analysis.mobileOptimization.mobileUsability,
+            'Responsive Design': analysis.mobileOptimization.responsiveDesign
           }}
         />
 
-        {/* Content Completeness - 10% */}
-                <ScoreCard
-          title="Content Completeness"
-          score={analysis.hybridAnalysis?.factors.contentCompleteness || analysis.contentQuality.score}
-          status={(analysis.hybridAnalysis?.factors.contentCompleteness || 0) >= 80 ? 'excellent' :
-                 (analysis.hybridAnalysis?.factors.contentCompleteness || 0) >= 60 ? 'good' :
-                 (analysis.hybridAnalysis?.factors.contentCompleteness || 0) >= 40 ? 'needs-improvement' : 'poor'}
-          findings={[
-            'Evaluates content depth and comprehensive coverage',
-            'Measures word count and content quality',
-            'Assesses relevance to user intent and search queries',
-            'Analyzes content structure and readability'
-          ]}
-          recommendations={[
-            '🔴 HIGH: Increase content depth and comprehensive coverage',
-            '🔴 HIGH: Improve word count and content quality',
-            '🟡 MEDIUM: Enhance relevance to user intent and search queries',
-            '🟡 MEDIUM: Optimize content structure and readability'
-          ]}
+        {/* Schema Analysis */}
+        <ScoreCard
+          title="Schema Analysis"
+          score={analysis.schemaAnalysis.score}
+          status={analysis.schemaAnalysis.status}
+          findings={analysis.schemaAnalysis.findings}
+          recommendations={analysis.schemaAnalysis.recommendations.map(rec =>
+            `${rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢'} ${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
           details={{
-            'Content Depth': Math.round((analysis.hybridAnalysis?.factors.contentCompleteness || 0) * 0.4),
-            'Word Count': Math.round((analysis.hybridAnalysis?.factors.contentCompleteness || 0) * 0.3),
-            'User Intent': Math.round((analysis.hybridAnalysis?.factors.contentCompleteness || 0) * 0.2),
-            'Readability': Math.round((analysis.hybridAnalysis?.factors.contentCompleteness || 0) * 0.1)
+            'Schema Presence': analysis.schemaAnalysis.schemaPresence,
+            'Schema Validation': analysis.schemaAnalysis.schemaValidation,
+            'Rich Snippet Potential': analysis.schemaAnalysis.richSnippetPotential,
+            'Structured Data Completeness': analysis.schemaAnalysis.structuredDataCompleteness,
+            'JSON-LD Implementation': analysis.schemaAnalysis.jsonLdImplementation
+          }}
+        />
+
+        {/* Technical Crawlability */}
+        <ScoreCard
+          title="Technical Crawlability"
+          score={analysis.technicalCrawlability.score}
+          status={analysis.technicalCrawlability.status}
+          findings={analysis.technicalCrawlability.findings}
+          recommendations={analysis.technicalCrawlability.recommendations.map(rec =>
+            `${rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢'} ${rec.priority.toUpperCase()}: ${rec.text}`
+          )}
+          details={{
+            'Robots Access': analysis.technicalCrawlability.robotsAccess,
+            'Bot Accessibility': analysis.technicalCrawlability.botAccessibility,
+            'Content Delivery': analysis.technicalCrawlability.contentDelivery,
+            'JavaScript Dependency': analysis.technicalCrawlability.javascriptDependency,
+            'Load Speed': analysis.technicalCrawlability.loadSpeed
           }}
         />
       </div>
