@@ -81,6 +81,8 @@ export interface SchemaAnalysis extends AnalysisScore {
   richSnippetPotential: number;
   structuredDataCompleteness: number;
   jsonLdImplementation: number;
+  hasSchema: boolean;
+  schemaTypes: string[];
 }
 
 export interface CrawledContent {

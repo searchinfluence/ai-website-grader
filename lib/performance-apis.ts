@@ -67,8 +67,7 @@ export async function validateHTML(url: string, html?: string): Promise<{
         errors: 0,
         warnings: 0,
         isValid: true,
-        messages: [],
-        source: 'fallback' as const
+        messages: []
       };
     }
     
