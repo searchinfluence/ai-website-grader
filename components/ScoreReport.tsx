@@ -3,7 +3,6 @@
 import { WebsiteAnalysis } from '@/types';
 import ScoreCard from './ScoreCard';
 import ExportButtons from './ExportButtons';
-import ResourcesSection from './ResourcesSection';
 import { generateMarkdownReport, downloadMarkdown } from '@/lib/exporters';
 import { useGoogleTagManager } from './GoogleTagManager';
 
@@ -1038,9 +1037,6 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           </div>
         </div>
       </div>
-
-      {/* Resources Section */}
-      <ResourcesSection />
     </div>
   );
 } 
