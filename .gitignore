@@ -259,7 +259,16 @@ playwright-report/
 .sentryclirc
 
 # =============================================================================
-# AI Comparison Testing (add these lines)
+# Test Results and Archives (keep test scripts, ignore results)
 # =============================================================================
-test-ai-comparison.js
+# Test result files
 analysis-log.json
+calibration-results.json
+test-results-*.json
+*-test-results.json
+
+# Archive directory (local only)
+docs/archive/
+
+# AI comparison testing (development tool only)
+test-ai-comparison.js

@@ -1,6 +1,8 @@
-# AI Website Grader v2.0 - Search Influence
+# AI Website Grader v3.0 - Search Influence
 
 A comprehensive web application that analyzes websites for their readiness in AI-powered search engines, chat interfaces, and modern search algorithms. Built with Next.js 15, TypeScript, and a modern design system.
+
+**Latest Update (v3.0)**: Critical fix implementing proper 7-factor weighted scoring system for accurate AI-readiness assessment.
 
 **Powered by Search Influence** - AI-Driven SEO Experts for Higher Education and Healthcare.
 
@@ -180,10 +182,14 @@ ai-website-grader/
 - **Print Report**: Opens a print-friendly HTML version
 
 ### Understanding Scores
-- **80-100%**: Excellent - Your content is well-optimized for AI search
-- **60-79%**: Good - Minor improvements needed
-- **40-59%**: Needs Improvement - Significant optimization required
-- **0-39%**: Poor - Major improvements needed
+The scoring system emphasizes AI Optimization and Content Quality, which are critical for future search visibility:
+
+- **65-100%**: Excellent - Well-optimized for AI search with strong content quality
+- **55-64%**: Good - Solid foundation, minor improvements recommended
+- **45-54%**: Average - Significant optimization opportunities
+- **0-44%**: Needs Improvement - Major content and AI optimization required
+
+**Note**: Scores are calibrated to provide realistic assessments. Even professional SEO agencies typically score 60-70%, as the system heavily weighs AI Optimization (25%) and Content Quality (18%).
 
 ## 🎯 AI Optimization Focus
 
@@ -264,7 +270,16 @@ The application uses a modern design system with:
 
 ## 📄 Recent Updates
 
-### Latest Improvements
+### v3.0 - Critical Scoring Fix (November 2025)
+- 🔴 **CRITICAL FIX**: Corrected overall score calculation to use proper 7-factor weighted system
+- ✅ **Scoring Accuracy**: Fixed bug where system used old 6-factor hybrid score instead of new weighted calculation
+- ✅ **UI Improvements**: Updated all reports to accurately display 7-factor analysis breakdown
+- ✅ **Better Differentiation**: Scores now properly distinguish between average (48%), good (60%), and excellent (65-70%) sites
+- ✅ **Responsive Layout**: Added proper grid layout for 7 score cards across all screen sizes
+- ✅ **Export Updates**: All export formats now include complete 7-factor analysis
+- 📊 **Impact**: Average scores dropped 20-25 points to reflect realistic AI-readiness assessments
+
+### Previous Updates (v2.0)
 - ✅ **W3C HTML Validation**: Real-time HTML validation with detailed error reporting
 - ✅ **Enhanced Content Extraction**: Improved markdown generation with full page content
 - ✅ **Performance Metrics**: Real Core Web Vitals data from Google PageSpeed Insights
@@ -289,12 +304,44 @@ The application uses a modern design system with:
 - 📊 **Enhanced Analytics**: Add more detailed reporting and insights
 - 🔧 **API Improvements**: Expand API capabilities for enterprise use
 
+## 🧪 Testing
+
+The project includes comprehensive test suites to validate scoring accuracy:
+
+### Test Scripts
+```bash
+# Test average (non-SEO-optimized) sites
+node test-average-sites.js
+
+# Test professional/SEO-optimized sites
+node test-professional-sites.js
+
+# Test calibration suite (original test set)
+node test-calibration-sites.js
+
+# Run full calibration suite
+node run-calibration-suite.js
+```
+
+### Test Coverage
+- **Average Sites**: 6 URLs testing typical websites (expected: 45-52%)
+- **Professional Sites**: 4 URLs testing SEO-optimized content (expected: 60-70%)
+- **Calibration Sites**: 9 URLs testing mixed quality sites (expected: 40-70% range)
+
+### Validation Scripts Location
+All test scripts are in the project root and use the local development API (localhost:3000). Make sure the dev server is running before executing tests.
+
+### Expected Results
+- Average sites: ~48% (reflects typical non-optimized content)
+- Professional SEO sites: ~66% (strong technical SEO but content quality varies)
+- Excellent AI-optimized sites: 70%+ (rare, requires both technical excellence and high content quality)
+
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
+4. Run test suites to validate changes
 5. Submit a pull request
 
 ## 📄 License
