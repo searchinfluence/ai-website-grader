@@ -668,7 +668,38 @@ export function analyzeMobileOptimization(content: CrawledContent): MobileOptimi
 export function analyzeSchemaAnalysis(content: CrawledContent): SchemaAnalysis {
   const findings: string[] = [];
   const recommendations: RecommendationItem[] = [];
-  
+
+  // Parse schema markup to extract types (handle @graph structure)
+  const schemaTypes: string[] = [];
+  let hasSchema = false;
+
+  content.schemaMarkup.forEach(schemaString => {
+    try {
+      const parsed = JSON.parse(schemaString);
+
+      // Handle @graph structure (array of schemas)
+      const items = Array.isArray(parsed)
+        ? parsed
+        : (parsed && Array.isArray(parsed['@graph']))
+          ? parsed['@graph']
+          : [parsed];
+
+      items.forEach(item => {
+        if (item && item['@type']) {
+          hasSchema = true;
+          const types = Array.isArray(item['@type']) ? item['@type'] : [item['@type']];
+          types.forEach(type => {
+            if (type && !schemaTypes.includes(type)) {
+              schemaTypes.push(type);
+            }
+          });
+        }
+      });
+    } catch (e) {
+      // Skip invalid JSON
+    }
+  });
+
   // Analyze schema presence
   const schemaPresence = analyzeSchemaPresence(content);
   if (schemaPresence < 70) {
@@ -680,7 +711,7 @@ export function analyzeSchemaAnalysis(content: CrawledContent): SchemaAnalysis {
       '1. Add Organization schema for business information\n2. Implement Article schema for blog posts\n3. Use Product schema for e-commerce items\n4. Add LocalBusiness schema if applicable\n5. Use Google\'s Structured Data Testing Tool to validate'
     ));
   }
-  
+
   // Analyze schema validation
   const schemaValidation = analyzeSchemaValidation(content);
   if (schemaValidation < 70) {
@@ -692,7 +723,7 @@ export function analyzeSchemaAnalysis(content: CrawledContent): SchemaAnalysis {
       '1. Use Google\'s Rich Results Test tool\n2. Fix syntax errors in JSON-LD\n3. Ensure required properties are included\n4. Validate schema against Schema.org specifications\n5. Test for rich snippet eligibility'
     ));
   }
-  
+
   // Analyze rich snippet potential
   const richSnippetPotential = analyzeRichSnippetPotential(content);
   if (richSnippetPotential < 70) {
@@ -704,7 +735,7 @@ export function analyzeSchemaAnalysis(content: CrawledContent): SchemaAnalysis {
       '1. Add FAQ schema for question-answer content\n2. Implement Review schema for testimonials\n3. Use HowTo schema for step-by-step guides\n4. Add Recipe schema for cooking content\n5. Include Event schema for event listings'
     ));
   }
-  
+
   // Analyze structured data completeness
   const structuredDataCompleteness = analyzeStructuredDataCompleteness(content);
   if (structuredDataCompleteness < 70) {
@@ -716,7 +747,7 @@ export function analyzeSchemaAnalysis(content: CrawledContent): SchemaAnalysis {
       '1. Add missing required properties\n2. Include optional but valuable properties\n3. Ensure consistency across all pages\n4. Add breadcrumb schema for navigation\n5. Implement sitelinks search box schema'
     ));
   }
-  
+
   // Analyze JSON-LD implementation
   const jsonLdImplementation = analyzeJsonLdImplementation(content);
   if (jsonLdImplementation < 70) {
@@ -728,10 +759,10 @@ export function analyzeSchemaAnalysis(content: CrawledContent): SchemaAnalysis {
       '1. Prefer JSON-LD over Microdata for new implementations\n2. Place JSON-LD in the <head> section\n3. Use proper schema.org context\n4. Ensure valid JSON syntax\n5. Keep structured data updated with content changes'
     ));
   }
-  
+
   const score = Math.round((schemaPresence + schemaValidation + richSnippetPotential + structuredDataCompleteness + jsonLdImplementation) / 5);
   const status = getScoreStatus(score);
-  
+
   return {
     score,
     status,
@@ -741,7 +772,9 @@ export function analyzeSchemaAnalysis(content: CrawledContent): SchemaAnalysis {
     schemaValidation,
     richSnippetPotential,
     structuredDataCompleteness,
-    jsonLdImplementation
+    jsonLdImplementation,
+    hasSchema,
+    schemaTypes
   };
 }
 
@@ -976,22 +1009,45 @@ function analyzeAltText(images: { src: string; alt: string }[]): number {
 }
 
 function analyzeLinkQuality(links: { href: string; text: string; internal: boolean }[]): number {
-  if (links.length === 0) return 50;
-  
+  if (links.length === 0) return 30; // No links is poor
+
   const internalLinks = links.filter(link => link.internal).length;
   const externalLinks = links.filter(link => !link.internal).length;
-  const descriptiveLinks = links.filter(link => 
-    link.text.length > 5 && 
-    !link.text.toLowerCase().includes('click here') && 
+  const descriptiveLinks = links.filter(link =>
+    link.text.length > 5 &&
+    !link.text.toLowerCase().includes('click here') &&
     !link.text.toLowerCase().includes('read more')
   ).length;
-  
-  let score = 50;
-  if (internalLinks > 0) score += 20;
-  if (externalLinks > 0) score += 10;
-  if (descriptiveLinks / links.length > 0.8) score += 20;
-  
-  return Math.min(100, score);
+
+  let score = 0;
+
+  // Internal links: need meaningful quantity (not just 1)
+  if (internalLinks >= 10) score += 25;
+  else if (internalLinks >= 5) score += 15;
+  else if (internalLinks >= 2) score += 5;
+
+  // External links: need at least 2-3 for good score
+  if (externalLinks >= 3) score += 20;
+  else if (externalLinks >= 2) score += 10;
+  else if (externalLinks >= 1) score += 5;
+
+  // Descriptive link text ratio
+  const descriptiveRatio = links.length > 0 ? descriptiveLinks / links.length : 0;
+  if (descriptiveRatio > 0.9) score += 25;
+  else if (descriptiveRatio > 0.8) score += 15;
+  else if (descriptiveRatio > 0.6) score += 10;
+  else if (descriptiveRatio > 0.4) score += 5;
+
+  // Link density (links per 100 words of content)
+  // Penalize excessive linking (over-optimization)
+  const linkDensity = links.length / 100; // Simplified - assumes ~100 words average
+  if (linkDensity > 5) score -= 10; // Too many links
+  if (linkDensity < 0.5) score -= 5; // Too few links
+
+  // Balance bonus: having both internal AND external links
+  if (internalLinks >= 3 && externalLinks >= 2) score += 30;
+
+  return Math.max(0, Math.min(100, score));
 }
 
 function analyzeReadability(paragraphs: string[]): number {
@@ -1212,34 +1268,100 @@ function analyzeQAFormat(content: CrawledContent): number {
   const text = content.paragraphs.join(' ').toLowerCase();
   const questionMarkers = text.match(/\?/g)?.length || 0;
   const headingQuestions = content.headings.filter(h => h.text.includes('?')).length;
-  
+
+  // Check for FAQ schema (strongest signal)
+  const hasFAQSchema = content.schemaMarkup.some(schema =>
+    schema.toLowerCase().includes('"@type"') && schema.toLowerCase().includes('faqpage')
+  );
+
   let score = 0;
-  if (questionMarkers > 0) score += 40;
-  if (headingQuestions > 0) score += 40;
-  if (questionMarkers > 3) score += 20;
-  
+
+  // FAQ Schema is strongest indicator of Q&A format
+  if (hasFAQSchema) {
+    score += 50;
+  }
+
+  // Headings as questions (structured Q&A)
+  if (headingQuestions >= 5) score += 30;
+  else if (headingQuestions >= 3) score += 20;
+  else if (headingQuestions >= 1) score += 10;
+
+  // Question density in content
+  const paragraphCount = content.paragraphs.length;
+  if (paragraphCount > 0) {
+    const questionDensity = questionMarkers / paragraphCount;
+
+    // High question density suggests Q&A format
+    if (questionDensity >= 1) score += 20; // At least 1 question per paragraph
+    else if (questionDensity >= 0.5) score += 10; // Question every 2 paragraphs
+    else if (questionDensity >= 0.25) score += 5; // Some questions present
+  }
+
+  // Penalty for scattered questions without structure
+  if (questionMarkers > 0 && headingQuestions === 0 && !hasFAQSchema) {
+    score = Math.min(score, 40); // Cap at 40% if questions not structured
+  }
+
   return Math.min(100, score);
 }
 
 function analyzeEntityRecognition(content: CrawledContent): number {
   const text = content.paragraphs.join(' ');
-  
+  const wordCount = text.split(/\s+/).length;
+
   // Look for capitalized words (potential entities)
   const capitalizedWords = text.match(/\b[A-Z][a-z]+\b/g) || [];
   const uniqueEntities = new Set(capitalizedWords.filter(word => word.length > 2));
-  
-  return Math.min(100, uniqueEntities.size * 5);
+
+  // Calculate entity density (entities per 100 words)
+  if (wordCount < 50) return 0; // Too short to measure
+
+  const entityDensity = (uniqueEntities.size / wordCount) * 100;
+
+  // Score based on density:
+  // 0-2% = poor (0-40 points)
+  // 2-4% = fair (40-60 points)
+  // 4-6% = good (60-80 points)
+  // 6%+ = excellent (80-100 points)
+  if (entityDensity < 2) return Math.min(40, entityDensity * 20);
+  if (entityDensity < 4) return 40 + ((entityDensity - 2) * 10);
+  if (entityDensity < 6) return 60 + ((entityDensity - 4) * 10);
+  return Math.min(100, 80 + ((entityDensity - 6) * 5));
 }
 
 function analyzeFactualDensity(paragraphs: string[]): number {
   const text = paragraphs.join(' ').toLowerCase();
+  const wordCount = text.split(/\s+/).length;
+
+  if (wordCount < 50) return 0; // Too short to measure
+
   const factualWords = [
     'percent', '%', 'study', 'research', 'data', 'statistics', 'according to',
     'survey', 'report', 'analysis', 'found', 'shows', 'indicates', 'reveals'
   ];
-  
+
   const factualCount = factualWords.filter(word => text.includes(word)).length;
-  return Math.min(100, factualCount * 15);
+
+  // Look for actual numbers with units (stronger signal)
+  const numbersWithUnits = text.match(/\d+\s*(%|percent|dollars?|users?|people|students?|million|billion|thousand)/gi) || [];
+
+  // Calculate density per 100 words
+  const factualDensity = (factualCount / wordCount) * 100;
+  const dataPointDensity = (numbersWithUnits.length / wordCount) * 100;
+
+  // Score based on combined density:
+  // < 0.5% = poor (0-30 points)
+  // 0.5-1% = fair (30-50 points)
+  // 1-2% = good (50-70 points)
+  // 2-3% = very good (70-85 points)
+  // 3%+ = excellent (85-100 points)
+  const combinedDensity = factualDensity + (dataPointDensity * 2); // Weight actual data points higher
+
+  if (combinedDensity < 0.5) return Math.min(30, combinedDensity * 60);
+  if (combinedDensity < 1) return 30 + ((combinedDensity - 0.5) * 40);
+  if (combinedDensity < 2) return 50 + ((combinedDensity - 1) * 20);
+  if (combinedDensity < 3) return 70 + ((combinedDensity - 2) * 15);
+  return Math.min(100, 85 + ((combinedDensity - 3) * 5));
 }
 
 function analyzeSemanticClarity(paragraphs: string[]): number {
