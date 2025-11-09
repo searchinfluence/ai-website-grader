@@ -5,6 +5,7 @@ import Image from 'next/image';
 import URLAnalyzer from '@/components/URLAnalyzer';
 import ScoreReport from '@/components/ScoreReport';
 import AnalysisStatus from '@/components/AnalysisStatus';
+import ResourcesSection from '@/components/ResourcesSection';
 import { WebsiteAnalysis } from '@/types';
 
 export default function Home() {
@@ -83,6 +84,9 @@ export default function Home() {
           )}
         </div>
       </div>
+
+      {/* Resources Section */}
+      <ResourcesSection />
 
       {/* Features Section */}
       <div className="features">
