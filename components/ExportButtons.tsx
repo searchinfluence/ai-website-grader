@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { FileText, FileDown, Loader2, Printer } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
 import { generatePDFReport, generateMarkdownReport } from '@/lib/exporters';
-import { useGoogleTagManager } from './GoogleTagManager';
+import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
 
 interface ExportButtonsProps {
   analysis: WebsiteAnalysis;
