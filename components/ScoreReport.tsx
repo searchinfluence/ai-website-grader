@@ -4,7 +4,7 @@ import { WebsiteAnalysis } from '@/types';
 import ScoreCard from './ScoreCard';
 import ExportButtons from './ExportButtons';
 import { generateMarkdownReport, downloadMarkdown } from '@/lib/exporters';
-import { useGoogleTagManager } from './GoogleTagManager';
+import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
 
 interface ScoreReportProps {
   analysis: WebsiteAnalysis;

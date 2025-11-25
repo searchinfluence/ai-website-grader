@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { Search, FileText, Loader2, AlertCircle } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
-import { useGoogleTagManager } from './GoogleTagManager';
+import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
 
 interface URLAnalyzerProps {
   onAnalysisComplete: (analysis: WebsiteAnalysis) => void;
