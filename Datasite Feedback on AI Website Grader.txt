@@ -1,0 +1,139 @@
+# Datasite Feedback on AI Website Grader
+
+Gi Levet   7:14
+Great. So yeah, see, I've tried out Will's website grader tool. We're eager to hear your feedback and we obviously he's not here. I'm sure he would appreciate the conversation. So we will take some good notes and pass him along.
+
+Nathan Ensminger   7:15
+Good.
+
+Kevin Shea   7:30
+If it works, I love it.
+
+Nathan Ensminger   7:31
+OK.
+
+Gi Levet   7:32
+Yeah, that's awesome.
+
+Kevin Shea   7:33
+Seriously, it's like it's a great little tool that he's built, but you know, it's all about actual results and the accuracy of the results. So hard to tell.
+
+Nathan Ensminger   7:37
+Mhm.
+Yep. And so just kind of based on my my experience with it, I'm putting this in the chat too, just for note taking purposes. So Sam spent some time with it, so I've put her feedback in the chat. I'm gonna add my feedback as well.
+
+Chuck   7:45
+2.
+
+Nathan Ensminger   8:00
+Uh, just so you have it.
+It's good.
+
+Gi Levet   8:04
+This is great. Thank you.
+
+Nathan Ensminger   8:06
+So yeah, just quickly kind of addressing some of Sam's feedback. Ease of use was definitely for both of us. We both felt like the ease of use was very high. It seems like it's it's very intuitive to use the tool, especially when analyzing a URL.
+I think Sam had some feedback on specifically analyzing text. She expected potentially a different scoring system. Since there's no URL, the scoring system seems low, so that's just something that you could potentially take away.
+Value of recommendations. We both kind of felt this way, but we expected the recommendations to be a bit more tailored to each URL. It seemed like we're plugging in our URLs as well as some of our competitors, and it seemed like a lot of the feedback was largely the same, so.
+It just feels like maybe there's some more room to grow as far as kind of the variety of feedback and making sure it's tailored to kind of each use case. I know it's early stages of the tool, so I'm sure there's plenty of room to grow there, but.
+And then, yeah, just some other things too that I felt specifically was just love the ability to evaluate both our site and our competitors. As I mentioned, I was putting a lot of our competitors in there and it's just kind of cool to have that visibility with a tool like that and especially when there's a scoring system and how we.
+Compare to that point. Maybe there's a comparison function that you consider adding at some point for us to to compare, you know, similar pages on a website across the board with our competitors. This is kind of just a maybe just anecdotal for me, but I appreciated the experience when the results were loading.
+There's kind of a series of fun facts that we're flying across the screen, and it actually gave you something interesting to look at instead of just a, you know, a little bar that's spinning or something. But so that was cool. And then, yeah, it didn't seem real clear to me, at least on the the front page there. It's called a website.
+Tool or website grader tool, but it seemed like it was more focused on a web page. So I don't know if that's just a distinction to make because it seemed like the results I was getting was very specific to the page and maybe not the site as a whole.
+
+Gi Levet   10:17
+Mhm.
+
+Chuck   10:22
+Yeah.
+
+Nathan Ensminger   10:22
+So just maybe some clarity could be added there.
+
+Kevin Shea   10:28
+Is that what it's doing? Is that true?
+
+Nathan Ensminger   10:29
+Yeah, do you have a feedback on that?
+
+Chuck   10:30
+Yeah, I find when I use it, you know, these things are still kind of, I think they're still in there like very like first or second iteration, which is why I think we wanted feedback. But I I see the same thing too. It is more tailored towards.
+
+Nathan Ensminger   10:39
+Sure.
+
+Chuck   10:45
+Uh, a single URL. The goal is to eventually be able to have it be a full website creator. Um, I think we're dealing with.
+
+Kevin Shea   10:52
+Uh, so it is only looking at one euro.
+
+Chuck   10:56
+Yeah, um, I think what we're dealing with and you know, I don't wanna speak for Will, but I think what we're kind of dealing with is API limitations and you know, making those those calls, um, you know, 'cause all that.
+
+Kevin Shea   10:57
+Gotcha.
+
+Nathan Ensminger   11:05
+M.
+
+Kevin Shea   11:08
+Sure.
+
+Chuck   11:11
+You know, I think cost money. I don't exactly know.
+
+Kevin Shea   11:14
+You should swing for the fences now.
+
+Chuck   11:16
+Yeah, I mean that's the goal. And yeah, as far as the the competitive analysis, I think I know what you mean when I it seems like the recommendations are are kind of standard.
+
+Nathan Ensminger   11:17
+OK.
+
+Kevin Shea   11:19
+Yeah.
+
+Nathan Ensminger   11:33
+Yeah.
+
+Chuck   11:33
+Um, are, you know, similar across all? You know, if you were analyzing 2 pages on the same topic, the recommendations are probably going to be similar. Um, I know that there are some other tools, um, in development right now more focused on.
+
+Nathan Ensminger   11:45
+Mhm.
+
+Chuck   11:53
+Like market share, competitive analysis, still working out some bugs on those. There's he, I think he spends most of his time building these tools. Well, I think it's, you know, yeah, I mean it is, it's fun, it's cool. I don't know anything about coding, but you know, I.
+
+Nathan Ensminger   11:57
+Oh.
+OK.
+It looks fun.
+
+Chuck   12:13
+Can go in and ask it to to write a script, but I think he's a little more involved than just having AI do it. Um. But to to address that question, you know, I you know, I I think those are in the works. Um. I've definitely given feedback to him on some of those other um.
+
+Nathan Ensminger   12:19
+M.
+
+Chuck   12:30
+Those other workflows or uh, competitive analysis, uh gauges. Um, so I think more to come on those, but those are the two things that you know, I have the same feedback.
+
+Nathan Ensminger   12:34
+Mhm.
+Mhm.
+OK, right on. And it's very possible too that what the tool is telling us for recommendations, even though it's across the board, maybe it is all valid and maybe if I just continue to put in more websites, I'd see kind of more tailored feedback over time. I think just as a user when I was seeing consistent feedback.
+The different sites I was putting in or URLs, it made me question the validity or how specific these were to our website. So just just as a user to gain trust, I think it would be nice to see more variety there.
+
+Chuck   13:14
+Sure.
+
+Nathan Ensminger   13:15
+And then just just the last thing that I I indicated here in the notes is just eventually the ability to click into different aspects. You know, you kind of get that nice package of here's how it's performing in the different areas.
+There there were certain things that were clickable to get more information, but certainly as kind of a future improvements would be nice to see more depth to the feedback and the ability to click through to see that. So I think that's it.
+
+Kevin Shea   13:42
+Yeah, Scrunch has got, Scrunch has got, uh, prompts. They've got a new thing in the left column. Have you seen it?

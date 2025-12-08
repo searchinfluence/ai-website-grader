@@ -270,6 +270,14 @@ The application uses a modern design system with:
 
 ## 📄 Recent Updates
 
+### Security Update - React2Shell (CVE-2025-66478) Fix (December 2025)
+- 🔒 **SECURITY FIX**: Addressed React2Shell vulnerability (CVE-2025-66478) by upgrading affected dependencies
+- ✅ **Next.js**: Upgraded from 15.4.5 to 15.4.8 (patched version)
+- ✅ **React**: Upgraded from 19.1.0 to 19.1.2 (patched version)
+- ✅ **React-DOM**: Upgraded from 19.1.0 to 19.1.2 (patched version)
+- ✅ **Build Verification**: All builds passing with zero vulnerabilities detected
+- 📝 **Impact**: Resolves critical security vulnerability affecting React Server Components and Next.js middleware
+
 ### v3.0 - Critical Scoring Fix (November 2025)
 - 🔴 **CRITICAL FIX**: Corrected overall score calculation to use proper 7-factor weighted system
 - ✅ **Scoring Accuracy**: Fixed bug where system used old 6-factor hybrid score instead of new weighted calculation
@@ -343,6 +351,28 @@ All test scripts are in the project root and use the local development API (loca
 3. Make your changes
 4. Run test suites to validate changes
 5. Submit a pull request
+
+## 🔒 Security
+
+### Security Updates
+
+**React2Shell (CVE-2025-66478) - December 2025**
+- **Vulnerability**: Critical security issue affecting React Server Components and Next.js middleware
+- **Affected Packages**: 
+  - `next`: versions 15.0.0 through 16.0.6
+  - `react-server-dom-*`: versions 19.0.0, 19.1.0, 19.1.1, 19.2.0
+- **Resolution**: 
+  - Upgraded `next` from 15.4.5 → 15.4.8
+  - Upgraded `react` from 19.1.0 → 19.1.2
+  - Upgraded `react-dom` from 19.1.0 → 19.1.2
+- **Verification**: All dependencies verified with `npm audit` showing zero vulnerabilities
+- **References**: 
+  - [Vercel React2Shell Security Bulletin](https://vercel.com/kb/bulletin/react2shell/)
+  - [React2Shell Tech Briefing](https://react2shell.info/)
+
+### Reporting Security Issues
+
+If you discover a security vulnerability, please email security@searchinfluence.com instead of using the issue tracker.
 
 ## 📄 License
 
