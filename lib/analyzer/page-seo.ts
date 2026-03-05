@@ -70,7 +70,7 @@ export function analyzePageSeo(content: CrawledContent): FactorResult {
   if (!pathIsClean || pathDepth > 3 || hasQuery) {
     findings.push(`URL path quality issue detected (path depth ${pathDepth}, query params ${hasQuery ? 'present' : 'absent'}).`);
     recommendations.push({
-      text: `Simplify the ${hostLabel} URL path depth and remove unnecessary query params (depth=${pathDepth}, query=${hasQuery ? 'yes' : 'no'}).`,
+      text: `Simplify the ${hostLabel} URL structure: current depth is ${pathDepth} levels${hasQuery ? ', has query parameters' : ''}${!pathIsClean ? ', contains non-clean characters' : ''}.`,
       priority: 'low',
       category: 'url-structure',
       timeToImplement: '~1 hour'

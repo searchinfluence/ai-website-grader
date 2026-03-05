@@ -58,6 +58,9 @@ function getOverallScoreStatus(score: number) {
 
 export default function ScoreReport({ analysis }: ScoreReportProps) {
   const { trackExport } = useGoogleTagManager();
+  const lowestScoringFactorKey = SCORING_FACTORS.reduce((lowestKey, factor) => {
+    return analysis.factors[factor.key].score < analysis.factors[lowestKey].score ? factor.key : lowestKey;
+  }, SCORING_FACTORS[0].key);
   const scoreColor = getOverallScoreColor(analysis.overallScore);
   const clampedScore = Math.max(0, Math.min(100, analysis.overallScore));
   const gaugeSize = 120;
@@ -208,6 +211,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                   accent={theme.accent}
                   borderColor={theme.borderColor}
                   gradient={theme.gradient}
+                  defaultOpen={factor.key === lowestScoringFactorKey}
                 />
               );
             })}

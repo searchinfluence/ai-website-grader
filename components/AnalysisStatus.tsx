@@ -1,247 +1,251 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Loader2, Brain, Search, Zap, Target, TrendingUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Loader2, Brain, Search, Zap, Target, CheckCircle2 } from 'lucide-react';
 
 interface AnalysisStatusProps {
   isVisible: boolean;
 }
 
-const analysisQuotes = [
-  {
-    text: "AI is not just about algorithms—it's about understanding human intent and delivering value at the right moment.",
-    author: "AI Search Expert",
-    icon: Brain
-  },
-  {
-    text: "The future of search isn't about keywords—it's about semantic understanding and contextual relevance.",
-    author: "Search Innovation",
-    icon: Search
-  },
-  {
-    text: "Every piece of content should be optimized for both humans and AI systems to discover and understand.",
-    author: "Content Strategy",
-    icon: Target
-  },
-  {
-    text: "Performance isn't just speed—it's about creating seamless experiences that convert visitors into customers.",
-    author: "UX Optimization",
-    icon: Zap
-  },
-  {
-    text: "The best SEO strategy is one that adapts to how people actually search and how AI actually understands.",
-    author: "Digital Marketing",
-    icon: TrendingUp
-  },
-  {
-    text: "AI-powered search rewards content that's structured, factual, and genuinely helpful to users.",
-    author: "AI SEO",
-    icon: Brain
-  },
-  {
-    text: "Your website's success in AI search depends on how well you answer the questions your audience is asking.",
-    author: "Search Psychology",
-    icon: Search
-  },
-  {
-    text: "Technical excellence and content quality work together to create AI-friendly experiences.",
-    author: "Technical SEO",
-    icon: Zap
-  }
-];
+const analysisSteps = [
+  { text: 'Fetching page content...', icon: Search, label: 'Crawling' },
+  { text: 'Analyzing structure & schema...', icon: Brain, label: 'Analyzing' },
+  { text: 'Running technical checks...', icon: Zap, label: 'Optimizing' },
+  { text: 'Generating recommendations...', icon: Target, label: 'Scoring' }
+] as const;
 
 export default function AnalysisStatus({ isVisible }: AnalysisStatusProps) {
-  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
-  const [fadeState, setFadeState] = useState<'in' | 'out'>('in');
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
   useEffect(() => {
     if (!isVisible) return;
 
-    const quoteInterval = setInterval(() => {
-      setFadeState('out');
-      
-      setTimeout(() => {
-        setCurrentQuoteIndex((prev) => (prev + 1) % analysisQuotes.length);
-        setFadeState('in');
-      }, 300);
-    }, 4000);
+    setCurrentStepIndex(0);
+    const stepInterval = setInterval(() => {
+      setCurrentStepIndex((prev) => (prev + 1) % analysisSteps.length);
+    }, 3000);
 
-    return () => clearInterval(quoteInterval);
+    return () => clearInterval(stepInterval);
   }, [isVisible]);
 
   if (!isVisible) return null;
 
-  const currentQuote = analysisQuotes[currentQuoteIndex];
-  const IconComponent = currentQuote.icon;
+  const currentStep = analysisSteps[currentStepIndex];
+  const CurrentIcon = currentStep.icon;
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(44, 62, 80, 0.85)', // Using your dark-blue with transparency
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      backdropFilter: 'blur(12px)'
-    }}>
-      <div style={{
-        background: 'var(--content-bg)',
-        borderRadius: '20px',
-        padding: '40px',
-        maxWidth: '600px',
-        width: '90%',
-        textAlign: 'center',
-        boxShadow: '0 25px 80px rgba(44, 62, 80, 0.4)',
-        border: '2px solid var(--orange-accent)',
-        opacity: fadeState === 'in' ? 1 : 0,
-        transform: fadeState === 'in' ? 'translateY(0)' : 'translateY(20px)',
-        transition: 'all 0.3s ease'
-      }}>
-        {/* Loading Animation */}
-        <div style={{
-          marginBottom: '30px',
-          display: 'flex',
-          justifyContent: 'center'
-        }}>
-          <div style={{
-            position: 'relative',
-            width: '80px',
-            height: '80px'
-          }}>
-            <Loader2 
-              size={80} 
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(44, 62, 80, 0.85)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+        backdropFilter: 'blur(12px)'
+      }}
+    >
+      <div
+        style={{
+          background: 'var(--content-bg)',
+          borderRadius: '20px',
+          padding: '40px',
+          maxWidth: '600px',
+          width: '90%',
+          textAlign: 'center',
+          boxShadow: '0 25px 80px rgba(44, 62, 80, 0.4)',
+          border: '2px solid var(--orange-accent)',
+          transition: 'all 0.3s ease'
+        }}
+      >
+        <div
+          style={{
+            marginBottom: '30px',
+            display: 'flex',
+            justifyContent: 'center'
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              width: '80px',
+              height: '80px'
+            }}
+          >
+            <Loader2
+              size={80}
               style={{
                 color: 'var(--orange-accent)',
                 animation: 'spin 2s linear infinite'
-              }} 
+              }}
             />
-            <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              background: 'var(--content-bg)',
-              borderRadius: '50%',
-              width: '60px',
-              height: '60px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <IconComponent size={24} style={{ color: 'var(--orange-accent)' }} />
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                background: 'var(--content-bg)',
+                borderRadius: '50%',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <CurrentIcon size={24} style={{ color: 'var(--orange-accent)' }} />
             </div>
           </div>
         </div>
 
-        {/* Status Text */}
-        <h2 style={{
-          fontSize: '1.5rem',
-          fontWeight: '600',
-          color: 'var(--content-text)',
-          marginBottom: '20px'
-        }}>
+        <h2
+          style={{
+            fontSize: '1.5rem',
+            fontWeight: '600',
+            color: 'var(--content-text)',
+            marginBottom: '10px'
+          }}
+        >
           Analyzing Your Website...
         </h2>
 
-        {/* Quote */}
-        <div style={{
-          marginBottom: '30px',
-          padding: '20px',
-          background: 'var(--background-gray)',
-          borderRadius: '12px',
-          border: '1px solid var(--border-gray)'
-        }}>
-          <blockquote style={{
-            fontSize: '1.1rem',
-            fontStyle: 'italic',
-            color: 'var(--content-text)',
-            margin: '0 0 15px 0',
-            lineHeight: '1.6'
-          }}>
-            &ldquo;{currentQuote.text}&rdquo;
-          </blockquote>
-          <cite style={{
-            fontSize: '0.9rem',
-            color: 'var(--muted-text)',
-            fontStyle: 'normal'
-          }}>
-            — {currentQuote.author}
-          </cite>
+        <div
+          style={{
+            marginBottom: '24px',
+            padding: '20px',
+            background: 'var(--background-gray)',
+            borderRadius: '12px',
+            border: '1px solid var(--border-gray)'
+          }}
+        >
+          <p
+            style={{
+              margin: '0 0 8px',
+              fontSize: '1.05rem',
+              color: 'var(--content-text)',
+              fontWeight: 600
+            }}
+          >
+            {currentStep.text}
+          </p>
+          <p
+            style={{
+              margin: 0,
+              fontSize: '0.85rem',
+              color: 'var(--muted-text)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}
+          >
+            {currentStepIndex + 1} of {analysisSteps.length}
+          </p>
         </div>
 
-        {/* Progress Steps */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '20px',
-          flexWrap: 'wrap'
-        }}>
-          {[
-            { step: 'Crawling', icon: Search },
-            { step: 'Analyzing', icon: Brain },
-            { step: 'Optimizing', icon: Zap },
-            { step: 'Scoring', icon: Target }
-          ].map((item, index) => {
-            const StepIcon = item.icon;
+        <div
+          style={{
+            display: 'grid',
+            gap: '8px',
+            marginBottom: '24px',
+            textAlign: 'left'
+          }}
+        >
+          {analysisSteps.map((step, index) => {
+            const StepIcon = step.icon;
+            const isComplete = index < currentStepIndex;
+            const isCurrent = index === currentStepIndex;
+
             return (
-              <div key={index} style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                                 <div style={{
-                   width: '40px',
-                   height: '40px',
-                   borderRadius: '50%',
-                   background: 'var(--background-gray)',
-                   display: 'flex',
-                   alignItems: 'center',
-                   justifyContent: 'center',
-                   border: '2px solid var(--orange-accent)'
-                 }}>
-                  <StepIcon size={18} style={{ color: 'var(--orange-accent)' }} />
+              <div
+                key={step.text}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                  borderRadius: '10px',
+                  padding: '10px 12px',
+                  border: isCurrent ? '1px solid rgba(230, 126, 34, 0.45)' : '1px solid var(--border-gray)',
+                  background: isCurrent ? 'rgba(230, 126, 34, 0.1)' : 'var(--content-bg)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <StepIcon size={16} style={{ color: isCurrent ? 'var(--orange-accent)' : 'var(--muted-text)' }} />
+                  <span style={{ color: 'var(--content-text)', fontSize: '0.9rem' }}>{step.text}</span>
                 </div>
-                <span style={{
-                  fontSize: '0.8rem',
-                  color: 'var(--muted-text)',
-                  fontWeight: '500'
-                }}>
-                  {item.step}
-                </span>
+                {isComplete && <CheckCircle2 size={18} style={{ color: 'var(--success-green)' }} />}
               </div>
             );
           })}
         </div>
 
-        {/* Powered by Search Influence */}
-        <div style={{
-          marginTop: '30px',
-          padding: '15px',
-          background: 'var(--background-gray)',
-          borderRadius: '8px',
-          border: '1px solid var(--border-gray)'
-        }}>
-          <p style={{
-            fontSize: '0.9rem',
-            color: 'var(--muted-text)',
-            margin: 0
-          }}>
-            Powered by <strong style={{ color: 'var(--orange-accent)' }}>Search Influence</strong> - AI SEO Experts
-          </p>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '20px',
+            flexWrap: 'wrap'
+          }}
+        >
+          {analysisSteps.map((item, index) => {
+            const StepIcon = item.icon;
+            const isCurrent = index === currentStepIndex;
+
+            return (
+              <div
+                key={item.label}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                  opacity: isCurrent ? 1 : 0.55
+                }}
+              >
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: isCurrent ? 'var(--orange-accent)' : 'var(--background-gray)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: `2px solid ${isCurrent ? 'var(--orange-accent)' : 'var(--border-gray)'}`,
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <StepIcon size={18} style={{ color: isCurrent ? 'var(--white)' : 'var(--muted-text)' }} />
+                </div>
+                <span
+                  style={{
+                    fontSize: '0.8rem',
+                    color: isCurrent ? 'var(--content-text)' : 'var(--muted-text)',
+                    fontWeight: isCurrent ? 700 : 500
+                  }}
+                >
+                  {item.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       <style jsx>{`
         @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </div>
   );
-} 
+}

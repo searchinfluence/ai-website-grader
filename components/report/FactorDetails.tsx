@@ -5,6 +5,7 @@ interface FactorDetailsProps {
   accent: string;
   borderColor: string;
   gradient: string;
+  defaultOpen?: boolean;
 }
 
 const priorityStyleMap = {
@@ -37,11 +38,11 @@ function formatStatValue(value: unknown): string {
   return String(value);
 }
 
-export default function FactorDetails({ factor, accent, borderColor, gradient }: FactorDetailsProps) {
+export default function FactorDetails({ factor, accent, borderColor, gradient, defaultOpen }: FactorDetailsProps) {
   const entries = Object.entries(factor.stats ?? {});
 
   return (
-    <details style={{
+    <details open={defaultOpen} style={{
       border: `1px solid ${borderColor}`,
       borderRadius: '12px',
       background: 'var(--content-bg)',
