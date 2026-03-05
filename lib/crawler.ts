@@ -1,4 +1,6 @@
 import * as cheerio from 'cheerio';
+import dns from 'node:dns/promises';
+import net from 'node:net';
 import { CrawledContent } from '@/types';
 import {
   analyzePerformanceMetrics,
@@ -13,6 +15,7 @@ const USER_AGENT = 'AI-Website-Grader/2.0 (+https://ai-grader.searchinfluence.co
 export async function crawlWebsite(url: string): Promise<CrawledContent> {
   // Validate and normalize URL
   const normalizedUrl = normalizeUrl(url);
+  await assertSafeTargetUrl(normalizedUrl);
   
   // Fetch with timeout and error handling
   const controller = new AbortController();
@@ -170,6 +173,7 @@ async function analyzePerformanceWithCaching(url: string, html: string): Promise
     errors: number;
     warnings: number;
     isValid: boolean;
+    validationState: 'valid' | 'invalid' | 'unknown';
     messages: Array<{
       type: 'error' | 'warning' | 'info';
       message: string;
@@ -218,9 +222,12 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
     if (text) headings.push({ level, text });
   });
   
-  // Extract paragraphs
+  // Extract main-content paragraphs (avoid noisy global div extraction)
   const paragraphs: string[] = [];
-  $('p, div').each((_, element) => {
+  const mainContent = $('main, article, [role="main"], .content, .main-content, .entry-content, .post-content').first();
+  const extractionRoot = mainContent.length > 0 ? mainContent : $('body');
+
+  extractionRoot.find('p, li').each((_, element) => {
     const text = $(element).text().trim();
     if (text && text.length > 20) {
       paragraphs.push(text);
@@ -380,17 +387,17 @@ function estimateLoadTime(html: string, imageCount: number): number {
   // Simple estimation based on content size
   const htmlSize = html.length;
   
-  // Base time in seconds
-  let estimatedTime = 0.5; // Base 500ms
+  // Base time in milliseconds
+  let estimatedTimeMs = 500;
   
   // Add time based on HTML size
-  if (htmlSize > 50000) estimatedTime += 0.5;
-  if (htmlSize > 100000) estimatedTime += 1.0;
+  if (htmlSize > 50000) estimatedTimeMs += 500;
+  if (htmlSize > 100000) estimatedTimeMs += 1000;
   
   // Add time based on image count
-  estimatedTime += imageCount * 0.1;
+  estimatedTimeMs += imageCount * 100;
   
-  return Math.round(estimatedTime * 100) / 100; // Round to 2 decimal places
+  return Math.round(estimatedTimeMs);
 }
 
 async function fetchRobotsInfo(url: string): Promise<CrawledContent['robotsInfo']> {
@@ -564,10 +571,81 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
 }
 
 function normalizeUrl(url: string): string {
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    return `https://${url}`;
+  const withProtocol = (!url.startsWith('http://') && !url.startsWith('https://'))
+    ? `https://${url}`
+    : url;
+
+  let parsed: URL;
+  try {
+    parsed = new URL(withProtocol);
+  } catch {
+    throw new Error('Invalid URL format');
   }
-  return url;
+
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    throw new Error('Only HTTP and HTTPS URLs are supported');
+  }
+
+  return parsed.toString();
+}
+
+const BLOCKED_HOSTNAMES = new Set([
+  'localhost',
+  'metadata.google.internal',
+  'metadata',
+  '169.254.169.254',
+  '100.100.100.200',
+]);
+
+async function assertSafeTargetUrl(url: string): Promise<void> {
+  const parsed = new URL(url);
+  const hostname = parsed.hostname.toLowerCase();
+
+  if (BLOCKED_HOSTNAMES.has(hostname) || hostname.endsWith('.localhost')) {
+    throw new Error('Target host is blocked for security reasons');
+  }
+
+  if (hostname === '::1' || hostname === '[::1]') {
+    throw new Error('Target host is blocked for security reasons');
+  }
+
+  if (isPrivateOrLocalIp(hostname)) {
+    throw new Error('Private network targets are not allowed');
+  }
+
+  const lookupResults = await dns.lookup(hostname, { all: true, verbatim: true });
+  if (lookupResults.length === 0) {
+    throw new Error('Could not resolve target host');
+  }
+
+  for (const result of lookupResults) {
+    if (isPrivateOrLocalIp(result.address)) {
+      throw new Error('Resolved target IP is not allowed');
+    }
+  }
+}
+
+function isPrivateOrLocalIp(value: string): boolean {
+  const normalized = value.replace(/^\[|\]$/g, '').toLowerCase();
+  const ipVersion = net.isIP(normalized);
+
+  if (ipVersion === 4) {
+    const octets = normalized.split('.').map(Number);
+    const [a, b] = octets;
+
+    if (a === 0 || a === 10 || a === 127) return true;
+    if (a === 169 && b === 254) return true;
+    if (a === 172 && b >= 16 && b <= 31) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 100 && b >= 64 && b <= 127) return true;
+    return false;
+  }
+
+  if (ipVersion === 6) {
+    return normalized === '::1' || normalized.startsWith('fc') || normalized.startsWith('fd') || normalized.startsWith('fe80');
+  }
+
+  return false;
 }
 
 function generateMarkdownContent(

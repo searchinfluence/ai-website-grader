@@ -7,6 +7,7 @@ import ScoreReport from '@/components/ScoreReport';
 import AnalysisStatus from '@/components/AnalysisStatus';
 import ResourcesSection from '@/components/ResourcesSection';
 import { WebsiteAnalysis } from '@/types';
+import { SCORING_FACTORS } from '@/lib/scoring/config';
 
 export default function Home() {
   const [analysis, setAnalysis] = useState<WebsiteAnalysis | null>(null);
@@ -123,7 +124,7 @@ export default function Home() {
           <div className="feature">
             <div className="feature-icon">📊</div>
             <h3>Professional Insights & Exports</h3>
-            <p>9-category scoring system, detailed HTML validation reports, mobile optimization analysis, and downloadable markdown reports.</p>
+            <p>4-factor scoring system, detailed technical findings, priority recommendations, and downloadable markdown reports.</p>
           </div>
         </div>
       </div>
@@ -265,14 +266,12 @@ export default function Home() {
               <div style={{ padding: '25px 30px', color: 'var(--secondary-content)', lineHeight: '1.6' }}>
                 <p>The AI Website Grader addresses key challenges in modern digital marketing:</p>
                 <ul style={{ marginTop: '15px', paddingLeft: '20px' }}>
-                  <li><strong>AI Overview Optimization:</strong> Improve chances of appearing in Google&apos;s AI-generated overviews</li>
-                  <li><strong>Voice Search Readiness:</strong> Optimize content for natural language queries and voice assistants</li>
-                  <li><strong>Featured Snippet Targeting:</strong> Structure content to appear in answer boxes and featured snippets</li>
-                  <li><strong>Technical Performance:</strong> Identify and fix Core Web Vitals issues affecting search rankings</li>
-                  <li><strong>Accessibility Compliance:</strong> Ensure content is accessible to all users and AI systems</li>
-                  <li><strong>Content Quality Assessment:</strong> Evaluate content depth, authority, and factual accuracy</li>
-                  <li><strong>Mobile Optimization:</strong> Ensure mobile-first indexing compliance and user experience</li>
-                  <li><strong>Schema Markup Validation:</strong> Verify structured data implementation for rich snippets</li>
+                  <li><strong>Content Structure:</strong> Improve heading hierarchy, FAQ blocks, readability, and internal linking.</li>
+                  <li><strong>Structured Data:</strong> Add JSON-LD and social metadata for rich result eligibility.</li>
+                  <li><strong>Technical Health:</strong> Resolve crawlability, mobile foundation, and speed bottlenecks.</li>
+                  <li><strong>Page SEO:</strong> Tighten title, meta description, URL quality, and image optimization.</li>
+                  <li><strong>AI Overview Readiness:</strong> Strengthen answer-first sections and clear, scannable page structure.</li>
+                  <li><strong>Execution Planning:</strong> Prioritize fixes by impact and effort from the recommendation list.</li>
                 </ul>
               </div>
             </details>
@@ -312,11 +311,11 @@ export default function Home() {
                 <ul style={{ marginTop: '15px', paddingLeft: '20px' }}>
                   <li><strong>Real Performance Data:</strong> Google PageSpeed Insights API for actual Core Web Vitals (LCP, FID, CLS)</li>
                   <li><strong>Professional Validation:</strong> W3C HTML Validator API for standards compliance</li>
-                  <li><strong>Content Analysis:</strong> Advanced pattern matching for semantic structure, entity recognition, and answer potential</li>
-                  <li><strong>Technical Assessment:</strong> Robots.txt analysis, schema markup validation, mobile optimization</li>
+                  <li><strong>Content Analysis:</strong> Main-content extraction, heading structure checks, and FAQ/Q&A detection</li>
+                  <li><strong>Technical Assessment:</strong> Robots.txt, sitemap hints, canonical tags, and mobile readiness</li>
                   <li><strong>Accessibility Evaluation:</strong> ARIA attributes, semantic HTML, alt text coverage</li>
-                  <li><strong>Authority Signals:</strong> Citation detection, external link analysis, author credentials</li>
-                  <li><strong>User Experience Metrics:</strong> Navigation structure, form usability, loading experience</li>
+                  <li><strong>Structured Data Review:</strong> JSON-LD type extraction, parse validation, and social meta checks</li>
+                  <li><strong>Page SEO Metrics:</strong> Title/meta length, H1 usage, URL cleanliness, and image format signals</li>
                 </ul>
                 <p style={{ marginTop: '15px' }}>All analysis is performed using <strong>free APIs and intelligent pattern matching</strong> - no paid subscriptions required.</p>
               </div>
@@ -353,19 +352,20 @@ export default function Home() {
                 }}>▼</span>
               </summary>
               <div style={{ padding: '25px 30px', color: 'var(--secondary-content)', lineHeight: '1.6' }}>
-                <p>Scores are calculated on a 0-100 scale across 7 key categories:</p>
+                <p>Scores are calculated on a 0-100 scale across 4 weighted factors:</p>
                 <ul style={{ marginTop: '15px', paddingLeft: '20px' }}>
-                  <li><strong>90-100:</strong> Excellent - Your content is well-optimized for AI search</li>
-                  <li><strong>80-89:</strong> Good - Minor improvements can enhance performance</li>
-                  <li><strong>70-79:</strong> Needs Improvement - Focus on priority recommendations</li>
-                  <li><strong>Below 70:</strong> Requires Attention - Significant optimization needed</li>
+                  <li><strong>80-95:</strong> Excellent - Strong implementation across most factors</li>
+                  <li><strong>65-79:</strong> Good - Solid baseline with clear optimization opportunities</li>
+                  <li><strong>45-64:</strong> Average - Multiple measurable gaps are limiting performance</li>
+                  <li><strong>20-44:</strong> Poor - Foundational issues need immediate attention</li>
                 </ul>
                 <p style={{ marginTop: '15px' }}><strong>Priority Categories:</strong></p>
                 <ul style={{ marginTop: '10px', paddingLeft: '20px' }}>
-                  <li><strong>AI Optimization (25%):</strong> Most important for future search visibility</li>
-                  <li><strong>Mobile Optimization (20%):</strong> Critical for mobile-first indexing</li>
-                  <li><strong>Technical Crawlability (16%):</strong> Ensures search engines can access your content</li>
-                  <li><strong>Schema Analysis (12%):</strong> Improves rich snippet opportunities</li>
+                  {SCORING_FACTORS.map((factor) => (
+                    <li key={factor.key}>
+                      <strong>{factor.label} ({Math.round(factor.weight * 100)}%):</strong> {factor.description}
+                    </li>
+                  ))}
                 </ul>
                 <p style={{ marginTop: '15px' }}>Focus on improving lower-scoring categories first, especially those with high priority weights.</p>
               </div>
