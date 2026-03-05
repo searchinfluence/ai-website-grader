@@ -18,6 +18,15 @@ export interface RecommendationItem {
   resources?: string[]; // Links to documentation or guides
 }
 
+export type ScoringFactorKey = 'contentStructure' | 'structuredData' | 'technicalHealth' | 'pageSEO';
+
+export interface ScoringFactorResult extends AnalysisScore {
+  key: ScoringFactorKey;
+  label: string;
+  weight: number;
+  stats: Record<string, unknown>;
+}
+
 export interface TechnicalSEO extends AnalysisScore {
   headingStructure: number;
   metaInfo: number;
@@ -212,6 +221,7 @@ export interface CrawledContent {
         errors: number;
         warnings: number;
         isValid: boolean;
+        validationState: 'valid' | 'invalid' | 'unknown';
         messages: Array<{
           type: 'error' | 'warning' | 'info';
           message: string;
@@ -229,7 +239,10 @@ export interface WebsiteAnalysis {
   title: string;
   overallScore: number;
   timestamp: string;
-  // NEW: Hybrid AI Search Analysis
+  analysisScope?: 'page';
+  factors: Record<ScoringFactorKey, ScoringFactorResult>;
+  recommendations: RecommendationItem[];
+  rawStats: Record<string, unknown>;
   hybridAnalysis?: {
     finalScore: number;
     factors: {
@@ -241,16 +254,15 @@ export interface WebsiteAnalysis {
       contentCompleteness: number;
     };
   };
-  // Legacy scores for detailed insights
-  technicalSEO: TechnicalSEO;
-  technicalCrawlability: TechnicalCrawlability;
-  contentQuality: ContentQuality;
-  aiOptimization: AIOptimization;
-  mobileOptimization: MobileOptimization;
-  schemaAnalysis: SchemaAnalysis;
-  eeatSignals: EEATSignals;
-  contentImprovements: ContentImprovement[];
-  crawledContent: CrawledContent;
+  technicalSEO?: TechnicalSEO;
+  technicalCrawlability?: TechnicalCrawlability;
+  contentQuality?: ContentQuality;
+  aiOptimization?: AIOptimization;
+  mobileOptimization?: MobileOptimization;
+  schemaAnalysis?: SchemaAnalysis;
+  eeatSignals?: EEATSignals;
+  contentImprovements?: ContentImprovement[];
+  crawledContent?: CrawledContent;
   debugInfo?: {
     detectedSchemas: string[];
     eeatBreakdown: {

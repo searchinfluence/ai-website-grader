@@ -7,10 +7,13 @@
 // 1. W3C HTML Validator API (100% Free)
 // ========================================
 
+type ValidationState = 'valid' | 'invalid' | 'unknown';
+
 export async function validateHTML(url: string, html?: string): Promise<{
   errors: number;
   warnings: number;
   isValid: boolean;
+  validationState: ValidationState;
   messages: Array<{
     type: 'error' | 'warning' | 'info';
     message: string;
@@ -66,8 +69,12 @@ export async function validateHTML(url: string, html?: string): Promise<{
       return {
         errors: 0,
         warnings: 0,
-        isValid: true,
-        messages: []
+        isValid: false,
+        validationState: 'unknown',
+        messages: [{
+          type: 'warning',
+          message: 'W3C validator unavailable; HTML validity is unknown.'
+        }]
       };
     }
     
@@ -92,6 +99,7 @@ export async function validateHTML(url: string, html?: string): Promise<{
           errors,
           warnings,
           isValid: errors === 0,
+          validationState: errors === 0 ? 'valid' : 'invalid',
           messages
         };
       } else {
@@ -106,6 +114,7 @@ export async function validateHTML(url: string, html?: string): Promise<{
           errors,
           warnings,
           isValid: errors === 0,
+          validationState: errors === 0 ? 'valid' : 'invalid',
           messages: messages.slice(0, 10).map((msg: { type: string; message: string; lastLine?: number }) => ({
             type: msg.type as 'error' | 'warning' | 'info',
             message: msg.message,
@@ -159,6 +168,7 @@ export async function validateHTML(url: string, html?: string): Promise<{
         errors,
         warnings,
         isValid: errors === 0,
+        validationState: errors === 0 ? 'valid' : 'invalid',
         messages: [...errorMessages, ...warningMessages].slice(0, 10)
       };
     }
@@ -175,6 +185,7 @@ export async function validateHTML(url: string, html?: string): Promise<{
         errors: 0,
         warnings: 0,
         isValid: false,
+        validationState: 'unknown',
         messages: [{
           type: 'warning' as const,
           message: 'HTML validation unavailable - validation services may be temporarily down or blocked'
@@ -189,6 +200,7 @@ function performLocalHTMLValidation(html: string): {
   errors: number;
   warnings: number;
   isValid: boolean;
+  validationState: ValidationState;
   messages: Array<{
     type: 'error' | 'warning' | 'info';
     message: string;
@@ -346,6 +358,7 @@ function performLocalHTMLValidation(html: string): {
     errors,
     warnings,
     isValid: errors === 0,
+    validationState: errors === 0 ? 'valid' : 'invalid',
     messages: messages.slice(0, 10)
   };
 }
@@ -492,6 +505,7 @@ export async function analyzePerformanceMetrics(url: string, html: string): Prom
     errors: number;
     warnings: number;
     isValid: boolean;
+    validationState: ValidationState;
     messages: Array<{
       type: 'error' | 'warning' | 'info';
       message: string;
@@ -514,13 +528,20 @@ export async function analyzePerformanceMetrics(url: string, html: string): Prom
     errors: htmlValidation.errors,
     warnings: htmlValidation.warnings,
     isValid: htmlValidation.isValid,
+    validationState: htmlValidation.validationState,
     messageCount: htmlValidation.messages.length
   });
+
+  const htmlValidityScore = htmlValidation.validationState === 'valid'
+    ? 100
+    : htmlValidation.validationState === 'invalid'
+      ? 60
+      : 75;
   
   // Calculate overall performance score
   const performanceScore = Math.round((
     (coreWebVitals?.score || 75) * 0.4 +  // 40% weight on Core Web Vitals
-    (htmlValidation?.isValid ? 100 : 60) * 0.3 +  // 30% weight on HTML validity
+    htmlValidityScore * 0.3 +  // 30% weight on HTML validity
     accessibilityScore * 0.3  // 30% weight on accessibility
   ));
   
@@ -605,6 +626,7 @@ export const performanceCache = new SimpleCache<{
     errors: number;
     warnings: number;
     isValid: boolean;
+    validationState: ValidationState;
     messages: Array<{
       type: 'error' | 'warning' | 'info';
       message: string;

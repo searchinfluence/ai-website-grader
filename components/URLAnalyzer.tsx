@@ -234,21 +234,21 @@ export default function URLAnalyzer({ onAnalysisComplete, onAnalysisStart, isLoa
           color: 'var(--light-gray)' 
         }}>
           <div>
-            <h3 style={{ fontWeight: '600', color: 'var(--white)', marginBottom: '10px' }}>AI Optimization Focus:</h3>
+            <h3 style={{ fontWeight: '600', color: 'var(--white)', marginBottom: '10px' }}>Content Structure Checks:</h3>
             <ul style={{ margin: 0, paddingLeft: '20px' }}>
-              <li>Content chunkability for AI processing</li>
-              <li>Q&A format optimization</li>
-              <li>Entity recognition and clarity</li>
-              <li>Semantic structure analysis</li>
+              <li>Heading hierarchy and H1 usage</li>
+              <li>Main-content depth and readability</li>
+              <li>FAQ/Q&A formatting</li>
+              <li>Internal links and alt text coverage</li>
             </ul>
           </div>
           <div>
-            <h3 style={{ fontWeight: '600', color: 'var(--white)', marginBottom: '10px' }}>Comprehensive Analysis:</h3>
+            <h3 style={{ fontWeight: '600', color: 'var(--white)', marginBottom: '10px' }}>Technical + SEO Checks:</h3>
             <ul style={{ margin: 0, paddingLeft: '20px' }}>
-              <li>Technical SEO fundamentals</li>
-              <li>Content quality assessment</li>
-              <li>Authority and trust signals</li>
-              <li>User engagement factors</li>
+              <li>Schema markup and social meta tags</li>
+              <li>HTTPS, robots, sitemap, canonical</li>
+              <li>Viewport and responsive mobile setup</li>
+              <li>Title/meta/H1 and URL/image SEO quality</li>
             </ul>
           </div>
         </div>
