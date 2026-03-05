@@ -11,11 +11,15 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 30;
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
+// Allow Vercel preview deployments and production
+export const maxDuration = 60;
+
 const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   'https://ai-grader.searchinfluence.com',
   'https://www.ai-grader.searchinfluence.com',
+  'https://ai-website-grader-si.vercel.app',
 ];
 
 const configuredOrigins = process.env.CORS_ALLOWED_ORIGINS
