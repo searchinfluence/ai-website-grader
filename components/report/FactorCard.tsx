@@ -16,6 +16,8 @@ const statusCopy: Record<ScoringFactorResult['status'], string> = {
 };
 
 export default function FactorCard({ factor, accent, borderColor, gradient }: FactorCardProps) {
+  const clampedScore = Math.max(0, Math.min(100, factor.score));
+
   return (
     <div style={{
       textAlign: 'left',
@@ -49,6 +51,17 @@ export default function FactorCard({ factor, accent, borderColor, gradient }: Fa
         <span style={{ fontSize: '0.86rem', color: 'var(--secondary-content)', fontWeight: 600 }}>
           Weight {Math.round(factor.weight * 100)}%
         </span>
+      </div>
+      <div style={{ marginTop: '12px', height: '6px', borderRadius: '999px', background: '#dee2e6', overflow: 'hidden' }}>
+        <div
+          style={{
+            height: '100%',
+            width: `${clampedScore}%`,
+            background: accent,
+            borderRadius: 'inherit',
+            transition: 'width 0.45s ease'
+          }}
+        />
       </div>
     </div>
   );

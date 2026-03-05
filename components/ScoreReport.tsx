@@ -1,5 +1,6 @@
 'use client';
 
+import { CSSProperties } from 'react';
 import { ScoringFactorKey, WebsiteAnalysis } from '@/types';
 import ExportButtons from './ExportButtons';
 import { generateMarkdownReport, downloadMarkdown } from '@/lib/exporters';
@@ -58,6 +59,18 @@ function getOverallScoreStatus(score: number) {
 export default function ScoreReport({ analysis }: ScoreReportProps) {
   const { trackExport } = useGoogleTagManager();
   const scoreColor = getOverallScoreColor(analysis.overallScore);
+  const clampedScore = Math.max(0, Math.min(100, analysis.overallScore));
+  const gaugeSize = 120;
+  const gaugeStrokeWidth = 8;
+  const gaugeRadius = (gaugeSize - gaugeStrokeWidth) / 2;
+  const gaugeCircumference = 2 * Math.PI * gaugeRadius;
+  const gaugeTargetOffset = gaugeCircumference - (clampedScore / 100) * gaugeCircumference;
+  const gaugeProgressStyle: CSSProperties = {
+    strokeDasharray: gaugeCircumference,
+    strokeDashoffset: gaugeCircumference,
+    ['--gauge-circumference' as string]: gaugeCircumference,
+    ['--gauge-target-offset' as string]: gaugeTargetOffset
+  };
 
   const handleExportMarkdown = () => {
     trackExport('markdown');
@@ -90,7 +103,31 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 <p style={{ margin: 0, color: 'var(--secondary-content)', wordBreak: 'break-word' }}><strong>Title:</strong> {analysis.title || 'Untitled page'}</p>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '3rem', fontWeight: 800, color: scoreColor, lineHeight: 1 }}>{analysis.overallScore}%</div>
+                <div className="score-gauge-wrap">
+                  <svg width={gaugeSize} height={gaugeSize} viewBox={`0 0 ${gaugeSize} ${gaugeSize}`} aria-hidden="true">
+                    <circle
+                      cx={gaugeSize / 2}
+                      cy={gaugeSize / 2}
+                      r={gaugeRadius}
+                      fill="none"
+                      stroke="#dee2e6"
+                      strokeWidth={gaugeStrokeWidth}
+                    />
+                    <circle
+                      className="score-gauge-progress"
+                      cx={gaugeSize / 2}
+                      cy={gaugeSize / 2}
+                      r={gaugeRadius}
+                      fill="none"
+                      stroke={scoreColor}
+                      strokeWidth={gaugeStrokeWidth}
+                      strokeLinecap="round"
+                      transform={`rotate(-90 ${gaugeSize / 2} ${gaugeSize / 2})`}
+                      style={gaugeProgressStyle}
+                    />
+                  </svg>
+                  <div className="score-gauge-center" style={{ color: scoreColor }}>{analysis.overallScore}%</div>
+                </div>
                 <div style={{
                   marginTop: '6px',
                   fontSize: '0.96rem',

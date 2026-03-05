@@ -321,7 +321,9 @@ body {
 }
 
 .feature-icon {
-  font-size: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 16px;
 }
 
@@ -494,7 +496,13 @@ textarea::placeholder {
 .back-btn {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   color: var(--orange-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1rem;
   font-weight: 600;
   text-decoration: none;
   margin-bottom: 30px;
@@ -503,12 +511,6 @@ textarea::placeholder {
 
 .back-btn:hover {
   color: var(--orange-light);
-}
-
-.back-btn::before {
-  content: '←';
-  margin-right: 8px;
-  font-size: 18px;
 }
 
 /* FAQ Accordion Styles */
@@ -564,5 +566,35 @@ details summary::marker {
 @media (min-width: 1400px) {
   .score-cards-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.score-gauge-wrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+.score-gauge-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.score-gauge-progress {
+  animation: fill-score-ring 1s ease-out forwards;
+}
+
+@keyframes fill-score-ring {
+  from {
+    stroke-dashoffset: var(--gauge-circumference);
+  }
+  to {
+    stroke-dashoffset: var(--gauge-target-offset);
   }
 }
