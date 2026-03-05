@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { ArrowLeft, Target, Zap, BarChart3 } from 'lucide-react';
 import URLAnalyzer from '@/components/URLAnalyzer';
 import ScoreReport from '@/components/ScoreReport';
 import AnalysisStatus from '@/components/AnalysisStatus';
@@ -76,7 +77,8 @@ export default function Home() {
                 onClick={handleNewAnalysis}
                 className="back-btn"
               >
-                Back to Analysis
+                <ArrowLeft size={18} aria-hidden="true" />
+                <span>Back to Analysis</span>
               </button>
               
               {/* Report */}
@@ -112,17 +114,23 @@ export default function Home() {
       <div className="features" style={{ paddingTop: '40px' }}>
         <div className="container">
           <div className="feature">
-            <div className="feature-icon">🎯</div>
+            <div className="feature-icon">
+              <Target size={32} color="var(--orange-accent)" aria-hidden="true" />
+            </div>
             <h3>Advanced AI Search Optimization</h3>
             <p>Real Core Web Vitals, semantic chunk analysis, answer-specific content detection, factual accuracy scoring, and AI bot accessibility analysis.</p>
           </div>
           <div className="feature">
-            <div className="feature-icon">⚡</div>
+            <div className="feature-icon">
+              <Zap size={32} color="var(--orange-accent)" aria-hidden="true" />
+            </div>
             <h3>Free API Integration</h3>
             <p>Google PageSpeed Insights for real performance data, W3C HTML validation, accessibility analysis, and comprehensive technical assessment.</p>
           </div>
           <div className="feature">
-            <div className="feature-icon">📊</div>
+            <div className="feature-icon">
+              <BarChart3 size={32} color="var(--orange-accent)" aria-hidden="true" />
+            </div>
             <h3>Professional Insights & Exports</h3>
             <p>4-factor scoring system, detailed technical findings, priority recommendations, and downloadable markdown reports.</p>
           </div>
@@ -399,7 +407,7 @@ export default function Home() {
                 Visit Search Influence
               </a>
               <span>•</span>
-              <a href="https://github.com/willscott-v2/ai-website-grader" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange-accent)', textDecoration: 'none' }}>
+              <a href="https://github.com/searchinfluence/ai-website-grader" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange-accent)', textDecoration: 'none' }}>
                 AI Website Grader v3.0.0
               </a>
               <span>•</span>
