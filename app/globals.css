@@ -44,6 +44,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: var(--font-stack);
   background: var(--dark-blue);
@@ -240,6 +244,7 @@ body {
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   margin: 20px 0;
+  transition: opacity 0.3s ease;
 }
 
 .results-header {

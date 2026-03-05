@@ -42,7 +42,7 @@ export function analyzeStructuredData(content: CrawledContent): FactorResult {
   if (!schema.hasFaqPage) {
     findings.push('FAQPage/QAPage schema not detected for FAQ-style content eligibility.');
     recommendations.push({
-      text: `Add FAQPage schema on ${hostLabel} for question-and-answer sections to improve rich-result eligibility.`,
+      text: `Add FAQPage schema on ${hostLabel} for question-and-answer sections to improve rich-result eligibility (currently 0 FAQPage schemas detected).`,
       priority: 'medium',
       category: 'schema-faq',
       timeToImplement: '~1 hour',

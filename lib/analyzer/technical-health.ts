@@ -59,7 +59,7 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
   if (!hasSitemapHint) {
     findings.push('Sitemap reference was not found in robots.txt or page HTML checks.');
     recommendations.push({
-      text: `Publish sitemap.xml for ${hostLabel} and include a Sitemap: line in robots.txt.`,
+      text: `Publish sitemap.xml for ${hostLabel} and add a Sitemap: directive in robots.txt (currently no sitemap reference detected).`,
       priority: 'medium',
       category: 'sitemap',
       timeToImplement: '~30 min'
@@ -69,7 +69,7 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
   if (!hasCanonical) {
     findings.push('Canonical tag is missing.');
     recommendations.push({
-      text: `Add a canonical tag on ${hostLabel} to prevent duplicate URL indexing conflicts.`,
+      text: `Add a canonical tag on ${hostLabel} to prevent duplicate URL indexing conflicts (currently missing from page head).`,
       priority: 'medium',
       category: 'canonical',
       timeToImplement: '~30 min'
