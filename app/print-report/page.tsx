@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { WebsiteAnalysis } from '@/types';
 import { SCORING_FACTORS } from '@/lib/scoring/config';
@@ -18,6 +18,14 @@ function getRecommendationText(value: unknown): string {
 }
 
 export default function PrintReportPage() {
+  return (
+    <Suspense fallback={<main style={{ padding: '24px', fontFamily: 'Arial, sans-serif' }}>Loading...</main>}>
+      <PrintReportContent />
+    </Suspense>
+  );
+}
+
+function PrintReportContent() {
   const searchParams = useSearchParams();
   const [analysis, setAnalysis] = useState<WebsiteAnalysis | null>(null);
 
