@@ -8,10 +8,10 @@ interface AnalysisStatusProps {
 }
 
 const analysisSteps = [
-  { text: 'Fetching page content...', icon: Search, label: 'Crawling' },
-  { text: 'Analyzing structure & schema...', icon: Brain, label: 'Analyzing' },
-  { text: 'Running technical checks...', icon: Zap, label: 'Optimizing' },
-  { text: 'Generating recommendations...', icon: Target, label: 'Scoring' }
+  { text: 'Fetching page content...', icon: Search },
+  { text: 'Analyzing structure & schema...', icon: Brain },
+  { text: 'Running technical checks...', icon: Zap },
+  { text: 'Generating recommendations...', icon: Target }
 ] as const;
 
 export default function AnalysisStatus({ isVisible }: AnalysisStatusProps) {
@@ -183,57 +183,6 @@ export default function AnalysisStatus({ isVisible }: AnalysisStatusProps) {
           })}
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '20px',
-            flexWrap: 'wrap'
-          }}
-        >
-          {analysisSteps.map((item, index) => {
-            const StepIcon = item.icon;
-            const isCurrent = index === currentStepIndex;
-
-            return (
-              <div
-                key={item.label}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '8px',
-                  opacity: isCurrent ? 1 : 0.55
-                }}
-              >
-                <div
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    background: isCurrent ? 'var(--orange-accent)' : 'var(--background-gray)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: `2px solid ${isCurrent ? 'var(--orange-accent)' : 'var(--border-gray)'}`,
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <StepIcon size={18} style={{ color: isCurrent ? 'var(--white)' : 'var(--muted-text)' }} />
-                </div>
-                <span
-                  style={{
-                    fontSize: '0.8rem',
-                    color: isCurrent ? 'var(--content-text)' : 'var(--muted-text)',
-                    fontWeight: isCurrent ? 700 : 500
-                  }}
-                >
-                  {item.label}
-                </span>
-              </div>
-            );
-          })}
-        </div>
       </div>
 
       <style jsx>{`

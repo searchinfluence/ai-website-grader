@@ -2,6 +2,7 @@
 
 import { CSSProperties } from 'react';
 import { ScoringFactorKey, WebsiteAnalysis } from '@/types';
+import { AlertCircle, AlertTriangle, Database, FileText, Info, Search, Settings, type LucideIcon } from 'lucide-react';
 import ExportButtons from './ExportButtons';
 import { generateMarkdownReport, downloadMarkdown } from '@/lib/exporters';
 import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
@@ -13,33 +14,37 @@ interface ScoreReportProps {
   analysis: WebsiteAnalysis;
 }
 
-const FACTOR_THEME: Record<ScoringFactorKey, { accent: string; borderColor: string; gradient: string }> = {
+const FACTOR_THEME: Record<ScoringFactorKey, { accent: string; borderColor: string; gradient: string; icon?: LucideIcon }> = {
   contentStructure: {
     accent: 'var(--info-blue)',
     borderColor: 'rgba(52, 152, 219, 0.28)',
-    gradient: 'linear-gradient(135deg, rgba(52, 152, 219, 0.12) 0%, rgba(52, 152, 219, 0.04) 100%)'
+    gradient: 'linear-gradient(135deg, rgba(52, 152, 219, 0.12) 0%, rgba(52, 152, 219, 0.04) 100%)',
+    icon: FileText
   },
   structuredData: {
     accent: 'var(--success-green)',
     borderColor: 'rgba(39, 174, 96, 0.28)',
-    gradient: 'linear-gradient(135deg, rgba(39, 174, 96, 0.12) 0%, rgba(39, 174, 96, 0.04) 100%)'
+    gradient: 'linear-gradient(135deg, rgba(39, 174, 96, 0.12) 0%, rgba(39, 174, 96, 0.04) 100%)',
+    icon: Database
   },
   technicalHealth: {
     accent: 'var(--orange-accent)',
     borderColor: 'rgba(230, 126, 34, 0.28)',
-    gradient: 'linear-gradient(135deg, rgba(230, 126, 34, 0.12) 0%, rgba(230, 126, 34, 0.04) 100%)'
+    gradient: 'linear-gradient(135deg, rgba(230, 126, 34, 0.12) 0%, rgba(230, 126, 34, 0.04) 100%)',
+    icon: Settings
   },
   pageSEO: {
     accent: '#8e44ad',
     borderColor: 'rgba(142, 68, 173, 0.28)',
-    gradient: 'linear-gradient(135deg, rgba(142, 68, 173, 0.12) 0%, rgba(142, 68, 173, 0.04) 100%)'
+    gradient: 'linear-gradient(135deg, rgba(142, 68, 173, 0.12) 0%, rgba(142, 68, 173, 0.04) 100%)',
+    icon: Search
   }
 };
 
 const priorityStyleMap = {
-  high: { bg: 'rgba(231, 76, 60, 0.12)', border: 'rgba(231, 76, 60, 0.35)', text: 'var(--error-red)', label: 'High' },
-  medium: { bg: 'rgba(230, 126, 34, 0.12)', border: 'rgba(230, 126, 34, 0.35)', text: 'var(--orange-accent)', label: 'Medium' },
-  low: { bg: 'rgba(39, 174, 96, 0.12)', border: 'rgba(39, 174, 96, 0.35)', text: 'var(--success-green)', label: 'Low' }
+  high: { bg: 'rgba(231, 76, 60, 0.12)', border: 'rgba(231, 76, 60, 0.35)', text: 'var(--error-red)', label: 'High', icon: AlertTriangle },
+  medium: { bg: 'rgba(230, 126, 34, 0.12)', border: 'rgba(230, 126, 34, 0.35)', text: 'var(--orange-accent)', label: 'Medium', icon: AlertCircle },
+  low: { bg: 'rgba(39, 174, 96, 0.12)', border: 'rgba(39, 174, 96, 0.35)', text: 'var(--success-green)', label: 'Low', icon: Info }
 } as const;
 
 function getOverallScoreColor(score: number) {
@@ -99,13 +104,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             background: 'var(--background-gray)',
             boxShadow: '0 8px 24px rgba(0,0,0,0.08)'
           }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '20px', alignItems: 'center' }}>
+            <div className="report-score-header-grid">
               <div>
                 <h3 style={{ fontSize: '1.45rem', margin: '0 0 10px', color: 'var(--content-text)' }}>Website Information</h3>
                 <p style={{ margin: '0 0 8px', color: 'var(--secondary-content)', wordBreak: 'break-word' }}><strong>URL:</strong> {analysis.url}</p>
                 <p style={{ margin: 0, color: 'var(--secondary-content)', wordBreak: 'break-word' }}><strong>Title:</strong> {analysis.title || 'Untitled page'}</p>
               </div>
-              <div style={{ textAlign: 'center' }}>
+              <div className="report-score-gauge-col">
                 <div className="score-gauge-wrap">
                   <svg width={gaugeSize} height={gaugeSize} viewBox={`0 0 ${gaugeSize} ${gaugeSize}`} aria-hidden="true">
                     <circle
@@ -148,7 +153,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           <h2 style={{ margin: '0 0 12px', color: 'var(--content-text)', fontSize: '1.4rem', textAlign: 'center' }}>
             Analysis Score Breakdown
           </h2>
-          <div style={{ display: 'grid', gap: '12px', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', marginBottom: '18px' }}>
+          <div className="factor-cards-grid" style={{ marginBottom: '18px' }}>
             {SCORING_FACTORS.map((factor) => (
               <FactorCard
                 key={factor.key}
@@ -156,6 +161,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 accent={FACTOR_THEME[factor.key].accent}
                 borderColor={FACTOR_THEME[factor.key].borderColor}
                 gradient={FACTOR_THEME[factor.key].gradient}
+                icon={FACTOR_THEME[factor.key].icon}
               />
             ))}
           </div>
@@ -171,19 +177,21 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             <div style={{ display: 'grid', gap: '10px' }}>
               {analysis.recommendations.map((recommendation, index) => {
                 const priorityStyle = priorityStyleMap[recommendation.priority];
+                const PriorityIcon = priorityStyle.icon;
                 return (
                   <article
                     key={`priority-rec-${index}`}
+                    className="recommendation-card"
                     style={{
                       border: `1px solid ${priorityStyle.border}`,
                       borderLeft: `4px solid ${priorityStyle.text}`,
                       borderRadius: '10px',
-                      padding: '12px',
                       background: priorityStyle.bg
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px', alignItems: 'center', marginBottom: '6px' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: priorityStyle.text }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: priorityStyle.text }}>
+                        <PriorityIcon size={14} />
                         {priorityStyle.label} Priority
                       </span>
                       <span style={{ fontSize: '0.8rem', color: 'var(--muted-text)' }}>{recommendation.category}</span>
@@ -211,6 +219,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                   accent={theme.accent}
                   borderColor={theme.borderColor}
                   gradient={theme.gradient}
+                  icon={theme.icon}
                   defaultOpen={factor.key === lowestScoringFactorKey}
                 />
               );

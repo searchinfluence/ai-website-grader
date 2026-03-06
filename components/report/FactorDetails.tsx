@@ -1,17 +1,19 @@
 import { ScoringFactorResult } from '@/types';
+import { AlertCircle, AlertTriangle, ChevronDown, Info, type LucideIcon } from 'lucide-react';
 
 interface FactorDetailsProps {
   factor: ScoringFactorResult;
   accent: string;
   borderColor: string;
   gradient: string;
+  icon?: LucideIcon;
   defaultOpen?: boolean;
 }
 
 const priorityStyleMap = {
-  high: { label: 'High', bg: 'rgba(231, 76, 60, 0.12)', border: 'rgba(231, 76, 60, 0.35)', text: 'var(--error-red)' },
-  medium: { label: 'Medium', bg: 'rgba(230, 126, 34, 0.12)', border: 'rgba(230, 126, 34, 0.35)', text: 'var(--orange-accent)' },
-  low: { label: 'Low', bg: 'rgba(39, 174, 96, 0.12)', border: 'rgba(39, 174, 96, 0.35)', text: 'var(--success-green)' }
+  high: { label: 'High', bg: 'rgba(231, 76, 60, 0.12)', border: 'rgba(231, 76, 60, 0.35)', text: 'var(--error-red)', icon: AlertTriangle },
+  medium: { label: 'Medium', bg: 'rgba(230, 126, 34, 0.12)', border: 'rgba(230, 126, 34, 0.35)', text: 'var(--orange-accent)', icon: AlertCircle },
+  low: { label: 'Low', bg: 'rgba(39, 174, 96, 0.12)', border: 'rgba(39, 174, 96, 0.35)', text: 'var(--success-green)', icon: Info }
 } as const;
 
 function formatStatValue(value: unknown): string {
@@ -38,18 +40,18 @@ function formatStatValue(value: unknown): string {
   return String(value);
 }
 
-export default function FactorDetails({ factor, accent, borderColor, gradient, defaultOpen }: FactorDetailsProps) {
+export default function FactorDetails({ factor, accent, borderColor, gradient, icon: Icon, defaultOpen }: FactorDetailsProps) {
   const entries = Object.entries(factor.stats ?? {});
 
   return (
-    <details open={defaultOpen} style={{
+    <details open={defaultOpen} className="factor-details-accordion" style={{
       border: `1px solid ${borderColor}`,
       borderRadius: '12px',
       background: 'var(--content-bg)',
       overflow: 'hidden',
       boxShadow: '0 10px 26px rgba(0,0,0,0.08)'
     }}>
-      <summary style={{
+      <summary className="factor-details-summary" style={{
         cursor: 'pointer',
         listStyle: 'none',
         padding: '16px 18px',
@@ -58,12 +60,18 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, d
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', alignItems: 'center' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--content-text)' }}>{factor.label}</h3>
+            <h3 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--content-text)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              {Icon && <Icon size={18} style={{ color: accent }} />}
+              {factor.label}
+            </h3>
             <p style={{ margin: '6px 0 0', fontSize: '0.88rem', color: 'var(--secondary-content)', textTransform: 'capitalize' }}>
               {factor.status.replace('-', ' ')} performance
             </p>
           </div>
-          <strong style={{ color: accent, fontSize: '1.5rem', lineHeight: 1 }}>{factor.score}%</strong>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <strong style={{ color: accent, fontSize: '1.5rem', lineHeight: 1 }}>{factor.score}%</strong>
+            <ChevronDown className="factor-details-chevron" size={18} style={{ color: accent }} />
+          </div>
         </div>
       </summary>
 
@@ -71,7 +79,7 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, d
         {entries.length > 0 && (
           <div style={{ marginBottom: '18px' }}>
             <h4 style={{ margin: '0 0 12px', color: 'var(--content-text)' }}>Metrics</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
+            <div className="factor-details-metrics-grid">
               {entries.map(([key, value]) => (
                 <div key={`${factor.key}-stat-${key}`} style={{
                   border: '1px solid var(--border-gray)',
@@ -115,19 +123,23 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, d
             <div style={{ display: 'grid', gap: '10px' }}>
               {factor.recommendations.map((recommendation, index) => {
                 const priorityStyle = priorityStyleMap[recommendation.priority];
+                const PriorityIcon = priorityStyle.icon;
                 return (
                   <article
                     key={`${factor.key}-rec-${index}`}
+                    className="recommendation-card"
                     style={{
                       border: `1px solid ${priorityStyle.border}`,
                       borderLeft: `4px solid ${priorityStyle.text}`,
                       borderRadius: '10px',
-                      padding: '12px',
                       background: priorityStyle.bg
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginBottom: '6px', alignItems: 'center' }}>
                       <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
                         borderRadius: '999px',
                         padding: '3px 9px',
                         fontSize: '0.72rem',
@@ -138,6 +150,7 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, d
                         border: `1px solid ${priorityStyle.border}`,
                         background: 'rgba(255,255,255,0.7)'
                       }}>
+                        <PriorityIcon size={13} />
                         {priorityStyle.label} Priority
                       </span>
                       <span style={{ fontSize: '0.78rem', color: 'var(--muted-text)' }}>{recommendation.category}</span>

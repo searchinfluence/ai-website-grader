@@ -1,10 +1,12 @@
 import { ScoringFactorResult } from '@/types';
+import { type LucideIcon } from 'lucide-react';
 
 interface FactorCardProps {
   factor: ScoringFactorResult;
   accent: string;
   borderColor: string;
   gradient: string;
+  icon?: LucideIcon;
 }
 
 const statusCopy: Record<ScoringFactorResult['status'], string> = {
@@ -15,7 +17,7 @@ const statusCopy: Record<ScoringFactorResult['status'], string> = {
   critical: 'Critical'
 };
 
-export default function FactorCard({ factor, accent, borderColor, gradient }: FactorCardProps) {
+export default function FactorCard({ factor, accent, borderColor, gradient, icon: Icon }: FactorCardProps) {
   const clampedScore = Math.max(0, Math.min(100, factor.score));
 
   return (
@@ -30,7 +32,10 @@ export default function FactorCard({ factor, accent, borderColor, gradient }: Fa
       minWidth: 0
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-        <h3 style={{ margin: 0, color: 'var(--content-text)', fontSize: '1.02rem', fontWeight: 700 }}>{factor.label}</h3>
+        <h3 style={{ margin: 0, color: 'var(--content-text)', fontSize: '1.02rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+          {Icon && <Icon size={18} style={{ color: accent }} />}
+          {factor.label}
+        </h3>
         <strong style={{ color: accent, fontSize: '1.65rem', lineHeight: 1, whiteSpace: 'nowrap' }}>{factor.score}%</strong>
       </div>
       <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'space-between', gap: '10px', alignItems: 'center' }}>

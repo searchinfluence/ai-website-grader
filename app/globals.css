@@ -267,6 +267,33 @@ body {
   overflow-y: auto;
 }
 
+.report-score-header-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: center;
+}
+
+.report-score-gauge-col {
+  text-align: center;
+}
+
+.factor-cards-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.factor-details-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.recommendation-card {
+  padding: 12px;
+}
+
 /* View Toggle Buttons */
 .view-toggle {
   display: flex;
@@ -595,11 +622,42 @@ details summary::marker {
   animation: fill-score-ring 1s ease-out forwards;
 }
 
+.factor-details-chevron {
+  transition: transform 0.2s ease;
+}
+
+.factor-details-accordion[open] .factor-details-chevron {
+  transform: rotate(180deg);
+}
+
 @keyframes fill-score-ring {
   from {
     stroke-dashoffset: var(--gauge-circumference);
   }
   to {
     stroke-dashoffset: var(--gauge-target-offset);
+  }
+}
+
+@media (max-width: 768px) {
+  .report-score-header-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .report-score-gauge-col {
+    display: flex;
+    justify-content: center;
+  }
+
+  .factor-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recommendation-card {
+    padding: 10px;
+  }
+
+  .factor-details-metrics-grid {
+    grid-template-columns: 1fr;
   }
 }
