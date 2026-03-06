@@ -314,7 +314,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                   borderColor={theme.borderColor}
                   gradient={theme.gradient}
                   icon={theme.icon}
-                  defaultOpen={factor.key === lowestScoringFactorKey}
+                  defaultOpen={false}
                 />
               );
             })}
