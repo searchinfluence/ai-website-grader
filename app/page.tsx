@@ -43,18 +43,18 @@ export default function Home() {
                 </a>
               </div>
               <h1>AI Website Grader</h1>
-              <div className="tagline">Optimize for AI-Powered Search</div>
+              <div className="tagline">Score Your Site. Fix What Matters.</div>
             </div>
             <div className="header-description">
               <p>
-                Analyze your website&apos;s readiness for AI-powered search engines, 
-                chat interfaces, and modern search algorithms. Get actionable insights 
-                to improve your visibility in AI overviews, voice search results, 
-                and chatbot responses.
+                Get a free, instant analysis of your website&apos;s content structure,
+                structured data, technical health, and on-page SEO -- scored across
+                4 weighted factors with specific, prioritized recommendations you
+                can act on today.
               </p>
               <p style={{ marginTop: '20px', fontSize: '1rem', color: 'var(--orange-accent)' }}>
                 <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange-accent)', textDecoration: 'underline' }}>
-                  Powered by Search Influence - AI SEO Experts
+                  Built by Search Influence
                 </a>
               </p>
             </div>
@@ -117,22 +117,22 @@ export default function Home() {
             <div className="feature-icon">
               <Target size={32} color="var(--orange-accent)" aria-hidden="true" />
             </div>
-            <h3>Advanced AI Search Optimization</h3>
-            <p>Real Core Web Vitals, semantic chunk analysis, answer-specific content detection, factual accuracy scoring, and AI bot accessibility analysis.</p>
+            <h3>4-Factor Scoring</h3>
+            <p>Content structure, structured data, technical health, and page SEO -- each weighted and scored so you know exactly where to focus.</p>
           </div>
           <div className="feature">
             <div className="feature-icon">
               <Zap size={32} color="var(--orange-accent)" aria-hidden="true" />
             </div>
-            <h3>Free API Integration</h3>
-            <p>Google PageSpeed Insights for real performance data, W3C HTML validation, accessibility analysis, and comprehensive technical assessment.</p>
+            <h3>Real Data, No Guesswork</h3>
+            <p>Pulls live data from Google PageSpeed Insights for Core Web Vitals, checks your robots.txt, validates JSON-LD, and measures actual load times.</p>
           </div>
           <div className="feature">
             <div className="feature-icon">
               <BarChart3 size={32} color="var(--orange-accent)" aria-hidden="true" />
             </div>
-            <h3>Professional Insights & Exports</h3>
-            <p>4-factor scoring system, detailed technical findings, priority recommendations, and downloadable markdown reports.</p>
+            <h3>Specific Recommendations</h3>
+            <p>Every recommendation names your domain, cites the actual numbers, and tells you how long the fix takes. Export as PDF or Markdown to share with your team.</p>
           </div>
         </div>
       </div>
@@ -408,8 +408,8 @@ export default function Home() {
               </div>
             </div>
             <p style={{ fontSize: '0.9rem', color: 'var(--dark-gray)', margin: '0 0 20px 0', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
-              Helping higher education institutions and healthcare organizations 
-              increase visibility and drive measurable growth through AI-powered SEO strategies.
+              20+ years of SEO expertise. Now helping organizations
+              optimize for AI-powered search and traditional search alike.
             </p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', fontSize: '0.8rem', color: 'var(--dark-gray)' }}>
               <span>•</span>
