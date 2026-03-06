@@ -234,21 +234,21 @@ export default function URLAnalyzer({ onAnalysisComplete, onAnalysisStart, isLoa
           color: 'var(--light-gray)' 
         }}>
           <div>
-            <h3 style={{ fontWeight: '600', color: 'var(--white)', marginBottom: '10px' }}>Content Structure Checks:</h3>
+            <h3 style={{ fontWeight: '600', color: 'var(--white)', marginBottom: '10px' }}>What We Analyze:</h3>
             <ul style={{ margin: 0, paddingLeft: '20px' }}>
-              <li>Heading hierarchy and H1 usage</li>
-              <li>Main-content depth and readability</li>
-              <li>FAQ/Q&A formatting</li>
-              <li>Internal links and alt text coverage</li>
+              <li>Heading hierarchy, word count, readability</li>
+              <li>FAQ sections and internal link density</li>
+              <li>JSON-LD schema and social meta tags</li>
+              <li>Alt text coverage and image formats</li>
             </ul>
           </div>
           <div>
-            <h3 style={{ fontWeight: '600', color: 'var(--white)', marginBottom: '10px' }}>Technical + SEO Checks:</h3>
+            <h3 style={{ fontWeight: '600', color: 'var(--white)', marginBottom: '10px' }}>What You Get:</h3>
             <ul style={{ margin: 0, paddingLeft: '20px' }}>
-              <li>Schema markup and social meta tags</li>
-              <li>HTTPS, robots, sitemap, canonical</li>
-              <li>Viewport and responsive mobile setup</li>
-              <li>Title/meta/H1 and URL/image SEO quality</li>
+              <li>Overall score with 4-factor breakdown</li>
+              <li>Prioritized recommendations with code examples</li>
+              <li>Exportable PDF and Markdown reports</li>
+              <li>Book a free consultation from the results page</li>
             </ul>
           </div>
         </div>
