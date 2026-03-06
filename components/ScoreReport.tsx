@@ -1,6 +1,7 @@
 'use client';
 
 import { CSSProperties, useState } from 'react';
+import Script from 'next/script';
 import { ScoringFactorKey, WebsiteAnalysis } from '@/types';
 import { AlertCircle, AlertTriangle, ArrowRight, Database, FileText, Info, Lightbulb, Search, Settings, type LucideIcon } from 'lucide-react';
 import ExportButtons from './ExportButtons';
@@ -323,26 +324,24 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               Our AI SEO experts can help you turn these recommendations into results.
               Book a free consultation to get a personalized action plan.
             </p>
-            {/* HubSpot Meetings Embed — replace placeholder with embed code */}
+            {/* HubSpot Meetings Embed — Paula's calendar */}
             <div
-              id="hubspot-meetings-embed"
               style={{
                 maxWidth: '660px',
                 margin: '0 auto 18px',
-                padding: '20px',
                 borderRadius: '10px',
-                border: '1px dashed rgba(230, 126, 34, 0.35)',
-                background: 'rgba(255, 255, 255, 0.6)',
-                color: 'var(--muted-text)',
-                fontSize: '0.9rem'
+                overflow: 'hidden',
+                minHeight: '516px'
               }}
             >
-              <p style={{ margin: '0 0 8px', fontWeight: 600, color: 'var(--secondary-content)' }}>
-                📅 Calendar booking widget loading here
-              </p>
-              <p style={{ margin: 0, fontSize: '0.82rem' }}>
-                HubSpot meetings embed placeholder — will be replaced with Paula&apos;s booking calendar
-              </p>
+              <div
+                className="meetings-iframe-container"
+                data-src="https://insights.searchinfluence.com/meetings/pfrench/introductory-meeting-25-mins?embed=true"
+              />
+              <Script
+                src="https://static.hsappstatic.net/MeetingsEmbed/ex/MeetingsEmbedCode.js"
+                strategy="lazyOnload"
+              />
             </div>
             <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--muted-text)' }}>
               Or reach out directly:{' '}
