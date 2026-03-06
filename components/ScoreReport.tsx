@@ -320,31 +320,41 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               Ready to Improve Your AI Search Visibility?
             </h3>
             <p style={{ margin: '0 0 18px', color: 'var(--secondary-content)', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
-              Search Influence helps organizations optimize for AI-powered search engines.
-              Get a personalized roadmap to improve your score.
+              Our AI SEO experts can help you turn these recommendations into results.
+              Book a free consultation to get a personalized action plan.
             </p>
-            <a
-              href="https://info.searchinfluence.com/higher-ed-seo-roadmap-universities/"
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* HubSpot Meetings Embed — replace placeholder with embed code */}
+            <div
+              id="hubspot-meetings-embed"
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '14px 28px',
-                background: 'linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%)',
-                color: 'var(--white)',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                fontWeight: 700,
-                fontSize: '1rem',
-                boxShadow: '0 4px 15px rgba(230, 126, 34, 0.3)',
-                transition: 'all 0.3s ease'
+                maxWidth: '660px',
+                margin: '0 auto 18px',
+                padding: '20px',
+                borderRadius: '10px',
+                border: '1px dashed rgba(230, 126, 34, 0.35)',
+                background: 'rgba(255, 255, 255, 0.6)',
+                color: 'var(--muted-text)',
+                fontSize: '0.9rem'
               }}
             >
-              Get Your Custom AI SEO Roadmap
-              <ArrowRight size={18} />
-            </a>
+              <p style={{ margin: '0 0 8px', fontWeight: 600, color: 'var(--secondary-content)' }}>
+                📅 Calendar booking widget loading here
+              </p>
+              <p style={{ margin: 0, fontSize: '0.82rem' }}>
+                HubSpot meetings embed placeholder — will be replaced with Paula&apos;s booking calendar
+              </p>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--muted-text)' }}>
+              Or reach out directly:{' '}
+              <a
+                href="https://www.searchinfluence.com/contact/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--orange-accent)', fontWeight: 600, textDecoration: 'none' }}
+              >
+                Contact Search Influence <ArrowRight size={14} style={{ verticalAlign: 'middle' }} />
+              </a>
+            </p>
           </div>
         </div>
       </div>
