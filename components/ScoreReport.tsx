@@ -1,8 +1,8 @@
 'use client';
 
-import { CSSProperties } from 'react';
+import { CSSProperties, useState } from 'react';
 import { ScoringFactorKey, WebsiteAnalysis } from '@/types';
-import { AlertCircle, AlertTriangle, Database, FileText, Info, Search, Settings, type LucideIcon } from 'lucide-react';
+import { AlertCircle, AlertTriangle, ArrowRight, Database, FileText, Info, Lightbulb, Search, Settings, type LucideIcon } from 'lucide-react';
 import ExportButtons from './ExportButtons';
 import { generateMarkdownReport, downloadMarkdown } from '@/lib/exporters';
 import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
@@ -61,11 +61,24 @@ function getOverallScoreStatus(score: number) {
   return 'Poor';
 }
 
+function getScoreInterpretation(score: number, lowestFactor: { label: string; score: number }) {
+  if (score >= 80) return `Your website is well-optimized for AI search visibility. Focus on maintaining your strong foundation while improving ${lowestFactor.label} (${lowestFactor.score}%) to push your score even higher.`;
+  if (score >= 60) return `Your website has a solid foundation but has clear optimization opportunities. Your biggest area for improvement is ${lowestFactor.label} (${lowestFactor.score}%). Addressing the high-priority recommendations below could raise your score significantly.`;
+  if (score >= 40) return `Your website has multiple gaps affecting AI search visibility. ${lowestFactor.label} scored just ${lowestFactor.score}% and should be your first priority. Work through the high-priority recommendations to build a stronger foundation.`;
+  return `Your website needs significant work to be competitive in AI search results. Start with ${lowestFactor.label} (${lowestFactor.score}%) and work through each high-priority recommendation systematically.`;
+}
+
 export default function ScoreReport({ analysis }: ScoreReportProps) {
   const { trackExport } = useGoogleTagManager();
+  const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
   const lowestScoringFactorKey = SCORING_FACTORS.reduce((lowestKey, factor) => {
     return analysis.factors[factor.key].score < analysis.factors[lowestKey].score ? factor.key : lowestKey;
   }, SCORING_FACTORS[0].key);
+  const lowestFactor = analysis.factors[lowestScoringFactorKey];
+  const scoreInterpretation = getScoreInterpretation(analysis.overallScore, {
+    label: lowestFactor.label,
+    score: lowestFactor.score
+  });
   const scoreColor = getOverallScoreColor(analysis.overallScore);
   const clampedScore = Math.max(0, Math.min(100, analysis.overallScore));
   const gaugeSize = 120;
@@ -85,6 +98,16 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
     const markdown = generateMarkdownReport(analysis);
     const filename = `ai-grader-report-${analysis.url.replace(/[^a-z0-9]/gi, '-')}-${new Date().toISOString().split('T')[0]}.md`;
     downloadMarkdown(markdown, filename);
+  };
+
+  const handleCopyCode = async (code: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedRecIndex(index);
+      setTimeout(() => setCopiedRecIndex((current) => (current === index ? null : current)), 1800);
+    } catch {
+      setCopiedRecIndex(null);
+    }
   };
 
   return (
@@ -150,6 +173,25 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             </div>
           </div>
 
+          <div style={{
+            marginBottom: '18px',
+            padding: '14px 16px',
+            borderRadius: '10px',
+            borderLeft: '4px solid var(--orange-accent)',
+            borderTop: '1px solid var(--border-gray)',
+            borderRight: '1px solid var(--border-gray)',
+            borderBottom: '1px solid var(--border-gray)',
+            background: 'rgba(255, 255, 255, 0.85)',
+            display: 'flex',
+            gap: '10px',
+            alignItems: 'flex-start'
+          }}>
+            <Lightbulb size={18} style={{ color: 'var(--muted-text)', marginTop: '2px', flexShrink: 0 }} />
+            <p style={{ margin: 0, color: 'var(--secondary-content)', fontSize: '0.95rem', lineHeight: 1.5 }}>
+              {scoreInterpretation}
+            </p>
+          </div>
+
           <h2 style={{ margin: '0 0 12px', color: 'var(--content-text)', fontSize: '1.4rem', textAlign: 'center' }}>
             Analysis Score Breakdown
           </h2>
@@ -197,6 +239,44 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                       <span style={{ fontSize: '0.8rem', color: 'var(--muted-text)' }}>{recommendation.category}</span>
                     </div>
                     <p style={{ margin: 0, color: 'var(--content-text)' }}>{recommendation.text}</p>
+                    {recommendation.codeExample && (
+                      <div style={{
+                        marginTop: '10px',
+                        background: '#1e293b',
+                        borderRadius: '8px',
+                        padding: '10px',
+                        border: '1px solid rgba(255,255,255,0.08)'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyCode(recommendation.codeExample as string, index)}
+                            style={{
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              background: 'rgba(255,255,255,0.08)',
+                              color: '#e2e8f0',
+                              borderRadius: '6px',
+                              padding: '4px 8px',
+                              fontSize: '0.75rem',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {copiedRecIndex === index ? 'Copied' : 'Copy'}
+                          </button>
+                        </div>
+                        <pre style={{
+                          margin: 0,
+                          whiteSpace: 'pre-wrap',
+                          overflowX: 'auto',
+                          fontSize: '0.8rem',
+                          lineHeight: 1.45,
+                          color: '#e2e8f0',
+                          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+                        }}>
+                          <code>{recommendation.codeExample}</code>
+                        </pre>
+                      </div>
+                    )}
                     {recommendation.timeToImplement && (
                       <p style={{ margin: '8px 0 0', color: 'var(--secondary-content)', fontSize: '0.84rem' }}>
                         Time to implement: {recommendation.timeToImplement}
@@ -227,6 +307,45 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           </div>
 
           <ExportButtons analysis={analysis} onExportMarkdown={handleExportMarkdown} />
+
+          <div style={{
+            marginTop: '30px',
+            padding: '28px',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, rgba(230, 126, 34, 0.08) 0%, rgba(230, 126, 34, 0.03) 100%)',
+            border: '1px solid rgba(230, 126, 34, 0.25)',
+            textAlign: 'center'
+          }}>
+            <h3 style={{ margin: '0 0 10px', color: 'var(--content-text)', fontSize: '1.3rem' }}>
+              Ready to Improve Your AI Search Visibility?
+            </h3>
+            <p style={{ margin: '0 0 18px', color: 'var(--secondary-content)', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
+              Search Influence helps organizations optimize for AI-powered search engines.
+              Get a personalized roadmap to improve your score.
+            </p>
+            <a
+              href="https://info.searchinfluence.com/higher-ed-seo-roadmap-universities/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '14px 28px',
+                background: 'linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%)',
+                color: 'var(--white)',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontWeight: 700,
+                fontSize: '1rem',
+                boxShadow: '0 4px 15px rgba(230, 126, 34, 0.3)',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              Get Your Custom AI SEO Roadmap
+              <ArrowRight size={18} />
+            </a>
+          </div>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { ArrowLeft, Target, Zap, BarChart3 } from 'lucide-react';
+import { ArrowLeft, BarChart3, HelpCircle, Target, Wrench, Zap } from 'lucide-react';
 import URLAnalyzer from '@/components/URLAnalyzer';
 import ScoreReport from '@/components/ScoreReport';
 import AnalysisStatus from '@/components/AnalysisStatus';
@@ -174,7 +174,9 @@ export default function Home() {
                 listStyle: 'none',
                 position: 'relative'
               }}>
-                <span style={{ marginRight: '15px' }}>❓</span>
+                <span style={{ marginRight: '15px', display: 'inline-flex', verticalAlign: 'middle' }}>
+                  <HelpCircle size={20} style={{ color: 'var(--info-blue)' }} />
+                </span>
                 What is the AI Website Grader and who is it for?
                 <span style={{ 
                   position: 'absolute', 
@@ -217,7 +219,9 @@ export default function Home() {
                 listStyle: 'none',
                 position: 'relative'
               }}>
-                <span style={{ marginRight: '15px' }}>⚡</span>
+                <span style={{ marginRight: '15px', display: 'inline-flex', verticalAlign: 'middle' }}>
+                  <Zap size={20} style={{ color: 'var(--orange-accent)' }} />
+                </span>
                 What makes this different from other SEO tools?
                 <span style={{ 
                   position: 'absolute', 
@@ -260,7 +264,9 @@ export default function Home() {
                 listStyle: 'none',
                 position: 'relative'
               }}>
-                <span style={{ marginRight: '15px' }}>🎯</span>
+                <span style={{ marginRight: '15px', display: 'inline-flex', verticalAlign: 'middle' }}>
+                  <Target size={20} style={{ color: 'var(--success-green)' }} />
+                </span>
                 What specific use cases does this tool address?
                 <span style={{ 
                   position: 'absolute', 
@@ -303,7 +309,9 @@ export default function Home() {
                 listStyle: 'none',
                 position: 'relative'
               }}>
-                <span style={{ marginRight: '15px' }}>🔧</span>
+                <span style={{ marginRight: '15px', display: 'inline-flex', verticalAlign: 'middle' }}>
+                  <Wrench size={20} style={{ color: 'var(--orange-accent)' }} />
+                </span>
                 How does the analysis work and what data does it use?
                 <span style={{ 
                   position: 'absolute', 
@@ -348,7 +356,9 @@ export default function Home() {
                 listStyle: 'none',
                 position: 'relative'
               }}>
-                <span style={{ marginRight: '15px' }}>📊</span>
+                <span style={{ marginRight: '15px', display: 'inline-flex', verticalAlign: 'middle' }}>
+                  <BarChart3 size={20} style={{ color: 'var(--info-blue)' }} />
+                </span>
                 What do the scores mean and how should I interpret them?
                 <span style={{ 
                   position: 'absolute', 
