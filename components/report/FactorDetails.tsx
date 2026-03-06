@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ScoringFactorResult } from '@/types';
 import { AlertCircle, AlertTriangle, ChevronDown, Info, type LucideIcon } from 'lucide-react';
 
@@ -16,21 +17,59 @@ const priorityStyleMap = {
   low: { label: 'Low', bg: 'rgba(39, 174, 96, 0.12)', border: 'rgba(39, 174, 96, 0.35)', text: 'var(--success-green)', icon: Info }
 } as const;
 
-function formatStatValue(value: unknown): string {
+const STAT_LABELS: Record<string, string> = {
+  wordCount: 'Word Count',
+  h1Count: 'H1 Tags',
+  headingJumps: 'Heading Level Skips',
+  questionHeadings: 'Question Headings',
+  faqIndicators: 'FAQ Sections',
+  internalLinks: 'Internal Links',
+  totalLinks: 'Total Links',
+  imagesMissingAlt: 'Images Missing Alt',
+  totalImages: 'Total Images',
+  altCoverage: 'Alt Text Coverage',
+  readabilityScore: 'Readability Score',
+  contentToCodeRatio: 'Content-to-Code Ratio',
+  jsonLdCount: 'JSON-LD Blocks',
+  validSchemaBlocks: 'Valid Schema Blocks',
+  schemaTypeCount: 'Schema Types Found',
+  schemaTypes: 'Schema Types',
+  hasOpenGraph: 'Open Graph Tags',
+  hasTwitter: 'Twitter Card Tags',
+  richSnippetEligible: 'Rich Snippet Eligible',
+  https: 'HTTPS',
+  robotsPresent: 'robots.txt Present',
+  allowsBots: 'Allows Bot Crawling',
+  hasSitemapHint: 'Sitemap Reference',
+  hasCanonical: 'Canonical Tag',
+  hasHreflang: 'Hreflang Tags',
+  hasViewport: 'Viewport Meta',
+  hasResponsiveCss: 'Responsive CSS',
+  pageSpeedScore: 'PageSpeed Score',
+  loadTimeMs: 'Load Time (ms)',
+  titleLength: 'Title Length',
+  descriptionLength: 'Meta Description Length',
+  pathDepth: 'URL Path Depth',
+  hasQuery: 'Has Query Parameters',
+  pathIsClean: 'Clean URL Path',
+  webpImages: 'WebP Images'
+};
+
+function formatStatValueWithKey(key: string, value: unknown): string {
   if (typeof value === 'number') {
+    if (['altCoverage', 'readabilityScore', 'pageSpeedScore'].includes(key)) return `${Math.round(value)}%`;
+    if (key === 'loadTimeMs') return `${Math.round(value)}ms`;
+    if (key === 'contentToCodeRatio') return `${(value * 100).toFixed(1)}%`;
+    if (['titleLength', 'descriptionLength'].includes(key)) return `${value} chars`;
     return Number.isFinite(value) ? `${Math.round(value * 100) / 100}` : 'N/A';
   }
 
   if (typeof value === 'boolean') {
-    return value ? 'Yes' : 'No';
+    return value ? '✓ Yes' : '✗ No';
   }
 
   if (Array.isArray(value)) {
-    return value.length ? `${value.length} items` : 'None';
-  }
-
-  if (value && typeof value === 'object') {
-    return `${Object.keys(value as Record<string, unknown>).length} fields`;
+    return value.length ? (typeof value[0] === 'string' ? value.join(', ') : `${value.length} items`) : 'None';
   }
 
   if (value === null || value === undefined || value === '') {
@@ -41,7 +80,17 @@ function formatStatValue(value: unknown): string {
 }
 
 export default function FactorDetails({ factor, accent, borderColor, gradient, icon: Icon, defaultOpen }: FactorDetailsProps) {
+  const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
   const entries = Object.entries(factor.stats ?? {});
+  const handleCopyCode = async (code: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedRecIndex(index);
+      setTimeout(() => setCopiedRecIndex((current) => (current === index ? null : current)), 1800);
+    } catch {
+      setCopiedRecIndex(null);
+    }
+  };
 
   return (
     <details open={defaultOpen} className="factor-details-accordion" style={{
@@ -88,9 +137,9 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
                   background: 'var(--background-gray)'
                 }}>
                   <div style={{ fontSize: '0.78rem', color: 'var(--muted-text)', marginBottom: '4px' }}>
-                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase())}
+                    {STAT_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase())}
                   </div>
-                  <div style={{ color: 'var(--content-text)', fontWeight: 700 }}>{formatStatValue(value)}</div>
+                  <div style={{ color: 'var(--content-text)', fontWeight: 700 }}>{formatStatValueWithKey(key, value)}</div>
                 </div>
               ))}
             </div>
@@ -158,6 +207,44 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
                     <p style={{ margin: 0, color: 'var(--content-text)', fontSize: '0.91rem', lineHeight: 1.5 }}>
                       {recommendation.text}
                     </p>
+                    {recommendation.codeExample && (
+                      <div style={{
+                        marginTop: '10px',
+                        background: '#1e293b',
+                        borderRadius: '8px',
+                        padding: '10px',
+                        border: '1px solid rgba(255,255,255,0.08)'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyCode(recommendation.codeExample as string, index)}
+                            style={{
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              background: 'rgba(255,255,255,0.08)',
+                              color: '#e2e8f0',
+                              borderRadius: '6px',
+                              padding: '4px 8px',
+                              fontSize: '0.75rem',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {copiedRecIndex === index ? 'Copied' : 'Copy'}
+                          </button>
+                        </div>
+                        <pre style={{
+                          margin: 0,
+                          whiteSpace: 'pre-wrap',
+                          overflowX: 'auto',
+                          fontSize: '0.8rem',
+                          lineHeight: 1.45,
+                          color: '#e2e8f0',
+                          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+                        }}>
+                          <code>{recommendation.codeExample}</code>
+                        </pre>
+                      </div>
+                    )}
                     {recommendation.timeToImplement && (
                       <p style={{ margin: '8px 0 0', fontSize: '0.8rem', color: 'var(--secondary-content)' }}>
                         Time to implement: {recommendation.timeToImplement}
