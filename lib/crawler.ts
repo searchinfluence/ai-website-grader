@@ -260,6 +260,28 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
     const content = $(element).html();
     if (content) schemaMarkup.push(content.trim());
   });
+
+  // Also scan inline scripts for JSON-LD patterns injected by GTM or other tag managers.
+  $('script:not([type]), script[type="text/javascript"]').each((_, element) => {
+    const scriptContent = $(element).html();
+    if (!scriptContent) return;
+
+    // Look for JSON-LD-like objects embedded in JavaScript blocks.
+    const jsonLdMatches = scriptContent.match(/\{[^{}]*"@context"\s*:\s*"https?:\/\/schema\.org"[^{}]*"@type"\s*:\s*"[^"]+?"[^{}]*\}/g);
+    if (!jsonLdMatches) return;
+
+    for (const match of jsonLdMatches) {
+      try {
+        JSON.parse(match);
+        const trimmed = match.trim();
+        if (!schemaMarkup.includes(trimmed)) {
+          schemaMarkup.push(trimmed);
+        }
+      } catch {
+        // Skip non-JSON matches.
+      }
+    }
+  });
   
   // Analyze mobile information
   const mobileInfo = analyzeMobileInfo($, html);
@@ -379,8 +401,14 @@ function analyzeJavaScriptDependency($: cheerio.CheerioAPI, html: string): boole
   
   // Check for single page app indicators
   const isSPA = $('div[id="root"]').length > 0 || $('div[id="app"]').length > 0;
+
+  // Check for Google Tag Manager signals often used to inject runtime content.
+  const hasGTM =
+    html.includes('googletagmanager.com') ||
+    html.includes('gtm.js') ||
+    $('script[src*="googletagmanager"]').length > 0;
   
-  return scriptTags > 3 || hasReactVue || hasDynamicContent || isSPA;
+  return scriptTags > 3 || hasReactVue || hasDynamicContent || isSPA || hasGTM;
 }
 
 function estimateLoadTime(html: string, imageCount: number): number {
@@ -419,7 +447,22 @@ async function fetchRobotsInfo(url: string): Promise<CrawledContent['robotsInfo'
     }
     
     const content = await response.text();
-    const allowsAllBots = content.includes('User-agent: *') && content.includes('Allow: /');
+    const lines = content.split('\n').map((line) => line.trim().toLowerCase());
+    let currentAgent = '';
+    let hasGlobalDisallow = false;
+
+    for (const line of lines) {
+      if (line.startsWith('user-agent:')) {
+        currentAgent = line.replace('user-agent:', '').trim();
+      } else if (line.startsWith('disallow:') && currentAgent === '*') {
+        const path = line.replace('disallow:', '').trim();
+        if (path === '/') {
+          hasGlobalDisallow = true;
+        }
+      }
+    }
+
+    const allowsAllBots = !hasGlobalDisallow;
     
     // Enhanced AI bot detection
     const aiBotNames = ['GPTBot', 'ChatGPT', 'CCBot', 'Google-Extended', 'Claude-Web', 'PerplexityBot', 'BingBot'];

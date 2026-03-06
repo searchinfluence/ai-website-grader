@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { ScoringFactorResult } from '@/types';
 import { AlertCircle, AlertTriangle, ChevronDown, Info, type LucideIcon } from 'lucide-react';
 
@@ -77,6 +77,19 @@ function formatStatValueWithKey(key: string, value: unknown): string {
   }
 
   return String(value);
+}
+
+function formatRecommendationText(text: string): ReactNode {
+  const parts = text.split(/((?:www\.)?[a-z0-9][-a-z0-9]*(?:\.[a-z]{2,})+|\d+(?:\.\d+)?(?:%|ms|px|s|chars?)?)/gi);
+  return parts.map((part, i) => {
+    if (/^(?:www\.)?[a-z0-9][-a-z0-9]*(?:\.[a-z]{2,})+$/i.test(part)) {
+      return <strong key={i}>{part}</strong>;
+    }
+    if (/^\d+(?:\.\d+)?(?:%|ms|px|s|chars?)?$/.test(part)) {
+      return <strong key={i} style={{ color: 'var(--orange-accent)' }}>{part}</strong>;
+    }
+    return part;
+  });
 }
 
 export default function FactorDetails({ factor, accent, borderColor, gradient, icon: Icon, defaultOpen }: FactorDetailsProps) {
@@ -205,7 +218,7 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
                       <span style={{ fontSize: '0.78rem', color: 'var(--muted-text)' }}>{recommendation.category}</span>
                     </div>
                     <p style={{ margin: 0, color: 'var(--content-text)', fontSize: '0.91rem', lineHeight: 1.5 }}>
-                      {recommendation.text}
+                      {formatRecommendationText(recommendation.text)}
                     </p>
                     {recommendation.codeExample && (
                       <div style={{

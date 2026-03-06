@@ -1,6 +1,6 @@
 'use client';
 
-import { CSSProperties, useState } from 'react';
+import { CSSProperties, ReactNode, useState } from 'react';
 import Script from 'next/script';
 import { ScoringFactorKey, WebsiteAnalysis } from '@/types';
 import { AlertCircle, AlertTriangle, ArrowRight, Database, FileText, Info, Lightbulb, Search, Settings, type LucideIcon } from 'lucide-react';
@@ -67,6 +67,19 @@ function getScoreInterpretation(score: number, lowestFactor: { label: string; sc
   if (score >= 60) return `Your website has a solid foundation but has clear optimization opportunities. Your biggest area for improvement is ${lowestFactor.label} (${lowestFactor.score}%). Addressing the high-priority recommendations below could raise your score significantly.`;
   if (score >= 40) return `Your website has multiple gaps affecting AI search visibility. ${lowestFactor.label} scored just ${lowestFactor.score}% and should be your first priority. Work through the high-priority recommendations to build a stronger foundation.`;
   return `Your website needs significant work to be competitive in AI search results. Start with ${lowestFactor.label} (${lowestFactor.score}%) and work through each high-priority recommendation systematically.`;
+}
+
+function formatRecommendationText(text: string): ReactNode {
+  const parts = text.split(/((?:www\.)?[a-z0-9][-a-z0-9]*(?:\.[a-z]{2,})+|\d+(?:\.\d+)?(?:%|ms|px|s|chars?)?)/gi);
+  return parts.map((part, i) => {
+    if (/^(?:www\.)?[a-z0-9][-a-z0-9]*(?:\.[a-z]{2,})+$/i.test(part)) {
+      return <strong key={i}>{part}</strong>;
+    }
+    if (/^\d+(?:\.\d+)?(?:%|ms|px|s|chars?)?$/.test(part)) {
+      return <strong key={i} style={{ color: 'var(--orange-accent)' }}>{part}</strong>;
+    }
+    return part;
+  });
 }
 
 export default function ScoreReport({ analysis }: ScoreReportProps) {
@@ -239,7 +252,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                       </span>
                       <span style={{ fontSize: '0.8rem', color: 'var(--muted-text)' }}>{recommendation.category}</span>
                     </div>
-                    <p style={{ margin: 0, color: 'var(--content-text)' }}>{recommendation.text}</p>
+                    <p style={{ margin: 0, color: 'var(--content-text)' }}>{formatRecommendationText(recommendation.text)}</p>
                     {recommendation.codeExample && (
                       <div style={{
                         marginTop: '10px',
