@@ -191,11 +191,11 @@ export default function Home() {
                 <p>The AI Website Grader is a sophisticated analysis tool designed for <strong>digital marketers, SEO professionals, web developers, and business owners</strong> who want to optimize their websites for AI-powered search engines and modern search algorithms.</p>
                 <p style={{ marginTop: '15px' }}>It&apos;s particularly valuable for:</p>
                 <ul style={{ marginTop: '10px', paddingLeft: '20px' }}>
-                  <li>Higher education institutions optimizing for student search behavior</li>
-                  <li>Healthcare organizations improving patient information discoverability</li>
-                  <li>E-commerce sites optimizing for voice search and AI assistants</li>
-                  <li>Content creators wanting to rank in AI overviews and featured snippets</li>
-                  <li>Web developers ensuring technical excellence and accessibility</li>
+                  <li>Businesses of all sizes improving discoverability in AI-driven search</li>
+                  <li>Marketing teams prioritizing technical and content fixes by impact</li>
+                  <li>Agencies and consultants delivering clear audits and action plans</li>
+                  <li>Content teams improving answer-first structure for AI overviews</li>
+                  <li>Web developers ensuring strong technical foundations and accessibility</li>
                 </ul>
               </div>
             </details>

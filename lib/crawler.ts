@@ -11,6 +11,7 @@ import {
 
 // Consistent User-Agent for all requests
 const USER_AGENT = 'AI-Website-Grader/2.0 (+https://ai-grader.searchinfluence.com/; contact@searchinfluence.com)';
+const GTM_ID_PATTERN = /\bGTM-[A-Z0-9]+\b/;
 
 export async function crawlWebsite(url: string): Promise<CrawledContent> {
   // Validate and normalize URL
@@ -282,6 +283,15 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
       }
     }
   });
+
+  // If GTM is present, fetch the container script and extract runtime-injected JSON-LD.
+  const gtmSchemaMarkup = await fetchGtmSchema(html);
+  for (const schema of gtmSchemaMarkup) {
+    if (!schemaMarkup.includes(schema)) {
+      schemaMarkup.push(schema);
+    }
+  }
+  const gtmSchemaDetected = gtmSchemaMarkup.length > 0;
   
   // Analyze mobile information
   const mobileInfo = analyzeMobileInfo($, html);
@@ -379,6 +389,7 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
     html,
     url,
     schemaMarkup,
+    gtmSchemaDetected,
     loadTime,
     hasJavaScriptDependency,
     mobileInfo,
@@ -387,6 +398,131 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
     uxInfo,
     aiAnalysisData: finalAIAnalysisData
   };
+}
+
+function extractBalancedJsonObjects(input: string): string[] {
+  const objects: string[] = [];
+  let depth = 0;
+  let startIndex = -1;
+  let inString = false;
+  let escapeNext = false;
+  let stringQuote = '"';
+
+  for (let i = 0; i < input.length; i += 1) {
+    const char = input[i];
+
+    if (inString) {
+      if (escapeNext) {
+        escapeNext = false;
+        continue;
+      }
+      if (char === '\\') {
+        escapeNext = true;
+        continue;
+      }
+      if (char === stringQuote) {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === '"' || char === '\'') {
+      inString = true;
+      stringQuote = char;
+      continue;
+    }
+
+    if (char === '{') {
+      if (depth === 0) {
+        startIndex = i;
+      }
+      depth += 1;
+      continue;
+    }
+
+    if (char === '}' && depth > 0) {
+      depth -= 1;
+      if (depth === 0 && startIndex >= 0) {
+        objects.push(input.slice(startIndex, i + 1));
+        startIndex = -1;
+      }
+    }
+  }
+
+  return objects;
+}
+
+function collectSchemaJsonFromSource(source: string): string[] {
+  const extracted = new Set<string>();
+  const objects = extractBalancedJsonObjects(source);
+
+  for (const candidate of objects) {
+    if (!candidate.includes('@context') || !candidate.toLowerCase().includes('schema.org')) {
+      continue;
+    }
+
+    try {
+      const parsed = JSON.parse(candidate);
+      extracted.add(JSON.stringify(parsed));
+    } catch {
+      // Skip invalid JSON candidates.
+    }
+  }
+
+  return Array.from(extracted);
+}
+
+function extractGtmContainerId(html: string): string | null {
+  const match = html.match(GTM_ID_PATTERN);
+  return match ? match[0] : null;
+}
+
+async function fetchGtmSchema(html: string): Promise<string[]> {
+  const gtmId = extractGtmContainerId(html);
+  if (!gtmId) return [];
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+  try {
+    const response = await fetch(`https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(gtmId)}`, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': USER_AGENT,
+        'Accept': '*/*'
+      }
+    });
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const containerScript = await response.text();
+    const schemaCandidates = new Set<string>(collectSchemaJsonFromSource(containerScript));
+
+    // GTM often stores payloads as escaped JSON strings.
+    const stringLiteralPattern = /"((?:\\.|[^"\\])*)"/g;
+    let match: RegExpExecArray | null;
+    while ((match = stringLiteralPattern.exec(containerScript)) !== null) {
+      try {
+        const decoded = JSON.parse(`"${match[1]}"`) as string;
+        if (!decoded.includes('@context') || !decoded.toLowerCase().includes('schema.org')) {
+          continue;
+        }
+        for (const schema of collectSchemaJsonFromSource(decoded)) {
+          schemaCandidates.add(schema);
+        }
+      } catch {
+        // Skip non-decodable strings.
+      }
+    }
+
+    return Array.from(schemaCandidates);
+  } catch {
+    clearTimeout(timeoutId);
+    return [];
+  }
 }
 
 function analyzeJavaScriptDependency($: cheerio.CheerioAPI, html: string): boolean {

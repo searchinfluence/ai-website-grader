@@ -33,6 +33,10 @@ export function analyzeStructuredData(content: CrawledContent): FactorResult {
     });
   }
 
+  if (content.gtmSchemaDetected) {
+    findings.push('Structured data detected via Google Tag Manager (injected at runtime).');
+  }
+
   if (!schema.hasFaqPage) {
     findings.push('FAQPage/QAPage schema not detected for FAQ-style content eligibility.');
     recommendations.push({
