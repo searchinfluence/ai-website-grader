@@ -17,20 +17,41 @@ export function analyzeStructuredData(content: CrawledContent): FactorResult {
   const richSnippetPotential = analyzeRichSnippetPotential(content, schema);
   const structuredDataCompleteness = analyzeStructuredDataCompleteness(content, schema);
   const jsonLdImplementation = analyzeJsonLdImplementation(content, schema, hasOpenGraph, hasTwitter);
+  const microdataTypesLabel = schema.microdataTypes.join(', ');
+  const rdfaTypesLabel = schema.rdfaTypes.join(', ');
+  const detectedNonJsonLdTypes = Array.from(new Set([...schema.microdataTypes, ...schema.rdfaTypes])).join(', ');
 
   const score = clamp(
     (schemaPresence + schemaValidation + richSnippetPotential + structuredDataCompleteness + jsonLdImplementation) / 5
   );
 
+  if (schema.microdataTypes.length > 0) {
+    findings.push(`Structured data detected via microdata (itemscope/itemtype): ${microdataTypesLabel}`);
+  }
+
+  if (schema.rdfaTypes.length > 0) {
+    findings.push(`Structured data detected via RDFa markup: ${rdfaTypesLabel}`);
+  }
+
   if (schema.jsonLdCount === 0) {
     findings.push('No JSON-LD schema blocks detected.');
-    recommendations.push({
-      text: `Add an Organization JSON-LD script on ${hostLabel} (currently 0 JSON-LD blocks).`,
-      priority: 'high',
-      category: 'schema',
-      timeToImplement: '~30 min',
-      codeExample: `<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Your Organization","url":"https://example.com"}</script>`
-    });
+
+    if (detectedNonJsonLdTypes.length > 0) {
+      recommendations.push({
+        text: `Consider migrating existing microdata/RDFa to JSON-LD format for better maintainability (currently detected types: ${detectedNonJsonLdTypes}).`,
+        priority: 'high',
+        category: 'schema',
+        timeToImplement: '~30 min'
+      });
+    } else {
+      recommendations.push({
+        text: `Add an Organization JSON-LD script on ${hostLabel} (currently 0 JSON-LD blocks).`,
+        priority: 'high',
+        category: 'schema',
+        timeToImplement: '~30 min',
+        codeExample: `<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Your Organization","url":"https://example.com"}</script>`
+      });
+    }
   }
 
   if (content.gtmSchemaDetected) {
@@ -81,6 +102,9 @@ export function analyzeStructuredData(content: CrawledContent): FactorResult {
       validSchemaBlocks: schema.validBlocks,
       schemaTypeCount: schema.schemaTypes.length,
       schemaTypes: schema.schemaTypes,
+      microdataTypes: schema.microdataTypes,
+      rdfaTypes: schema.rdfaTypes,
+      hasGraph: schema.hasGraph,
       hasOpenGraph,
       hasTwitter,
       richSnippetEligible: schema.hasFaqPage || schema.hasHowTo || schema.hasArticle || schema.hasProductOrService,
@@ -94,18 +118,37 @@ export function analyzeStructuredData(content: CrawledContent): FactorResult {
 }
 
 const SCHEMA_PRESENCE_PATTERNS = [
-  { pattern: /"@type":\s*"organization"/i, points: 25 },
-  { pattern: /"@type":\s*"service"/i, points: 20 },
-  { pattern: /"@type":\s*"faqpage"/i, points: 20 },
-  { pattern: /"@type":\s*"localbusiness"/i, points: 20 },
-  { pattern: /"@type":\s*"webpage"/i, points: 15 },
-  { pattern: /"@type":\s*"breadcrumblist"/i, points: 15 },
-  { pattern: /"@type":\s*"article"/i, points: 15 },
-  { pattern: /"@type":\s*"website"/i, points: 15 },
-  { pattern: /"@type":\s*"person"/i, points: 10 },
-  { pattern: /"@type":\s*"review"/i, points: 10 },
-  { pattern: /"@type":\s*"howto"/i, points: 10 }
+  { type: 'organization', points: 25 },
+  { type: 'service', points: 20 },
+  { type: 'faqpage', points: 20 },
+  { type: 'localbusiness', points: 20 },
+  { type: 'webpage', points: 15 },
+  { type: 'breadcrumblist', points: 15 },
+  { type: 'article', points: 15 },
+  { type: 'website', points: 15 },
+  { type: 'person', points: 10 },
+  { type: 'review', points: 10 },
+  { type: 'howto', points: 10 }
 ] as const;
+
+const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+function hasSchemaTypeInAnyFormat(
+  html: string,
+  schema: ReturnType<typeof summarizeSchema>,
+  schemaType: string
+): boolean {
+  const normalizedType = schemaType.toLowerCase();
+  if (schema.schemaTypes.some((type) => type.toLowerCase().includes(normalizedType))) {
+    return true;
+  }
+
+  const escapedType = escapeRegex(schemaType);
+  const jsonLdPattern = new RegExp(`"@type"\\s*:\\s*"${escapedType}"`, 'i');
+  const microdataPattern = new RegExp(`itemtype\\s*=\\s*["'][^"']*schema\\.org\\/${escapedType}(?:[^"']*)["']`, 'i');
+  const rdfaPattern = new RegExp(`typeof\\s*=\\s*["'][^"']*(?:schema:)?${escapedType}(?:\\s|["'])`, 'i');
+  return jsonLdPattern.test(html) || microdataPattern.test(html) || rdfaPattern.test(html);
+}
 
 function analyzeSchemaPresence(
   content: CrawledContent,
@@ -117,7 +160,7 @@ function analyzeSchemaPresence(
   const html = content.html.toLowerCase();
 
   SCHEMA_PRESENCE_PATTERNS.forEach((schemaType) => {
-    if (schemaType.pattern.test(html)) {
+    if (hasSchemaTypeInAnyFormat(html, schema, schemaType.type)) {
       score += schemaType.points;
     }
   });
@@ -207,17 +250,17 @@ function analyzeStructuredDataCompleteness(content: CrawledContent, schema: Retu
   let score = 50;
   const html = content.html.toLowerCase();
   const essentialSchemas = [
-    { pattern: /"@type":\s*"organization"/i, points: 20 },
-    { pattern: /"@type":\s*"website"/i, points: 15 },
-    { pattern: /"@type":\s*"webpage"/i, points: 15 },
-    { pattern: /"@type":\s*"breadcrumblist"/i, points: 15 },
-    { pattern: /"@type":\s*"service"/i, points: 15 },
-    { pattern: /"@type":\s*"person"/i, points: 10 },
-    { pattern: /"@type":\s*"article"/i, points: 10 }
+    { type: 'organization', points: 20 },
+    { type: 'website', points: 15 },
+    { type: 'webpage', points: 15 },
+    { type: 'breadcrumblist', points: 15 },
+    { type: 'service', points: 15 },
+    { type: 'person', points: 10 },
+    { type: 'article', points: 10 }
   ];
 
   essentialSchemas.forEach((item) => {
-    if (item.pattern.test(html)) score += item.points;
+    if (hasSchemaTypeInAnyFormat(html, schema, item.type)) score += item.points;
   });
 
   if (schema.hasOrganization) score += 10;
@@ -226,13 +269,13 @@ function analyzeStructuredDataCompleteness(content: CrawledContent, schema: Retu
   if (schema.hasArticle) score += 8;
   if (schema.hasProductOrService) score += 8;
 
-  if (/"@type":\s*"organization"/i.test(html)) {
+  if (hasSchemaTypeInAnyFormat(html, schema, 'organization')) {
     if (/"name"\s*:/i.test(html)) score += 5;
     if (/"url"\s*:/i.test(html)) score += 5;
     if (/"logo"\s*:/i.test(html)) score += 5;
   }
 
-  if (/"@type":\s*"service"/i.test(html)) {
+  if (hasSchemaTypeInAnyFormat(html, schema, 'service')) {
     if (/"name"\s*:/i.test(html)) score += 5;
     if (/"description"\s*:/i.test(html)) score += 5;
   }
@@ -251,6 +294,8 @@ function analyzeJsonLdImplementation(
 ): number {
   let score = 50;
   const html = content.html.toLowerCase();
+  const hasSchemaVocab = /vocab\s*=\s*["']\s*(?:https?:)?\/\/schema\.org\/?\s*["']/i.test(content.html);
+  const hasTypeof = /typeof\s*=\s*["'][^"']+["']/i.test(content.html);
 
   if (html.includes('application/ld+json')) score += 30;
 
@@ -265,6 +310,12 @@ function analyzeJsonLdImplementation(
   const microdataCount = content.enhancedSchemaInfo?.microdataCount || 0;
   if (schema.validBlocks > microdataCount) {
     score += 10;
+  }
+  if (schema.microdataTypes.length > 0) {
+    score += schema.microdataTypes.length > 1 ? 10 : 5;
+  }
+  if (schema.rdfaTypes.length > 0) {
+    score += hasSchemaVocab && hasTypeof ? 10 : 5;
   }
 
   if (hasOpenGraph && hasTwitter) {

@@ -15,8 +15,11 @@ export type FactorResult = {
 export type SchemaSummary = {
   jsonLdCount: number;
   schemaTypes: string[];
+  microdataTypes: string[];
+  rdfaTypes: string[];
   validBlocks: number;
   totalBlocks: number;
+  hasGraph: boolean;
   hasOrganization: boolean;
   hasFaqPage: boolean;
   hasHowTo: boolean;
