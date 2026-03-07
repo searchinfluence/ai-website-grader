@@ -9,9 +9,10 @@ import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
 interface ExportButtonsProps {
   analysis: WebsiteAnalysis;
   onExportMarkdown: () => void;
+  onShare?: () => Promise<void>;
 }
 
-export default function ExportButtons({ analysis, onExportMarkdown }: ExportButtonsProps) {
+export default function ExportButtons({ analysis, onExportMarkdown, onShare }: ExportButtonsProps) {
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [isSharingReport, setIsSharingReport] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
