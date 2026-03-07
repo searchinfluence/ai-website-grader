@@ -111,6 +111,7 @@ export interface CrawledContent {
     content?: string;
   };
   schemaMarkup: string[];
+  gtmSchemaDetected?: boolean;
   loadTime?: number;
   hasJavaScriptDependency: boolean;
   mobileInfo?: {
