@@ -12,20 +12,14 @@ export function analyzeStructuredData(content: CrawledContent): FactorResult {
   const html = content.html.toLowerCase();
   const hasOpenGraph = html.includes('property="og:') || html.includes("property='og:");
   const hasTwitter = html.includes('name="twitter:') || html.includes("name='twitter:");
-
-  const typeScore = clamp(schema.schemaTypes.length * 18);
-  const presenceScore = schema.jsonLdCount > 0 ? clamp(55 + schema.validBlocks * 10) : 10;
-  const completenessCount = [schema.hasOrganization, schema.hasFaqPage, schema.hasHowTo, schema.hasArticle, schema.hasProductOrService].filter(Boolean).length;
-  const completenessScore = clamp(completenessCount * 20);
-  const socialMetaScore = hasOpenGraph && hasTwitter ? 95 : hasOpenGraph || hasTwitter ? 65 : 20;
-  const richSnippetScore = clamp((schema.hasFaqPage ? 35 : 0) + (schema.hasHowTo ? 25 : 0) + (schema.hasArticle ? 20 : 0) + (schema.hasProductOrService ? 20 : 0));
+  const schemaPresence = analyzeSchemaPresence(content, schema, hasOpenGraph, hasTwitter);
+  const schemaValidation = analyzeSchemaValidation(content);
+  const richSnippetPotential = analyzeRichSnippetPotential(content, schema);
+  const structuredDataCompleteness = analyzeStructuredDataCompleteness(content, schema);
+  const jsonLdImplementation = analyzeJsonLdImplementation(content, schema, hasOpenGraph, hasTwitter);
 
   const score = clamp(
-    presenceScore * 0.3 +
-    typeScore * 0.2 +
-    completenessScore * 0.2 +
-    socialMetaScore * 0.15 +
-    richSnippetScore * 0.15
+    (schemaPresence + schemaValidation + richSnippetPotential + structuredDataCompleteness + jsonLdImplementation) / 5
   );
 
   if (schema.jsonLdCount === 0) {
@@ -85,7 +79,195 @@ export function analyzeStructuredData(content: CrawledContent): FactorResult {
       schemaTypes: schema.schemaTypes,
       hasOpenGraph,
       hasTwitter,
-      richSnippetEligible: schema.hasFaqPage || schema.hasHowTo || schema.hasArticle || schema.hasProductOrService
+      richSnippetEligible: schema.hasFaqPage || schema.hasHowTo || schema.hasArticle || schema.hasProductOrService,
+      schemaPresence,
+      schemaValidation,
+      richSnippetPotential,
+      structuredDataCompleteness,
+      jsonLdImplementation
     }
   };
+}
+
+const SCHEMA_PRESENCE_PATTERNS = [
+  { pattern: /"@type":\s*"organization"/i, points: 25 },
+  { pattern: /"@type":\s*"service"/i, points: 20 },
+  { pattern: /"@type":\s*"faqpage"/i, points: 20 },
+  { pattern: /"@type":\s*"localbusiness"/i, points: 20 },
+  { pattern: /"@type":\s*"webpage"/i, points: 15 },
+  { pattern: /"@type":\s*"breadcrumblist"/i, points: 15 },
+  { pattern: /"@type":\s*"article"/i, points: 15 },
+  { pattern: /"@type":\s*"website"/i, points: 15 },
+  { pattern: /"@type":\s*"person"/i, points: 10 },
+  { pattern: /"@type":\s*"review"/i, points: 10 },
+  { pattern: /"@type":\s*"howto"/i, points: 10 }
+] as const;
+
+function analyzeSchemaPresence(
+  content: CrawledContent,
+  schema: ReturnType<typeof summarizeSchema>,
+  hasOpenGraph: boolean,
+  hasTwitter: boolean
+): number {
+  let score = 0;
+  const html = content.html.toLowerCase();
+
+  SCHEMA_PRESENCE_PATTERNS.forEach((schemaType) => {
+    if (schemaType.pattern.test(html)) {
+      score += schemaType.points;
+    }
+  });
+
+  if (html.includes('application/ld+json')) score += 20;
+  if (html.includes('itemtype=') || html.includes('itemscope')) score += 10;
+
+  if (schema.jsonLdCount > 0) score += 10;
+  if (schema.jsonLdCount > 2) score += 10;
+  if (schema.jsonLdCount > 4) score += 10;
+
+  if (hasOpenGraph) score += 7;
+  if (hasTwitter) score += 7;
+
+  return clamp(score);
+}
+
+function analyzeSchemaValidation(content: CrawledContent): number {
+  let score = 80;
+  const validationErrors = content.enhancedSchemaInfo?.validationErrors ?? [];
+
+  if (validationErrors.length > 0) {
+    score -= Math.min(60, validationErrors.length * 5);
+  }
+
+  let validJsonLd = 0;
+  content.schemaMarkup.forEach((schemaBlock) => {
+    try {
+      JSON.parse(schemaBlock);
+      validJsonLd += 1;
+    } catch {
+      score -= 10;
+    }
+  });
+
+  if (validJsonLd > 0) {
+    score += Math.min(20, validJsonLd * 5);
+  }
+
+  const html = content.html.toLowerCase();
+  if (/"@type":\s*"organization"/i.test(html)) {
+    if (/"name"\s*:/i.test(html)) score += 5;
+    if (/"url"\s*:/i.test(html)) score += 5;
+  }
+  if (/"@type":\s*"service"/i.test(html)) {
+    if (/"name"\s*:/i.test(html)) score += 5;
+    if (/"description"\s*:/i.test(html)) score += 5;
+  }
+
+  return clamp(score);
+}
+
+function analyzeRichSnippetPotential(content: CrawledContent, schema: ReturnType<typeof summarizeSchema>): number {
+  let score = 40;
+  const html = content.html.toLowerCase();
+  const richSnippetPatterns = [
+    { pattern: /"@type":\s*"faqpage"/i, points: 20 },
+    { pattern: /"@type":\s*"review"/i, points: 15 },
+    { pattern: /"@type":\s*"howto"/i, points: 15 },
+    { pattern: /"@type":\s*"recipe"/i, points: 15 },
+    { pattern: /"@type":\s*"event"/i, points: 15 },
+    { pattern: /"@type":\s*"product"/i, points: 15 },
+    { pattern: /"@type":\s*"article"/i, points: 10 },
+    { pattern: /"@type":\s*"organization"/i, points: 10 },
+    { pattern: /"@type":\s*"service"/i, points: 10 }
+  ];
+
+  richSnippetPatterns.forEach((item) => {
+    if (item.pattern.test(html)) score += item.points;
+  });
+
+  if (schema.hasFaqPage) score += 12;
+  if (schema.hasHowTo) score += 10;
+  if (schema.hasArticle) score += 8;
+  if (schema.hasProductOrService) score += 8;
+
+  if (html.includes('faq') || html.includes('question')) score += 10;
+  if (html.includes('review') || html.includes('rating')) score += 10;
+  if (html.includes('how to') || html.includes('step')) score += 10;
+  if (html.includes('price') || html.includes('cost')) score += 5;
+  if (html.includes('contact') || html.includes('phone')) score += 5;
+
+  return clamp(score);
+}
+
+function analyzeStructuredDataCompleteness(content: CrawledContent, schema: ReturnType<typeof summarizeSchema>): number {
+  let score = 50;
+  const html = content.html.toLowerCase();
+  const essentialSchemas = [
+    { pattern: /"@type":\s*"organization"/i, points: 20 },
+    { pattern: /"@type":\s*"website"/i, points: 15 },
+    { pattern: /"@type":\s*"webpage"/i, points: 15 },
+    { pattern: /"@type":\s*"breadcrumblist"/i, points: 15 },
+    { pattern: /"@type":\s*"service"/i, points: 15 },
+    { pattern: /"@type":\s*"person"/i, points: 10 },
+    { pattern: /"@type":\s*"article"/i, points: 10 }
+  ];
+
+  essentialSchemas.forEach((item) => {
+    if (item.pattern.test(html)) score += item.points;
+  });
+
+  if (schema.hasOrganization) score += 10;
+  if (schema.hasFaqPage) score += 8;
+  if (schema.hasHowTo) score += 8;
+  if (schema.hasArticle) score += 8;
+  if (schema.hasProductOrService) score += 8;
+
+  if (/"@type":\s*"organization"/i.test(html)) {
+    if (/"name"\s*:/i.test(html)) score += 5;
+    if (/"url"\s*:/i.test(html)) score += 5;
+    if (/"logo"\s*:/i.test(html)) score += 5;
+  }
+
+  if (/"@type":\s*"service"/i.test(html)) {
+    if (/"name"\s*:/i.test(html)) score += 5;
+    if (/"description"\s*:/i.test(html)) score += 5;
+  }
+
+  if (schema.jsonLdCount > 0) score += 5;
+  if (schema.jsonLdCount > 2) score += 5;
+
+  return clamp(score);
+}
+
+function analyzeJsonLdImplementation(
+  content: CrawledContent,
+  schema: ReturnType<typeof summarizeSchema>,
+  hasOpenGraph: boolean,
+  hasTwitter: boolean
+): number {
+  let score = 50;
+  const html = content.html.toLowerCase();
+
+  if (html.includes('application/ld+json')) score += 30;
+
+  const headEndIndex = html.indexOf('</head>');
+  const headSection = headEndIndex >= 0 ? html.substring(0, headEndIndex + 7) : html;
+  if (headSection.includes('application/ld+json')) score += 20;
+
+  if (schema.validBlocks > 0) {
+    score += Math.min(20, schema.validBlocks * 5);
+  }
+
+  const microdataCount = content.enhancedSchemaInfo?.microdataCount || 0;
+  if (schema.validBlocks > microdataCount) {
+    score += 10;
+  }
+
+  if (hasOpenGraph && hasTwitter) {
+    score += 10;
+  } else if (hasOpenGraph || hasTwitter) {
+    score += 5;
+  }
+
+  return clamp(score);
 }
