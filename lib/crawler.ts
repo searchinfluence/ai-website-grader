@@ -1,6 +1,8 @@
 import * as cheerio from 'cheerio';
 import dns from 'node:dns/promises';
 import net from 'node:net';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 import { CrawledContent } from '@/types';
 import {
   analyzePerformanceMetrics,
@@ -292,9 +294,39 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
     }
   }
   const gtmSchemaDetected = gtmSchemaMarkup.length > 0;
+
+  const gtmContainerId = extractGtmContainerId(html);
+  const gtmRenderedSchemaPromise = gtmContainerId
+    ? fetchGtmRenderedSchema(url)
+    : Promise.resolve<string[]>([]);
   
   // Analyze mobile information
   const mobileInfo = analyzeMobileInfo($, html);
+
+  const gtmRenderedSchemaMarkup = await gtmRenderedSchemaPromise;
+  if (gtmRenderedSchemaMarkup.length > 0) {
+    const serializedSchemaSet = new Set<string>();
+
+    for (const schema of schemaMarkup) {
+      try {
+        serializedSchemaSet.add(JSON.stringify(JSON.parse(schema)));
+      } catch {
+        serializedSchemaSet.add(schema.trim());
+      }
+    }
+
+    for (const schema of gtmRenderedSchemaMarkup) {
+      try {
+        const serialized = JSON.stringify(JSON.parse(schema));
+        if (!serializedSchemaSet.has(serialized)) {
+          schemaMarkup.push(serialized);
+          serializedSchemaSet.add(serialized);
+        }
+      } catch {
+        // Skip invalid schema strings.
+      }
+    }
+  }
   
   // Analyze enhanced schema information
   const enhancedSchemaInfo = analyzeEnhancedSchemaInfo($, schemaMarkup);
@@ -522,6 +554,77 @@ async function fetchGtmSchema(html: string): Promise<string[]> {
   } catch {
     clearTimeout(timeoutId);
     return [];
+  }
+}
+
+function hasSchemaOrgContext(parsed: unknown): boolean {
+  if (!parsed || typeof parsed !== 'object') return false;
+  const value = (parsed as Record<string, unknown>)['@context'];
+
+  if (typeof value === 'string') {
+    return value.toLowerCase().includes('schema.org');
+  }
+
+  if (Array.isArray(value)) {
+    return value.some((entry) => typeof entry === 'string' && entry.toLowerCase().includes('schema.org'));
+  }
+
+  return false;
+}
+
+async function fetchGtmRenderedSchema(url: string): Promise<string[]> {
+  let browser: Awaited<ReturnType<typeof puppeteer.launch>> | null = null;
+  const chromiumWithHeadless = chromium as typeof chromium & { headless: 'shell' | boolean };
+
+  try {
+    browser = await puppeteer.launch({
+      executablePath: await chromium.executablePath(),
+      args: [...chromium.args, '--no-sandbox'],
+      headless: chromiumWithHeadless.headless
+    });
+
+    const page = await browser.newPage();
+    await page.goto(url, {
+      waitUntil: 'domcontentloaded',
+      timeout: 8000
+    });
+
+    try {
+      await page.waitForNetworkIdle({ timeout: 8000 });
+    } catch {
+      // Continue if network never becomes idle before timeout.
+    }
+
+    const rawSchemas = await page.evaluate(() => {
+      return Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
+        .map((script) => script.textContent || '')
+        .filter((content) => content.trim().length > 0);
+    });
+
+    const validSchemas: string[] = [];
+    for (const rawSchema of rawSchemas) {
+      try {
+        const parsed = JSON.parse(rawSchema);
+        if (hasSchemaOrgContext(parsed)) {
+          validSchemas.push(JSON.stringify(parsed));
+        }
+      } catch {
+        // Ignore invalid JSON-LD blocks.
+      }
+    }
+
+    return validSchemas;
+  } catch (error) {
+    console.warn('Failed to fetch GTM-rendered schema markup:', error);
+    return [];
+  } finally {
+    if (browser) {
+      try {
+        await browser.close();
+      } catch {
+        // Ignore browser close failures.
+      }
+    }
   }
 }
 
