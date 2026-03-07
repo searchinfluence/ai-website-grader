@@ -85,6 +85,7 @@ function formatRecommendationText(text: string): ReactNode {
 export default function ScoreReport({ analysis }: ScoreReportProps) {
   const { trackExport } = useGoogleTagManager();
   const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
+  const [shareStatus, setShareStatus] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const lowestScoringFactorKey = SCORING_FACTORS.reduce((lowestKey, factor) => {
     return analysis.factors[factor.key].score < analysis.factors[lowestKey].score ? factor.key : lowestKey;
   }, SCORING_FACTORS[0].key);
@@ -122,6 +123,32 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
     } catch {
       setCopiedRecIndex(null);
     }
+  };
+
+  const handleShareLink = async () => {
+    const response = await fetch('/api/share', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ analysis })
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error((data as { error?: string }).error || 'Could not create share link.');
+    }
+
+    const data = await response.json() as { shareUrl?: string };
+    if (!data?.shareUrl) {
+      throw new Error('Share URL was not returned.');
+    }
+
+    await navigator.clipboard.writeText(data.shareUrl);
+    setShareStatus({ tone: 'success', message: 'Share link copied to clipboard.' });
+    setTimeout(() => {
+      setShareStatus((current) => (current?.message === 'Share link copied to clipboard.' ? null : current));
+    }, 2400);
   };
 
   return (
@@ -320,7 +347,37 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             })}
           </div>
 
-          <ExportButtons analysis={analysis} onExportMarkdown={handleExportMarkdown} />
+          <ExportButtons
+            analysis={analysis}
+            onExportMarkdown={handleExportMarkdown}
+            onShare={async () => {
+              try {
+                await handleShareLink();
+              } catch (error) {
+                setShareStatus({
+                  tone: 'error',
+                  message: error instanceof Error ? error.message : 'Unable to create share link.'
+                });
+                setTimeout(() => {
+                  setShareStatus((current) => (current?.tone === 'error' ? null : current));
+                }, 3200);
+                throw error;
+              }
+            }}
+          />
+          {shareStatus && (
+            <div style={{
+              marginTop: '12px',
+              borderRadius: '8px',
+              border: `1px solid ${shareStatus.tone === 'success' ? 'rgba(27, 115, 64, 0.35)' : 'rgba(231, 76, 60, 0.35)'}`,
+              background: shareStatus.tone === 'success' ? 'rgba(27, 115, 64, 0.1)' : 'rgba(231, 76, 60, 0.1)',
+              color: shareStatus.tone === 'success' ? '#1b7340' : 'var(--error-red)',
+              padding: '10px 12px',
+              fontSize: '0.9rem'
+            }}>
+              {shareStatus.message}
+            </div>
+          )}
 
           <div style={{
             marginTop: '30px',

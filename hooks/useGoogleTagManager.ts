@@ -32,7 +32,7 @@ export function useGoogleTagManager() {
     });
   };
 
-  const trackExport = (exportType: 'pdf' | 'markdown' | 'print') => {
+  const trackExport = (exportType: 'pdf' | 'markdown' | 'print' | 'share') => {
     pushEvent('report_exported', {
       export_type: exportType,
       event_category: 'Export',
@@ -73,5 +73,4 @@ declare global {
     dataLayer: EventPayload[];
   }
 }
-
 
