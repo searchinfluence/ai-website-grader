@@ -30,6 +30,26 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
   const [shareToast, setShareToast] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const { trackExport } = useGoogleTagManager();
 
+  const copyText = async (text: string) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', 'true');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    const copied = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    if (!copied) {
+      throw new Error('Unable to copy share link automatically.');
+    }
+  };
+
   useEffect(() => {
     try {
       const raw = localStorage.getItem(LEAD_STORAGE_KEY);
@@ -107,7 +127,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
         throw new Error('Share URL was not returned.');
       }
 
-      await navigator.clipboard.writeText(data.shareUrl as string);
+      await copyText(data.shareUrl as string);
       trackExport('share');
       setShareToast({ tone: 'success', message: 'Share link copied to clipboard.' });
       setTimeout(() => {
