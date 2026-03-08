@@ -61,9 +61,9 @@
 - [x] Test at 375px and 768px breakpoints
 
 ### 10. Calibration Validation
-- [ ] Run 9-site test suite (`run-calibration-suite.js`)
-- [ ] Verify scores are reasonable across different site types
-- [ ] Document results in `calibration-results.json`
+- [x] Run 9-site test suite (`run-calibration-suite.js`)
+- [x] Verify scores are reasonable across different site types
+- [x] Document results in `calibration-results.json`
 
 ### 11. Production Deploy
 - [ ] Merge `v3-fixes` → `main`
