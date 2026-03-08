@@ -289,7 +289,7 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
                       background: priorityStyle.bg
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginBottom: '6px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginBottom: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
                       <span style={{
                         display: 'inline-flex',
                         alignItems: 'center',

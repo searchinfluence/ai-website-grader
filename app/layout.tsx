@@ -1,24 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Open_Sans } from "next/font/google";
 import "./globals.css";
 import GoogleTagManager, { GoogleTagManagerNoScript } from "@/components/GoogleTagManager";
 import GoogleSearchConsole from "@/components/GoogleSearchConsole";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "600", "700", "800"]
-});
 
 export const metadata: Metadata = {
   title: "AI Website Grader - Search Influence",
@@ -61,9 +44,7 @@ export default function RootLayout({
         {/* Google Tag Manager */}
         <GoogleTagManager />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${openSans.variable} antialiased`}
-      >
+      <body className="antialiased">
         {/* GTM noscript fallback */}
         <GoogleTagManagerNoScript />
 

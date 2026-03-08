@@ -73,7 +73,7 @@ export default function EmailGateModal({
 
   return (
     <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-slate-900/75 p-4">
-      <div className="w-full max-w-xl overflow-hidden rounded-xl border border-slate-700 bg-slate-900 text-slate-100 shadow-2xl">
+      <div className="max-h-[calc(100vh-2rem)] w-full max-w-xl overflow-y-auto overflow-x-hidden rounded-xl border border-slate-700 bg-slate-900 text-slate-100 shadow-2xl">
         <div className="border-b border-slate-700 bg-gradient-to-r from-[#1B7340] to-[#145832] px-6 py-5">
           <h3 className="text-xl font-bold">Get your full report</h3>
           <p className="mt-1 text-sm text-slate-100/90">

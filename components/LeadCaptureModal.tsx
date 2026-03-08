@@ -89,7 +89,9 @@ export default function LeadCaptureModal({
         borderRadius: '12px',
         border: '1px solid var(--border-gray)',
         boxShadow: '0 24px 48px rgba(0, 0, 0, 0.25)',
-        overflow: 'hidden'
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        maxHeight: 'calc(100vh - 32px)'
       }}>
         <div style={{
           background: 'linear-gradient(135deg, #1b7340 0%, #145832 100%)',

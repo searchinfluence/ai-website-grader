@@ -353,7 +353,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                       background: priorityStyle.bg
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px', alignItems: 'center', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px', alignItems: 'center', marginBottom: '6px', flexWrap: 'wrap' }}>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: priorityStyle.text }}>
                         <PriorityIcon size={14} />
                         {priorityStyle.label} Priority
