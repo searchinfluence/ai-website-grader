@@ -20,11 +20,11 @@
 ## Remaining Tasks (in priority order)
 
 ### 4. Email Gate for Exports
-- [ ] Create email capture modal component (name, email, company optional)
-- [ ] Create Supabase `leads` table (or verify it exists)
-- [ ] Gate PDF export, print, and share behind email capture
-- [ ] Store captured email in localStorage to skip gate on repeat visits
-- [ ] "Get your full report" framing — helpful, not annoying
+- [x] Create email capture modal component (name, email, company optional)
+- [x] Create Supabase `leads` table (or verify it exists)
+- [x] Gate PDF export, print, and share behind email capture
+- [x] Store captured email in localStorage to skip gate on repeat visits
+- [x] "Get your full report" framing — helpful, not annoying
 
 ### 5. Print Report
 - [ ] Print button triggers browser print dialog

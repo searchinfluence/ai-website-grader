@@ -13,13 +13,18 @@ interface ExportButtonsProps {
 }
 
 type ExportAction = 'pdf' | 'print' | 'share';
+type SavedLead = {
+  email: string;
+  name?: string;
+  company?: string;
+};
 
 const LEAD_STORAGE_KEY = 'ai-grader-lead';
 
 export default function ExportButtons({ analysis, onExportMarkdown }: ExportButtonsProps) {
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [isSharingReport, setIsSharingReport] = useState(false);
-  const [savedLead, setSavedLead] = useState<EmailGateValues | null>(null);
+  const [savedLead, setSavedLead] = useState<SavedLead | null>(null);
   const [isGateOpen, setIsGateOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<ExportAction | null>(null);
   const [shareToast, setShareToast] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
@@ -30,7 +35,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       const raw = localStorage.getItem(LEAD_STORAGE_KEY);
       if (!raw) return;
       const parsed = JSON.parse(raw) as Partial<EmailGateValues>;
-      if (parsed?.name && parsed?.email) {
+      if (parsed?.email) {
         setSavedLead({
           name: parsed.name,
           email: parsed.email,
@@ -340,7 +345,11 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       <EmailGateModal
         isOpen={isGateOpen}
         actionLabel={actionLabel}
-        initialValues={savedLead || undefined}
+        initialValues={savedLead ? {
+          name: savedLead.name,
+          email: savedLead.email,
+          company: savedLead.company
+        } : undefined}
         onClose={() => {
           setIsGateOpen(false);
           setPendingAction(null);
