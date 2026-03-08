@@ -197,8 +197,8 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
   return (
     <>
       <div className="export-button-group" style={{
-        display: 'flex',
-        flexWrap: 'wrap',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
         gap: '12px',
         marginTop: '20px'
       }}>
@@ -342,6 +342,12 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           Print Report
         </button>
       </div>
+
+      <p style={{ margin: '12px 0 0', color: 'var(--secondary-content)', fontSize: '0.86rem' }}>
+        {savedLead?.email
+          ? `Exports unlocked for ${savedLead.email}.`
+          : 'PDF, share, and print actions will prompt once for contact details, then remain unlocked on this device.'}
+      </p>
 
       {shareToast && (
         <div style={{
