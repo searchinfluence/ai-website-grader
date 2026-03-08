@@ -101,7 +101,7 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
     writeLine(title, 13, true, brandGreen);
   };
 
-  const logoDataUrl = await tryLoadLogoDataUrl('/si-logo.png');
+  const logoDataUrl = await tryLoadLogoDataUrl('/search-influence-logo.png');
   if (logoDataUrl) {
     pdf.addImage(logoDataUrl, 'PNG', margin, 10, 38, 11);
   } else {

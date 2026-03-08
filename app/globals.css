@@ -509,6 +509,11 @@ textarea::placeholder {
   .form-card {
     padding: 20px;
   }
+
+  .url-input-group .analyze-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* Utility Classes */
@@ -659,5 +664,32 @@ details summary::marker {
 
   .factor-details-metrics-grid {
     grid-template-columns: 1fr;
+  }
+
+  .export-button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .export-action-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+  }
+}
+
+@media (max-width: 375px) {
+  .content-area {
+    padding: 14px;
+  }
+
+  .form-card {
+    padding: 16px;
+  }
+
+  .export-action-btn {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    font-size: 13px !important;
   }
 }
