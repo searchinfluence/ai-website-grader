@@ -88,10 +88,34 @@ function formatStatValueWithKey(key: string, value: unknown): string {
   return String(value);
 }
 
+function formatStatLabel(key: string): string {
+  return STAT_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase());
+}
+
+function getFindingPreview(finding?: string): string | null {
+  if (!finding) return null;
+  return finding.length > 110 ? `${finding.slice(0, 107).trimEnd()}...` : finding;
+}
+
+function getPreviewMetricValue(key: string, value: unknown): number | null {
+  if (typeof value === 'boolean') return value ? 100 : 0;
+  if (typeof value !== 'number' || !Number.isFinite(value)) return null;
+
+  if (['altCoverage', 'readabilityScore', 'pageSpeedScore'].includes(key)) return Math.max(0, Math.min(100, value));
+  if (key === 'contentToCodeRatio') return Math.max(0, Math.min(100, value * 100));
+  if (['titleLength', 'descriptionLength'].includes(key)) return Math.max(0, Math.min(100, (value / 160) * 100));
+  if (key === 'loadTimeMs') return Math.max(0, Math.min(100, 100 - (value / 5000) * 100));
+  if (value <= 1) return Math.max(0, Math.min(100, value * 100));
+  if (value <= 100) return Math.max(0, Math.min(100, value));
+
+  return null;
+}
+
 export default function FactorDetails({ factor, accent, borderColor, gradient, icon: Icon, defaultOpen }: FactorDetailsProps) {
   const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
   const entries = Object.entries(factor.stats ?? {});
   const previewStats = entries.slice(0, 3);
+  const topFindingPreview = getFindingPreview(factor.findings[0]);
   const previewMetricColors = [
     'var(--si-dark-navy)',
     'var(--si-navy)',
@@ -131,6 +155,11 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
               {Icon && <Icon size={18} style={{ color: accent }} />}
               {factor.label}
             </h3>
+            {topFindingPreview && (
+              <p style={{ margin: '8px 0 0', color: 'var(--secondary-content)', fontSize: '0.86rem', lineHeight: 1.45 }}>
+                {topFindingPreview}
+              </p>
+            )}
             <div className="factor-summary-meta">
               <span style={{
                 display: 'inline-flex',
@@ -147,10 +176,13 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
                 {statusCopy[factor.status]}
               </span>
               <span style={{ fontSize: '0.82rem', color: 'var(--secondary-content)' }}>
-                {factor.findings.length} key findings
+                {factor.findings.length} Key Findings
               </span>
               <span style={{ fontSize: '0.82rem', color: 'var(--secondary-content)' }}>
-                {factor.recommendations.length} recommendations
+                {factor.recommendations.length} Recommendations
+              </span>
+              <span style={{ fontSize: '0.82rem', color: 'var(--secondary-content)' }}>
+                Weight {Math.round(factor.weight * 100)}%
               </span>
             </div>
           </div>
@@ -164,29 +196,33 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
             {previewStats.map(([key, value], index) => (
               <span
                 key={`${factor.key}-preview-stat-${key}`}
+                className="factor-summary-stat-card"
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  borderRadius: '999px',
-                  padding: '4px 8px',
-                  fontSize: '0.72rem',
-                  border: `1px solid ${borderColor}`,
-                  background: 'rgba(255,255,255,0.82)',
-                  color: 'var(--content-text)'
+                  borderColor,
+                  background: 'rgba(255,255,255,0.82)'
                 }}
               >
-                <span style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: previewMetricColors[index % previewMetricColors.length],
-                  flexShrink: 0
-                }} />
-                <span style={{ color: 'var(--muted-text)' }}>
-                  {STAT_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase())}:
+                <span className="factor-summary-stat-label">
+                  <span style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    background: previewMetricColors[index % previewMetricColors.length],
+                    flexShrink: 0
+                  }} />
+                  {formatStatLabel(key)}
                 </span>
-                <strong>{formatStatValueWithKey(key, value)}</strong>
+                <strong style={{ color: 'var(--content-text)', fontSize: '0.74rem' }}>{formatStatValueWithKey(key, value)}</strong>
+                {getPreviewMetricValue(key, value) !== null && (
+                  <span className="factor-summary-stat-meter">
+                    <span
+                      style={{
+                        width: `${getPreviewMetricValue(key, value)}%`,
+                        background: previewMetricColors[index % previewMetricColors.length]
+                      }}
+                    />
+                  </span>
+                )}
               </span>
             ))}
           </div>
@@ -206,7 +242,7 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
                   background: 'var(--background-gray)'
                 }}>
                   <div style={{ fontSize: '0.78rem', color: 'var(--muted-text)', marginBottom: '4px' }}>
-                    {STAT_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase())}
+                    {formatStatLabel(key)}
                   </div>
                   <div style={{ color: 'var(--content-text)', fontWeight: 700 }}>{formatStatValueWithKey(key, value)}</div>
                 </div>
