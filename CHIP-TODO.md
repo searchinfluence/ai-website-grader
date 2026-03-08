@@ -47,11 +47,11 @@
 - [x] Gated behind email capture (#4)
 
 ### 8. Lead Gen CTA Banner
-- [ ] Banner after score summary (before factor details)
-- [ ] Banner at bottom of report
-- [ ] Messaging: "free single-page analysis" vs "comprehensive review" upsell
-- [ ] CTA: "Get Your Full AI Visibility Review" → searchinfluence.com/contact/
-- [ ] Tone: helpful, not salesy
+- [x] Banner after score summary (before factor details)
+- [x] Banner at bottom of report
+- [x] Messaging: "free single-page analysis" vs "comprehensive review" upsell
+- [x] CTA: "Get Your Full AI Visibility Review" → searchinfluence.com/contact/
+- [x] Tone: helpful, not salesy
 
 ### 9. Mobile Optimization
 - [ ] Score cards stack on mobile

@@ -70,7 +70,7 @@ function getScoreInterpretation(score: number, lowestFactor: { label: string; sc
 }
 
 export default function ScoreReport({ analysis }: ScoreReportProps) {
-  const { trackExport } = useGoogleTagManager();
+  const { trackExport, trackCTA } = useGoogleTagManager();
   const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
   const lowestScoringFactorKey = SCORING_FACTORS.reduce((lowestKey, factor) => {
     return analysis.factors[factor.key].score < analysis.factors[lowestKey].score ? factor.key : lowestKey;
@@ -225,6 +225,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               href="https://www.searchinfluence.com/contact/"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackCTA('after-score-summary', 'contact-click')}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -363,6 +364,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               href="https://www.searchinfluence.com/contact/"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackCTA('bottom-banner', 'contact-click')}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
