@@ -58,7 +58,24 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
     month: 'long',
     day: 'numeric'
   });
-  let y = 34;
+  let y = 30;
+  const logoDataUrl = await tryLoadLogoDataUrl('/search-influence-logo.png');
+
+  const drawPageHeader = () => {
+    if (logoDataUrl) {
+      pdf.addImage(logoDataUrl, 'PNG', margin, 10, 38, 11);
+    } else {
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(14);
+      pdf.setTextColor(brandGreen);
+      pdf.text('Search Influence', margin, 17);
+    }
+
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(9);
+    pdf.setTextColor(84, 96, 109);
+    pdf.text(`Generated: ${generatedDate}`, 210 - margin, 17, { align: 'right' });
+  };
 
   const drawFooter = () => {
     pdf.setDrawColor(219, 229, 223);
@@ -72,7 +89,8 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
   const addPage = () => {
     drawFooter();
     pdf.addPage();
-    y = 24;
+    drawPageHeader();
+    y = 30;
   };
 
   const ensureSpace = (requiredHeight: number) => {
@@ -101,20 +119,7 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
     writeLine(title, 13, true, brandGreen);
   };
 
-  const logoDataUrl = await tryLoadLogoDataUrl('/search-influence-logo.png');
-  if (logoDataUrl) {
-    pdf.addImage(logoDataUrl, 'PNG', margin, 10, 38, 11);
-  } else {
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(14);
-    pdf.setTextColor(brandGreen);
-    pdf.text('Search Influence', margin, 17);
-  }
-
-  pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(9);
-  pdf.setTextColor(84, 96, 109);
-  pdf.text(`Generated: ${generatedDate}`, 210 - margin, 17, { align: 'right' });
+  drawPageHeader();
 
   writeLine('AI Website Grader Report', 18, true, '#1E2F3A');
   writeLine(`Website: ${analysis.url}`, 10);
