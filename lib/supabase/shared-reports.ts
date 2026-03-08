@@ -40,7 +40,10 @@ create policy "service role can insert shared reports"
   with check (true);
 `;
 
-export async function createSharedReport(analysis: WebsiteAnalysis): Promise<{ id: string; shareUrl: string }> {
+export async function createSharedReport(
+  analysis: WebsiteAnalysis,
+  baseUrl?: string
+): Promise<{ id: string; shareUrl: string }> {
   const client = getSupabaseAdminClient();
   if (!client) {
     throw new Error('Supabase admin client is not configured.');
@@ -66,7 +69,7 @@ export async function createSharedReport(analysis: WebsiteAnalysis): Promise<{ i
 
   return {
     id: shareId,
-    shareUrl: `${SHARE_BASE_URL}/report/${shareId}`
+    shareUrl: `${(baseUrl || SHARE_BASE_URL).replace(/\/+$/, '')}/report/${shareId}`
   };
 }
 

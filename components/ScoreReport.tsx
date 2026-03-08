@@ -1,7 +1,6 @@
 'use client';
 
 import { CSSProperties, useState } from 'react';
-import Script from 'next/script';
 import { ScoringFactorKey, WebsiteAnalysis } from '@/types';
 import { AlertCircle, AlertTriangle, ArrowRight, Database, FileText, Info, Lightbulb, Search, Settings, type LucideIcon } from 'lucide-react';
 import ExportButtons from './ExportButtons';
@@ -73,7 +72,6 @@ function getScoreInterpretation(score: number, lowestFactor: { label: string; sc
 export default function ScoreReport({ analysis }: ScoreReportProps) {
   const { trackExport } = useGoogleTagManager();
   const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
-  const [shareStatus, setShareStatus] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const lowestScoringFactorKey = SCORING_FACTORS.reduce((lowestKey, factor) => {
     return analysis.factors[factor.key].score < analysis.factors[lowestKey].score ? factor.key : lowestKey;
   }, SCORING_FACTORS[0].key);
@@ -111,32 +109,6 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
     } catch {
       setCopiedRecIndex(null);
     }
-  };
-
-  const handleShareLink = async () => {
-    const response = await fetch('/api/share', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ analysis })
-    });
-
-    if (!response.ok) {
-      const data = await response.json().catch(() => ({}));
-      throw new Error((data as { error?: string }).error || 'Could not create share link.');
-    }
-
-    const data = await response.json() as { shareUrl?: string };
-    if (!data?.shareUrl) {
-      throw new Error('Share URL was not returned.');
-    }
-
-    await navigator.clipboard.writeText(data.shareUrl);
-    setShareStatus({ tone: 'success', message: 'Share link copied to clipboard.' });
-    setTimeout(() => {
-      setShareStatus((current) => (current?.message === 'Share link copied to clipboard.' ? null : current));
-    }, 2400);
   };
 
   return (
@@ -235,6 +207,38 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 icon={FACTOR_THEME[factor.key].icon}
               />
             ))}
+          </div>
+
+          <div style={{
+            marginBottom: '18px',
+            padding: '16px',
+            borderRadius: '12px',
+            border: '1px solid rgba(27, 115, 64, 0.32)',
+            background: 'linear-gradient(135deg, rgba(27, 115, 64, 0.1) 0%, rgba(20, 88, 50, 0.08) 100%)'
+          }}>
+            <h3 style={{ margin: '0 0 8px', color: 'var(--content-text)' }}>From snapshot to strategy</h3>
+            <p style={{ margin: '0 0 12px', color: 'var(--secondary-content)' }}>
+              This grader is a free single-page analysis. If you want deeper insight across templates, technical systems,
+              and content priorities, we can provide a comprehensive AI visibility review.
+            </p>
+            <a
+              href="https://www.searchinfluence.com/contact/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 14px',
+                borderRadius: '8px',
+                background: '#1B7340',
+                color: '#fff',
+                fontWeight: 700,
+                textDecoration: 'none'
+              }}
+            >
+              Get Your Full AI Visibility Review <ArrowRight size={15} />
+            </a>
           </div>
 
           <div style={{
@@ -338,80 +342,41 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           <ExportButtons
             analysis={analysis}
             onExportMarkdown={handleExportMarkdown}
-            onShare={async () => {
-              try {
-                await handleShareLink();
-              } catch (error) {
-                setShareStatus({
-                  tone: 'error',
-                  message: error instanceof Error ? error.message : 'Unable to create share link.'
-                });
-                setTimeout(() => {
-                  setShareStatus((current) => (current?.tone === 'error' ? null : current));
-                }, 3200);
-                throw error;
-              }
-            }}
           />
-          {shareStatus && (
-            <div style={{
-              marginTop: '12px',
-              borderRadius: '8px',
-              border: `1px solid ${shareStatus.tone === 'success' ? 'rgba(27, 115, 64, 0.35)' : 'rgba(231, 76, 60, 0.35)'}`,
-              background: shareStatus.tone === 'success' ? 'rgba(27, 115, 64, 0.1)' : 'rgba(231, 76, 60, 0.1)',
-              color: shareStatus.tone === 'success' ? '#1b7340' : 'var(--error-red)',
-              padding: '10px 12px',
-              fontSize: '0.9rem'
-            }}>
-              {shareStatus.message}
-            </div>
-          )}
 
           <div style={{
             marginTop: '30px',
-            padding: '28px',
+            padding: '24px',
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, rgba(230, 126, 34, 0.08) 0%, rgba(230, 126, 34, 0.03) 100%)',
-            border: '1px solid rgba(230, 126, 34, 0.25)',
+            background: 'linear-gradient(135deg, rgba(27, 115, 64, 0.12) 0%, rgba(20, 88, 50, 0.08) 100%)',
+            border: '1px solid rgba(27, 115, 64, 0.28)',
             textAlign: 'center'
           }}>
             <h3 style={{ margin: '0 0 10px', color: 'var(--content-text)', fontSize: '1.3rem' }}>
-              Ready to Improve Your AI Search Visibility?
+              Want a roadmap beyond this single page?
             </h3>
-            <p style={{ margin: '0 0 18px', color: 'var(--secondary-content)', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
-              Our AI SEO experts can help you turn these recommendations into results.
-              Book a free consultation to get a personalized action plan.
+            <p style={{ margin: '0 0 16px', color: 'var(--secondary-content)', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+              We&apos;ll turn this free page-level analysis into a comprehensive review with technical, content, and
+              implementation priorities across your site.
             </p>
-            {/* HubSpot Meetings Embed — Paula's calendar */}
-            <div
+            <a
+              href="https://www.searchinfluence.com/contact/"
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
-                maxWidth: '660px',
-                margin: '0 auto 18px',
-                borderRadius: '10px',
-                overflow: 'hidden',
-                minHeight: '516px'
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '11px 16px',
+                borderRadius: '8px',
+                background: '#1B7340',
+                color: '#fff',
+                fontWeight: 700,
+                textDecoration: 'none'
               }}
             >
-              <div
-                className="meetings-iframe-container"
-                data-src="https://insights.searchinfluence.com/meetings/pfrench/introductory-meeting-25-mins?embed=true"
-              />
-              <Script
-                src="https://static.hsappstatic.net/MeetingsEmbed/ex/MeetingsEmbedCode.js"
-                strategy="lazyOnload"
-              />
-            </div>
-            <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--muted-text)' }}>
-              Or reach out directly:{' '}
-              <a
-                href="https://www.searchinfluence.com/contact/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: 'var(--orange-accent)', fontWeight: 600, textDecoration: 'none' }}
-              >
-                Contact Search Influence <ArrowRight size={14} style={{ verticalAlign: 'middle' }} />
-              </a>
-            </p>
+              Get Your Full AI Visibility Review <ArrowRight size={15} />
+            </a>
           </div>
         </div>
       </div>

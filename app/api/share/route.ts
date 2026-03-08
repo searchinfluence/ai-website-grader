@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Valid analysis payload is required.' }, { status: 400 });
     }
 
-    const shared = await createSharedReport(analysis);
+    const shared = await createSharedReport(analysis, request.nextUrl.origin);
     return NextResponse.json(shared);
   } catch (error) {
     console.error('Share report POST failed:', error);
@@ -43,4 +43,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

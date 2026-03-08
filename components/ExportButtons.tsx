@@ -1,25 +1,54 @@
 'use client';
 
-import { useState } from 'react';
-import { Check, Copy, FileText, FileDown, Loader2, Printer, Share2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { FileDown, FileText, Loader2, Printer, Share2 } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
 import { generatePDFReport } from '@/lib/exporters';
 import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
+import EmailGateModal, { EmailGateValues } from './EmailGateModal';
 
 interface ExportButtonsProps {
   analysis: WebsiteAnalysis;
   onExportMarkdown: () => void;
-  onShare?: () => Promise<void>;
 }
 
-export default function ExportButtons({ analysis, onExportMarkdown, onShare }: ExportButtonsProps) {
+type ExportAction = 'pdf' | 'print' | 'share';
+
+const LEAD_STORAGE_KEY = 'ai-grader-lead';
+
+export default function ExportButtons({ analysis, onExportMarkdown }: ExportButtonsProps) {
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [isSharingReport, setIsSharingReport] = useState(false);
-  const [shareUrl, setShareUrl] = useState<string | null>(null);
-  const [copySuccess, setCopySuccess] = useState(false);
+  const [savedLead, setSavedLead] = useState<EmailGateValues | null>(null);
+  const [isGateOpen, setIsGateOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<ExportAction | null>(null);
+  const [shareToast, setShareToast] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const { trackExport } = useGoogleTagManager();
 
-  const handleExportPDF = async () => {
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(LEAD_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as Partial<EmailGateValues>;
+      if (parsed?.name && parsed?.email) {
+        setSavedLead({
+          name: parsed.name,
+          email: parsed.email,
+          company: parsed.company
+        });
+      }
+    } catch {
+      setSavedLead(null);
+    }
+  }, []);
+
+  const actionLabel = useMemo(() => {
+    if (pendingAction === 'pdf') return 'PDF export';
+    if (pendingAction === 'share') return 'share link';
+    return 'print view';
+  }, [pendingAction]);
+
+  const exportPdf = async () => {
     setIsExportingPDF(true);
     try {
       trackExport('pdf');
@@ -29,7 +58,7 @@ export default function ExportButtons({ analysis, onExportMarkdown, onShare }: E
         throw new Error('Report container not found. Please ensure the analysis is complete.');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       await generatePDFReport(analysis);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -39,7 +68,7 @@ export default function ExportButtons({ analysis, onExportMarkdown, onShare }: E
     }
   };
 
-  const handlePrint = () => {
+  const printReport = () => {
     trackExport('print');
 
     const printWindow = window.open('', '_blank', 'noopener');
@@ -53,9 +82,8 @@ export default function ExportButtons({ analysis, onExportMarkdown, onShare }: E
     printWindow.location.href = `/print-report?key=${encodeURIComponent(key)}`;
   };
 
-  const handleShareReport = async () => {
+  const shareReport = async () => {
     setIsSharingReport(true);
-    setCopySuccess(false);
     try {
       const response = await fetch('/api/share', {
         method: 'POST',
@@ -74,243 +102,251 @@ export default function ExportButtons({ analysis, onExportMarkdown, onShare }: E
         throw new Error('Share URL was not returned.');
       }
 
+      await navigator.clipboard.writeText(data.shareUrl as string);
       trackExport('share');
-      setShareUrl(data.shareUrl as string);
+      setShareToast({ tone: 'success', message: 'Share link copied to clipboard.' });
+      setTimeout(() => {
+        setShareToast((current) => (current?.message === 'Share link copied to clipboard.' ? null : current));
+      }, 2400);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to create share link.';
-      alert(message);
-      setShareUrl(null);
+      setShareToast({ tone: 'error', message });
+      setTimeout(() => {
+        setShareToast((current) => (current?.tone === 'error' ? null : current));
+      }, 3200);
     } finally {
       setIsSharingReport(false);
     }
   };
 
-  const handleCopyShareLink = async () => {
-    if (!shareUrl) return;
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 1800);
-    } catch {
-      setCopySuccess(false);
+  const runAction = async (action: ExportAction) => {
+    if (action === 'pdf') {
+      await exportPdf();
+      return;
+    }
+
+    if (action === 'share') {
+      await shareReport();
+      return;
+    }
+
+    printReport();
+  };
+
+  const startGatedAction = async (action: ExportAction) => {
+    if (savedLead?.email) {
+      await runAction(action);
+      return;
+    }
+
+    setPendingAction(action);
+    setIsGateOpen(true);
+  };
+
+  const handleGateSubmit = async (values: EmailGateValues) => {
+    const response = await fetch('/api/leads', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(values)
+    });
+
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(data?.error || 'Unable to save your details right now.');
+    }
+
+    localStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(values));
+    setSavedLead(values);
+
+    const actionToRun = pendingAction;
+    setPendingAction(null);
+    setIsGateOpen(false);
+
+    if (actionToRun) {
+      await runAction(actionToRun);
     }
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '12px',
-      marginTop: '20px'
-    }}>
-      <button
-        onClick={handleExportPDF}
-        disabled={isExportingPDF}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '12px 20px',
-          background: 'linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%)',
-          color: 'var(--white)',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: isExportingPDF ? 'not-allowed' : 'pointer',
-          transition: 'all 0.3s ease',
-          boxShadow: '0 2px 8px rgba(230, 126, 34, 0.3)',
-          opacity: isExportingPDF ? 0.6 : 1,
-          fontSize: '14px',
-          fontWeight: '600',
-          fontFamily: 'var(--font-stack)'
-        }}
-        onMouseEnter={(e) => {
-          if (!isExportingPDF) {
+    <>
+      <div className="export-button-group" style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '12px',
+        marginTop: '20px'
+      }}>
+        <button
+          className="export-action-btn"
+          onClick={() => void startGatedAction('pdf')}
+          disabled={isExportingPDF}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '12px 20px',
+            background: 'linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%)',
+            color: 'var(--white)',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: isExportingPDF ? 'not-allowed' : 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 8px rgba(230, 126, 34, 0.3)',
+            opacity: isExportingPDF ? 0.6 : 1,
+            fontSize: '14px',
+            fontWeight: '600',
+            fontFamily: 'var(--font-stack)'
+          }}
+          onMouseEnter={(e) => {
+            if (!isExportingPDF) {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(230, 126, 34, 0.4)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(230, 126, 34, 0.3)';
+          }}
+        >
+          {isExportingPDF ? (
+            <Loader2 size={16} style={{ marginRight: '8px' }} />
+          ) : (
+            <FileDown size={16} style={{ marginRight: '8px' }} />
+          )}
+          {isExportingPDF ? 'Generating PDF...' : 'Export PDF'}
+        </button>
+
+        <button
+          className="export-action-btn"
+          onClick={onExportMarkdown}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '12px 20px',
+            background: 'linear-gradient(135deg, var(--info-blue) 0%, #2980b9 100%)',
+            color: 'var(--white)',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 8px rgba(52, 152, 219, 0.3)',
+            fontSize: '14px',
+            fontWeight: '600',
+            fontFamily: 'var(--font-stack)'
+          }}
+          onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 4px 15px rgba(230, 126, 34, 0.4)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(230, 126, 34, 0.3)';
-        }}
-      >
-        {isExportingPDF ? (
-          <Loader2 size={16} style={{ marginRight: '8px' }} />
-        ) : (
-          <FileDown size={16} style={{ marginRight: '8px' }} />
-        )}
-        {isExportingPDF ? 'Generating PDF...' : 'Export PDF'}
-      </button>
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(52, 152, 219, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(52, 152, 219, 0.3)';
+          }}
+        >
+          <FileText size={16} style={{ marginRight: '8px' }} />
+          Export Markdown
+        </button>
 
-      <button
-        onClick={onExportMarkdown}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '12px 20px',
-          background: 'linear-gradient(135deg, var(--info-blue) 0%, #2980b9 100%)',
-          color: 'var(--white)',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          boxShadow: '0 2px 8px rgba(52, 152, 219, 0.3)',
-          fontSize: '14px',
-          fontWeight: '600',
-          fontFamily: 'var(--font-stack)'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-2px)';
-          e.currentTarget.style.boxShadow = '0 4px 15px rgba(52, 152, 219, 0.4)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(52, 152, 219, 0.3)';
-        }}
-      >
-        <FileText size={16} style={{ marginRight: '8px' }} />
-        Export Markdown
-      </button>
+        <button
+          className="export-action-btn"
+          onClick={() => void startGatedAction('share')}
+          disabled={isSharingReport}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '12px 20px',
+            background: 'linear-gradient(135deg, #6c5ce7 0%, #5f4dd6 100%)',
+            color: 'var(--white)',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: isSharingReport ? 'not-allowed' : 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 8px rgba(108, 92, 231, 0.28)',
+            opacity: isSharingReport ? 0.6 : 1,
+            fontSize: '14px',
+            fontWeight: '600',
+            fontFamily: 'var(--font-stack)'
+          }}
+          onMouseEnter={(e) => {
+            if (!isSharingReport) {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(108, 92, 231, 0.35)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(108, 92, 231, 0.28)';
+          }}
+        >
+          {isSharingReport ? (
+            <Loader2 size={16} style={{ marginRight: '8px' }} />
+          ) : (
+            <Share2 size={16} style={{ marginRight: '8px' }} />
+          )}
+          {isSharingReport ? 'Creating Link...' : 'Share Report'}
+        </button>
 
-      <button
-        onClick={handleShareReport}
-        disabled={isSharingReport}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '12px 20px',
-          background: 'linear-gradient(135deg, #6c5ce7 0%, #5f4dd6 100%)',
-          color: 'var(--white)',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: isSharingReport ? 'not-allowed' : 'pointer',
-          transition: 'all 0.3s ease',
-          boxShadow: '0 2px 8px rgba(108, 92, 231, 0.28)',
-          opacity: isSharingReport ? 0.6 : 1,
-          fontSize: '14px',
-          fontWeight: '600',
-          fontFamily: 'var(--font-stack)'
-        }}
-        onMouseEnter={(e) => {
-          if (!isSharingReport) {
+        <button
+          className="export-action-btn"
+          onClick={() => void startGatedAction('print')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '12px 20px',
+            background: 'linear-gradient(135deg, var(--success-green) 0%, #229954 100%)',
+            color: 'var(--white)',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 8px rgba(39, 174, 96, 0.3)',
+            fontSize: '14px',
+            fontWeight: '600',
+            fontFamily: 'var(--font-stack)'
+          }}
+          onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 4px 15px rgba(108, 92, 231, 0.35)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(108, 92, 231, 0.28)';
-        }}
-      >
-        {isSharingReport ? (
-          <Loader2 size={16} style={{ marginRight: '8px' }} />
-        ) : (
-          <Share2 size={16} style={{ marginRight: '8px' }} />
-        )}
-        {isSharingReport ? 'Creating Link...' : 'Share Report'}
-      </button>
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(39, 174, 96, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(39, 174, 96, 0.3)';
+          }}
+        >
+          <Printer size={16} style={{ marginRight: '8px' }} />
+          Print Report
+        </button>
+      </div>
 
-      <button
-        onClick={handlePrint}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '12px 20px',
-          background: 'linear-gradient(135deg, var(--success-green) 0%, #229954 100%)',
-          color: 'var(--white)',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          boxShadow: '0 2px 8px rgba(39, 174, 96, 0.3)',
-          fontSize: '14px',
-          fontWeight: '600',
-          fontFamily: 'var(--font-stack)'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-2px)';
-          e.currentTarget.style.boxShadow = '0 4px 15px rgba(39, 174, 96, 0.4)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(39, 174, 96, 0.3)';
-        }}
-      >
-        <Printer size={16} style={{ marginRight: '8px' }} />
-        Print Report
-      </button>
-
-      {shareUrl && (
+      {shareToast && (
         <div style={{
           position: 'fixed',
-          inset: 0,
-          background: 'rgba(15, 23, 42, 0.45)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1100,
-          padding: '20px'
+          right: '20px',
+          bottom: '20px',
+          zIndex: 1250,
+          borderRadius: '10px',
+          border: `1px solid ${shareToast.tone === 'success' ? 'rgba(27, 115, 64, 0.4)' : 'rgba(231, 76, 60, 0.45)'}`,
+          background: shareToast.tone === 'success' ? 'rgba(27, 115, 64, 0.95)' : 'rgba(127, 29, 29, 0.95)',
+          color: '#fff',
+          padding: '10px 14px',
+          boxShadow: '0 12px 28px rgba(15,23,42,0.3)',
+          maxWidth: '320px',
+          fontSize: '0.9rem'
         }}>
-          <div style={{
-            width: 'min(680px, 100%)',
-            background: 'var(--content-bg)',
-            borderRadius: '12px',
-            border: '1px solid var(--border-gray)',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.18)',
-            padding: '18px'
-          }}>
-            <h3 style={{ margin: '0 0 10px', color: 'var(--content-text)' }}>Share Report</h3>
-            <p style={{ margin: '0 0 12px', color: 'var(--secondary-content)' }}>
-              Anyone with this link can view the report for the next 30 days.
-            </p>
-            <div style={{
-              border: '1px solid var(--border-gray)',
-              borderRadius: '8px',
-              background: 'var(--background-gray)',
-              padding: '12px',
-              marginBottom: '12px',
-              fontSize: '0.9rem',
-              color: 'var(--content-text)',
-              wordBreak: 'break-all'
-            }}>
-              {shareUrl}
-            </div>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button
-                onClick={() => setShareUrl(null)}
-                style={{
-                  border: '1px solid var(--border-gray)',
-                  background: 'transparent',
-                  color: 'var(--content-text)',
-                  borderRadius: '8px',
-                  padding: '9px 12px',
-                  cursor: 'pointer',
-                  fontWeight: 600
-                }}
-              >
-                Close
-              </button>
-              <button
-                onClick={handleCopyShareLink}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  border: 'none',
-                  background: 'var(--success-green)',
-                  color: 'white',
-                  borderRadius: '8px',
-                  padding: '9px 12px',
-                  cursor: 'pointer',
-                  fontWeight: 600
-                }}
-              >
-                {copySuccess ? <Check size={15} /> : <Copy size={15} />}
-                {copySuccess ? 'Copied' : 'Copy Link'}
-              </button>
-            </div>
-          </div>
+          {shareToast.message}
         </div>
       )}
-    </div>
+
+      <EmailGateModal
+        isOpen={isGateOpen}
+        actionLabel={actionLabel}
+        initialValues={savedLead || undefined}
+        onClose={() => {
+          setIsGateOpen(false);
+          setPendingAction(null);
+        }}
+        onSubmit={handleGateSubmit}
+      />
+    </>
   );
 }

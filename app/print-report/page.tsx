@@ -137,7 +137,7 @@ function PrintReportContent() {
         </tbody>
       </table>
 
-      <h2 style={{ margin: '0 0 10px', fontSize: '1.25rem' }}>Top Recommendations</h2>
+      <h2 className="print-page-break" style={{ margin: '0 0 10px', fontSize: '1.25rem' }}>Top Recommendations</h2>
       <table className="print-section" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '18px', border: '1px solid #d9e1ea' }}>
         <thead>
           <tr style={{ background: '#f4f7fb' }}>
@@ -181,6 +181,14 @@ function PrintReportContent() {
                   {(result.findings.length ? result.findings : ['No major issues detected.']).slice(0, 5).map((finding, index) => (
                     <li key={`print-finding-${factor.key}-${index}`} style={{ marginBottom: '4px' }}>{finding}</li>
                   ))}
+                </ul>
+                <p style={{ margin: '10px 0 6px', fontWeight: 700 }}>Recommendations</p>
+                <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                  {(result.recommendations.length ? result.recommendations.map((rec) => rec.text) : ['No additional recommendations for this factor.'])
+                    .slice(0, 4)
+                    .map((recommendation, index) => (
+                      <li key={`print-factor-rec-${factor.key}-${index}`} style={{ marginBottom: '4px' }}>{recommendation}</li>
+                    ))}
                 </ul>
               </article>
             );
@@ -227,6 +235,11 @@ function PrintReportContent() {
           .print-page-break {
             break-before: page;
             page-break-before: always;
+          }
+
+          .print-page-break:first-child {
+            break-before: auto;
+            page-break-before: auto;
           }
         }
       `}</style>
