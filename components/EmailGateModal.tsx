@@ -77,7 +77,7 @@ export default function EmailGateModal({
         <div className="border-b border-slate-700 bg-gradient-to-r from-[#1B7340] to-[#145832] px-6 py-5">
           <h3 className="text-xl font-bold">Get your full report</h3>
           <p className="mt-1 text-sm text-slate-100/90">
-            Add your details so we can send this report and practical next steps.
+            Add your details to unlock exports and get practical next steps. No spam.
           </p>
         </div>
 
