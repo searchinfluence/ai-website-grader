@@ -296,14 +296,15 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
   const gtmSchemaDetected = gtmSchemaMarkup.length > 0;
 
   const gtmContainerId = extractGtmContainerId(html);
-  const gtmRenderedSchemaPromise = gtmContainerId
-    ? fetchGtmRenderedSchema(url)
-    : Promise.resolve<string[]>([]);
   
   // Analyze mobile information
   const mobileInfo = analyzeMobileInfo($, html);
 
-  const gtmRenderedSchemaMarkup = await gtmRenderedSchemaPromise;
+  // Only fall back to Puppeteer-based rendering if container script parsing found nothing.
+  // Puppeteer is too heavy for Vercel's 60s function limit when combined with the rest of the pipeline.
+  const gtmRenderedSchemaMarkup = (gtmContainerId && gtmSchemaMarkup.length === 0)
+    ? await fetchGtmRenderedSchema(url)
+    : [];
   if (gtmRenderedSchemaMarkup.length > 0) {
     const serializedSchemaSet = new Set<string>();
 
