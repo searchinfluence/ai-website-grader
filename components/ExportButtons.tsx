@@ -96,15 +96,18 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
   const printReport = () => {
     trackExport('print');
 
-    const printWindow = window.open('', '_blank', 'noopener');
-    if (!printWindow) {
-      alert('Please allow popups to print the report');
-      return;
-    }
-
     const key = `ai-report:${Date.now()}`;
     localStorage.setItem(key, JSON.stringify(analysis));
-    printWindow.location.href = `/print-report?key=${encodeURIComponent(key)}`;
+    const url = `/print-report?key=${encodeURIComponent(key)}`;
+
+    // Try opening in a new tab (direct URL — avoids most popup blockers)
+    const printWindow = window.open(url, '_blank');
+    if (!printWindow) {
+      // Fallback: navigate in the same window
+      // Store analysis for restoration when user comes back
+      sessionStorage.setItem('ai-grader-analysis-backup', JSON.stringify(analysis));
+      window.location.href = url;
+    }
   };
 
   const shareReport = async () => {
@@ -169,6 +172,21 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
   };
 
   const handleGateSubmit = async (values: EmailGateValues) => {
+    // For print action, pre-open the window NOW (in user gesture context)
+    // before the async fetch, so popup blockers don't block it
+    let preOpenedWindow: Window | null = null;
+    const actionToRun = pendingAction;
+
+    let printKey = '';
+    if (actionToRun === 'print') {
+      printKey = `ai-report:${Date.now()}`;
+      localStorage.setItem(printKey, JSON.stringify(analysis));
+      preOpenedWindow = window.open('', '_blank');
+      if (preOpenedWindow) {
+        preOpenedWindow.document.write('<html><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><p>Preparing print view...</p></body></html>');
+      }
+    }
+
     const response = await fetch('/api/leads', {
       method: 'POST',
       headers: {
@@ -179,18 +197,28 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
     const data = await response.json().catch(() => null);
     if (!response.ok) {
+      // Close pre-opened window on error
+      preOpenedWindow?.close();
       throw new Error(data?.error || 'Unable to save your details right now.');
     }
 
     localStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(values));
     setSavedLead(values);
 
-    const actionToRun = pendingAction;
     setPendingAction(null);
     setIsGateOpen(false);
 
     if (actionToRun) {
-      await runAction(actionToRun);
+      if (actionToRun === 'print' && preOpenedWindow) {
+        // Navigate the pre-opened window to the print page
+        trackExport('print');
+        preOpenedWindow.location.href = `/print-report?key=${encodeURIComponent(printKey)}`;
+      } else if (actionToRun === 'print') {
+        // Fallback if popup was still blocked
+        printReport();
+      } else {
+        await runAction(actionToRun);
+      }
     }
   };
 
