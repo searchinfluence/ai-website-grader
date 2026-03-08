@@ -147,7 +147,7 @@ function PrintReportContent() {
           </tr>
         </thead>
         <tbody>
-          {analysis.recommendations.slice(0, 8).map((item, index) => (
+          {analysis.recommendations.map((item, index) => (
             <tr key={`${item.category}-${index}`}>
               <td style={{ borderBottom: '1px solid #ebf0f5', padding: '8px 10px', textTransform: 'uppercase', fontWeight: 700 }}>{item.priority}</td>
               <td style={{ borderBottom: '1px solid #ebf0f5', padding: '8px 10px' }}>{item.category}</td>
@@ -159,7 +159,7 @@ function PrintReportContent() {
 
       <h2 style={{ margin: '0 0 10px', fontSize: '1.25rem' }}>Additional Recommendations</h2>
       <ul className="print-section" style={{ marginTop: 0, paddingLeft: '20px' }}>
-        {analysis.recommendations.slice(0, 12).map((rec, index) => (
+        {analysis.recommendations.map((rec, index) => (
           <li key={`rec-${index}`} style={{ marginBottom: '6px' }}>{getRecommendationText(rec)}</li>
         ))}
       </ul>
@@ -178,14 +178,13 @@ function PrintReportContent() {
               }}>
                 <h3 style={{ margin: '0 0 8px', fontSize: '1rem' }}>{result.label} ({result.score}%)</h3>
                 <ul style={{ margin: 0, paddingLeft: '20px' }}>
-                  {(result.findings.length ? result.findings : ['No major issues detected.']).slice(0, 5).map((finding, index) => (
+                  {(result.findings.length ? result.findings : ['No major issues detected.']).map((finding, index) => (
                     <li key={`print-finding-${factor.key}-${index}`} style={{ marginBottom: '4px' }}>{finding}</li>
                   ))}
                 </ul>
                 <p style={{ margin: '10px 0 6px', fontWeight: 700 }}>Recommendations</p>
                 <ul style={{ margin: 0, paddingLeft: '20px' }}>
                   {(result.recommendations.length ? result.recommendations.map((rec) => rec.text) : ['No additional recommendations for this factor.'])
-                    .slice(0, 4)
                     .map((recommendation, index) => (
                       <li key={`print-factor-rec-${factor.key}-${index}`} style={{ marginBottom: '4px' }}>{recommendation}</li>
                     ))}
