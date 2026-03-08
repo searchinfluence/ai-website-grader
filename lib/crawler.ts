@@ -210,8 +210,8 @@ async function analyzePerformanceWithCaching(url: string, html: string): Promise
 async function parseHtmlContent(html: string, url: string): Promise<CrawledContent> {
   const $ = cheerio.load(html) as cheerio.CheerioAPI;
   
-  // Extract title
-  const title = $('title').text().trim() || $('h1').first().text().trim() || 'Untitled';
+  // Extract title (use 'head > title' to avoid SVG <title> elements)
+  const title = $('head > title').first().text().trim() || $('h1').first().text().trim() || 'Untitled';
   
   // Extract meta description
   const metaDescription = $('meta[name="description"]').attr('content') || '';
@@ -1304,8 +1304,8 @@ function extractNavigationContext($: cheerio.CheerioAPI): string {
 function extractTechnicalSignals($: cheerio.CheerioAPI): string {
   const signals: string[] = [];
   
-  // Meta tags analysis
-  const title = $('title').text().trim();
+  // Meta tags analysis (use 'head > title' to avoid SVG <title> elements)
+  const title = $('head > title').first().text().trim();
   const metaDescription = $('meta[name="description"]').attr('content');
   const ogTitle = $('meta[property="og:title"]').attr('content');
   const ogDescription = $('meta[property="og:description"]').attr('content');
