@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import ScoreReport from '@/components/ScoreReport';
 import { WebsiteAnalysis } from '@/types';
+import { normalizeWebsiteAnalysis } from '@/lib/normalize-analysis';
 
 export default function SharedReportPage() {
   const params = useParams<{ id: string }>();
@@ -34,8 +35,9 @@ export default function SharedReportPage() {
 
         const data = await response.json();
         if (!cancelled) {
-          setAnalysis((data?.report || null) as WebsiteAnalysis | null);
-          setError(null);
+          const normalized = normalizeWebsiteAnalysis(data?.report);
+          setAnalysis(normalized);
+          setError(normalized ? null : 'Unable to load shared report.');
         }
       } catch (loadError) {
         if (!cancelled) {
@@ -80,4 +82,3 @@ export default function SharedReportPage() {
     </main>
   );
 }
-

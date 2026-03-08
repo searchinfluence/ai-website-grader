@@ -1,5 +1,6 @@
 import { WebsiteAnalysis } from '@/types';
 import { getSupabaseAdminClient } from './admin';
+import { normalizeWebsiteAnalysis } from '@/lib/normalize-analysis';
 
 const SHARE_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://ai-grader.searchinfluence.com';
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -99,5 +100,5 @@ export async function getSharedReport(id: string): Promise<WebsiteAnalysis | nul
     return null;
   }
 
-  return data.analysis_data;
+  return normalizeWebsiteAnalysis(data.analysis_data);
 }
