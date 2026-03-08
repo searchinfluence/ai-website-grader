@@ -84,7 +84,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
   const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
   const [markdownCopied, setMarkdownCopied] = useState(false);
   const [showLeadModal, setShowLeadModal] = useState(false);
-  const [leadSubmitted, setLeadSubmitted] = useState(false);
+  const [leadSubmitted, setLeadSubmitted] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !!localStorage.getItem('ai-grader-lead');
+    }
+    return false;
+  });
+  const [showLeadToast, setShowLeadToast] = useState(false);
   const lowestScoringFactorKey = SCORING_FACTORS.reduce((lowestKey, factor) => {
     return analysis.factors[factor.key].score < analysis.factors[lowestKey].score ? factor.key : lowestKey;
   }, SCORING_FACTORS[0].key);
@@ -301,7 +307,11 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               and content priorities, we can provide a comprehensive AI visibility review.
             </p>
             <button
-              onClick={() => { trackCTA('after-score-summary', 'lead-modal-open'); setShowLeadModal(true); }}
+              onClick={() => {
+                trackCTA('after-score-summary', leadSubmitted ? 'contact-redirect' : 'lead-modal-open');
+                if (leadSubmitted) { window.open('https://www.searchinfluence.com/contact/', '_blank'); return; }
+                setShowLeadModal(true);
+              }}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -850,7 +860,11 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               implementation priorities across your site.
             </p>
             <button
-              onClick={() => { trackCTA('bottom-banner', 'lead-modal-open'); setShowLeadModal(true); }}
+              onClick={() => {
+                trackCTA('bottom-banner', leadSubmitted ? 'contact-redirect' : 'lead-modal-open');
+                if (leadSubmitted) { window.open('https://www.searchinfluence.com/contact/', '_blank'); return; }
+                setShowLeadModal(true);
+              }}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -885,11 +899,32 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             const data = await res.json().catch(() => ({}));
             throw new Error(data.error || 'Something went wrong.');
           }
+          localStorage.setItem('ai-grader-lead', JSON.stringify(values));
           setLeadSubmitted(true);
           setShowLeadModal(false);
+          setShowLeadToast(true);
+          setTimeout(() => setShowLeadToast(false), 4000);
           trackCTA('lead-modal', 'lead-submitted');
         }}
       />
+
+      {showLeadToast && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          zIndex: 1100,
+          background: 'var(--si-navy)',
+          color: '#fff',
+          padding: '14px 20px',
+          borderRadius: '10px',
+          fontWeight: 600,
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+          fontSize: '0.95rem'
+        }}>
+          Thanks! We&apos;ll be in touch.
+        </div>
+      )}
     </div>
   );
 }

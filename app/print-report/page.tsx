@@ -63,7 +63,26 @@ function PrintReportContent() {
   }, [analysis]);
 
   if (!analysis) {
-    return <main style={{ padding: '24px', fontFamily: 'Arial, sans-serif' }}>Print data not found.</main>;
+    return (
+      <main style={{ padding: '24px', fontFamily: 'Arial, sans-serif', textAlign: 'center', marginTop: '40px' }}>
+        <p>Print data not found.</p>
+        <button
+          onClick={() => window.history.back()}
+          style={{
+            marginTop: '12px',
+            padding: '10px 20px',
+            background: '#012c3a',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          ← Back to Report
+        </button>
+      </main>
+    );
   }
 
   const factorRows = SCORING_FACTORS.map((factor) => ({
@@ -83,6 +102,46 @@ function PrintReportContent() {
 
   return (
     <main className="print-root" style={{ padding: '0', fontFamily: "'Open Sans', Arial, sans-serif", color: '#012c3a' }}>
+      {/* Screen-only toolbar */}
+      <div className="print-toolbar" style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px 28px',
+        background: '#f0f4f7',
+        borderBottom: '1px solid #dde3e8'
+      }}>
+        <button
+          onClick={() => window.history.back()}
+          style={{
+            padding: '8px 16px',
+            background: '#012c3a',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '13px',
+            fontWeight: 600
+          }}
+        >
+          ← Back to Report
+        </button>
+        <button
+          onClick={() => window.print()}
+          style={{
+            padding: '8px 16px',
+            background: '#91c364',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '13px',
+            fontWeight: 600
+          }}
+        >
+          🖨️ Print Again
+        </button>
+      </div>
       {/* Branded header */}
       <header style={{
         background: '#012c3a',
@@ -304,6 +363,10 @@ function PrintReportContent() {
         }
 
         @media print {
+          .print-toolbar {
+            display: none !important;
+          }
+
           html, body {
             margin: 0 !important;
             padding: 0 !important;
