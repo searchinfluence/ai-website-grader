@@ -226,7 +226,6 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
     <>
       <div className="export-button-group" style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
         gap: '12px',
         marginTop: '20px'
       }}>
