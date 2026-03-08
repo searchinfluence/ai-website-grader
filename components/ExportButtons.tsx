@@ -24,6 +24,7 @@ const LEAD_STORAGE_KEY = 'ai-grader-lead';
 export default function ExportButtons({ analysis, onExportMarkdown }: ExportButtonsProps) {
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [isSharingReport, setIsSharingReport] = useState(false);
+  const [lastShareUrl, setLastShareUrl] = useState<string | null>(null);
   const [savedLead, setSavedLead] = useState<SavedLead | null>(null);
   const [isGateOpen, setIsGateOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<ExportAction | null>(null);
@@ -130,8 +131,10 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
         throw new Error('Share URL was not returned.');
       }
 
-      await copyText(data.shareUrl as string);
+      const shareUrl = data.shareUrl as string;
+      await copyText(shareUrl);
       trackExport('share');
+      setLastShareUrl(shareUrl);
       setShareToast({ tone: 'success', message: 'Share link copied to clipboard.' });
       setTimeout(() => {
         setShareToast((current) => (current?.message === 'Share link copied to clipboard.' ? null : current));
@@ -144,6 +147,24 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       }, 3200);
     } finally {
       setIsSharingReport(false);
+    }
+  };
+
+  const copyLatestShareLink = async () => {
+    if (!lastShareUrl) return;
+
+    try {
+      await copyText(lastShareUrl);
+      setShareToast({ tone: 'success', message: 'Share link copied to clipboard.' });
+      setTimeout(() => {
+        setShareToast((current) => (current?.message === 'Share link copied to clipboard.' ? null : current));
+      }, 2400);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to copy share link automatically.';
+      setShareToast({ tone: 'error', message });
+      setTimeout(() => {
+        setShareToast((current) => (current?.tone === 'error' ? null : current));
+      }, 3200);
     }
   };
 
@@ -376,8 +397,47 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           : 'PDF, share, and print actions will prompt once for contact details, then remain unlocked on this device.'}
       </p>
 
-      {shareToast && (
+      {lastShareUrl && (
         <div style={{
+          marginTop: '12px',
+          padding: '12px 14px',
+          borderRadius: '10px',
+          border: '1px solid rgba(78, 177, 205, 0.28)',
+          background: 'rgba(78, 177, 205, 0.08)',
+          color: 'var(--content-text)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '6px' }}>
+            <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700 }}>Latest share link</p>
+            <button
+              type="button"
+              onClick={() => void copyLatestShareLink()}
+              style={{
+                border: '1px solid rgba(1, 74, 97, 0.24)',
+                background: '#fff',
+                color: 'var(--si-navy)',
+                borderRadius: '8px',
+                padding: '6px 10px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+            >
+              Copy Link
+            </button>
+          </div>
+          <p style={{ margin: 0, wordBreak: 'break-all', fontSize: '0.84rem' }}>
+            <a href={lastShareUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--si-navy)', fontWeight: 600 }}>
+              {lastShareUrl}
+            </a>
+          </p>
+        </div>
+      )}
+
+      {shareToast && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
           position: 'fixed',
           right: '20px',
           bottom: '20px',
