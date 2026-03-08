@@ -25,13 +25,18 @@ export async function POST(request: NextRequest) {
       source: 'export-gate'
     });
 
-    // Push to HubSpot (non-blocking — won't fail the request if HubSpot is down)
-    pushContactToHubSpot({
-      email,
-      firstname: name,
-      company: company || undefined,
-      lead_source: 'AI Website Grader',
-    }).catch((err) => console.error('HubSpot push error (non-blocking):', err));
+    // Push to HubSpot (awaited so it completes before serverless function terminates)
+    try {
+      await pushContactToHubSpot({
+        email,
+        firstname: name,
+        company: company || undefined,
+        lead_source: 'AI Website Grader',
+      });
+    } catch (hubspotErr) {
+      // Log but don't fail the request — Supabase is the primary store
+      console.error('HubSpot push error (non-blocking):', hubspotErr);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
