@@ -210,13 +210,13 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             display: 'flex',
             alignItems: 'center',
             padding: '12px 20px',
-            background: 'linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%)',
+            background: 'linear-gradient(135deg, var(--si-orange) 0%, var(--orange-dark) 100%)',
             color: 'var(--white)',
             border: 'none',
             borderRadius: '8px',
             cursor: isExportingPDF ? 'not-allowed' : 'pointer',
             transition: 'all 0.3s ease',
-            boxShadow: '0 2px 8px rgba(230, 126, 34, 0.3)',
+            boxShadow: '0 2px 8px rgba(223, 89, 38, 0.3)',
             opacity: isExportingPDF ? 0.6 : 1,
             fontSize: '14px',
             fontWeight: '600',
@@ -225,12 +225,12 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           onMouseEnter={(e) => {
             if (!isExportingPDF) {
               e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(230, 126, 34, 0.4)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(223, 89, 38, 0.42)';
             }
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(230, 126, 34, 0.3)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(223, 89, 38, 0.3)';
           }}
         >
           {isExportingPDF ? (
@@ -248,24 +248,24 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             display: 'flex',
             alignItems: 'center',
             padding: '12px 20px',
-            background: 'linear-gradient(135deg, var(--info-blue) 0%, #2980b9 100%)',
+            background: 'linear-gradient(135deg, var(--si-medium-blue) 0%, var(--si-navy) 100%)',
             color: 'var(--white)',
             border: 'none',
             borderRadius: '8px',
             cursor: 'pointer',
             transition: 'all 0.3s ease',
-            boxShadow: '0 2px 8px rgba(52, 152, 219, 0.3)',
+            boxShadow: '0 2px 8px rgba(1, 74, 97, 0.28)',
             fontSize: '14px',
             fontWeight: '600',
             fontFamily: 'var(--font-stack)'
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 4px 15px rgba(52, 152, 219, 0.4)';
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(1, 74, 97, 0.38)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(52, 152, 219, 0.3)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(1, 74, 97, 0.28)';
           }}
         >
           <FileText size={16} style={{ marginRight: '8px' }} />
@@ -280,13 +280,13 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             display: 'flex',
             alignItems: 'center',
             padding: '12px 20px',
-            background: 'linear-gradient(135deg, #6c5ce7 0%, #5f4dd6 100%)',
+            background: 'linear-gradient(135deg, var(--si-light-blue) 0%, var(--si-medium-blue) 100%)',
             color: 'var(--white)',
             border: 'none',
             borderRadius: '8px',
             cursor: isSharingReport ? 'not-allowed' : 'pointer',
             transition: 'all 0.3s ease',
-            boxShadow: '0 2px 8px rgba(108, 92, 231, 0.28)',
+            boxShadow: '0 2px 8px rgba(78, 177, 205, 0.32)',
             opacity: isSharingReport ? 0.6 : 1,
             fontSize: '14px',
             fontWeight: '600',
@@ -295,12 +295,12 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           onMouseEnter={(e) => {
             if (!isSharingReport) {
               e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(108, 92, 231, 0.35)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(78, 177, 205, 0.42)';
             }
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(108, 92, 231, 0.28)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(78, 177, 205, 0.32)';
           }}
         >
           {isSharingReport ? (
@@ -318,24 +318,24 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             display: 'flex',
             alignItems: 'center',
             padding: '12px 20px',
-            background: 'linear-gradient(135deg, var(--success-green) 0%, #229954 100%)',
+            background: 'linear-gradient(135deg, var(--si-green) 0%, #7daf53 100%)',
             color: 'var(--white)',
             border: 'none',
             borderRadius: '8px',
             cursor: 'pointer',
             transition: 'all 0.3s ease',
-            boxShadow: '0 2px 8px rgba(39, 174, 96, 0.3)',
+            boxShadow: '0 2px 8px rgba(145, 195, 100, 0.34)',
             fontSize: '14px',
             fontWeight: '600',
             fontFamily: 'var(--font-stack)'
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 4px 15px rgba(39, 174, 96, 0.4)';
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(145, 195, 100, 0.42)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(39, 174, 96, 0.3)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(145, 195, 100, 0.34)';
           }}
         >
           <Printer size={16} style={{ marginRight: '8px' }} />

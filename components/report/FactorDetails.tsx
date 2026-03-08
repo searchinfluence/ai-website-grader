@@ -18,6 +18,14 @@ const priorityStyleMap = {
   low: { label: 'Low', bg: 'rgba(39, 174, 96, 0.12)', border: 'rgba(39, 174, 96, 0.35)', text: 'var(--success-green)', icon: Info }
 } as const;
 
+const statusCopy: Record<ScoringFactorResult['status'], string> = {
+  excellent: 'Excellent',
+  good: 'Good',
+  'needs-improvement': 'Needs Improvement',
+  poor: 'Poor',
+  critical: 'Critical'
+};
+
 const STAT_LABELS: Record<string, string> = {
   wordCount: 'Word Count',
   h1Count: 'H1 Tags',
@@ -83,6 +91,15 @@ function formatStatValueWithKey(key: string, value: unknown): string {
 export default function FactorDetails({ factor, accent, borderColor, gradient, icon: Icon, defaultOpen }: FactorDetailsProps) {
   const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
   const entries = Object.entries(factor.stats ?? {});
+  const previewStats = entries.slice(0, 3);
+  const previewMetricColors = [
+    'var(--si-dark-navy)',
+    'var(--si-navy)',
+    'var(--si-medium-blue)',
+    'var(--si-light-blue)',
+    'var(--si-green)',
+    'var(--si-orange)'
+  ];
   const handleCopyCode = async (code: string, index: number) => {
     try {
       await navigator.clipboard.writeText(code);
@@ -114,15 +131,66 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
               {Icon && <Icon size={18} style={{ color: accent }} />}
               {factor.label}
             </h3>
-            <p style={{ margin: '6px 0 0', fontSize: '0.88rem', color: 'var(--secondary-content)', textTransform: 'capitalize' }}>
-              {factor.status.replace('-', ' ')} performance
-            </p>
+            <div className="factor-summary-meta">
+              <span style={{
+                display: 'inline-flex',
+                borderRadius: '999px',
+                padding: '3px 9px',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                color: accent,
+                border: `1px solid ${borderColor}`,
+                background: 'rgba(255,255,255,0.72)'
+              }}>
+                {statusCopy[factor.status]}
+              </span>
+              <span style={{ fontSize: '0.82rem', color: 'var(--secondary-content)' }}>
+                {factor.findings.length} key findings
+              </span>
+              <span style={{ fontSize: '0.82rem', color: 'var(--secondary-content)' }}>
+                {factor.recommendations.length} recommendations
+              </span>
+            </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <strong style={{ color: accent, fontSize: '1.5rem', lineHeight: 1 }}>{factor.score}%</strong>
             <ChevronDown className="factor-details-chevron" size={18} style={{ color: accent }} />
           </div>
         </div>
+        {previewStats.length > 0 && (
+          <div className="factor-summary-stats">
+            {previewStats.map(([key, value], index) => (
+              <span
+                key={`${factor.key}-preview-stat-${key}`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  borderRadius: '999px',
+                  padding: '4px 8px',
+                  fontSize: '0.72rem',
+                  border: `1px solid ${borderColor}`,
+                  background: 'rgba(255,255,255,0.82)',
+                  color: 'var(--content-text)'
+                }}
+              >
+                <span style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: previewMetricColors[index % previewMetricColors.length],
+                  flexShrink: 0
+                }} />
+                <span style={{ color: 'var(--muted-text)' }}>
+                  {STAT_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase())}:
+                </span>
+                <strong>{formatStatValueWithKey(key, value)}</strong>
+              </span>
+            ))}
+          </div>
+        )}
       </summary>
 
       <section style={{ padding: '18px' }}>
