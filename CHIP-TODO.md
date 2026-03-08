@@ -27,11 +27,11 @@
 - [x] "Get your full report" framing — helpful, not annoying
 
 ### 5. Print Report
-- [ ] Print button triggers browser print dialog
-- [ ] Print-friendly CSS: hide nav, input form, UI chrome
-- [ ] Proper page breaks between sections
-- [ ] Full report visible in print view
-- [ ] Gated behind email capture (#4)
+- [x] Print button triggers browser print dialog
+- [x] Print-friendly CSS: hide nav, input form, UI chrome
+- [x] Proper page breaks between sections
+- [x] Full report visible in print view
+- [x] Gated behind email capture (#4)
 
 ### 6. Share Link
 - [ ] Generate unique URL with analysis results
