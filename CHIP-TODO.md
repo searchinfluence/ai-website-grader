@@ -34,10 +34,10 @@
 - [x] Gated behind email capture (#4)
 
 ### 6. Share Link
-- [ ] Generate unique URL with analysis results
-- [ ] Store results in Supabase for shareable links
-- [ ] Copy-to-clipboard with toast notification
-- [ ] Gated behind email capture (#4)
+- [x] Generate unique URL with analysis results
+- [x] Store results in Supabase for shareable links
+- [x] Copy-to-clipboard with toast notification
+- [x] Gated behind email capture (#4)
 
 ### 7. PDF Export with SI Branding
 - [ ] SI green (#1B7340) as primary color
