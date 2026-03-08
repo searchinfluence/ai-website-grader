@@ -17,27 +17,27 @@ interface ScoreReportProps {
 
 const FACTOR_THEME: Record<ScoringFactorKey, { accent: string; borderColor: string; gradient: string; icon?: LucideIcon }> = {
   contentStructure: {
-    accent: 'var(--info-blue)',
-    borderColor: 'rgba(52, 152, 219, 0.28)',
-    gradient: 'linear-gradient(135deg, rgba(52, 152, 219, 0.12) 0%, rgba(52, 152, 219, 0.04) 100%)',
+    accent: 'var(--si-medium-blue)',
+    borderColor: 'rgba(52, 144, 181, 0.32)',
+    gradient: 'linear-gradient(135deg, rgba(52, 144, 181, 0.14) 0%, rgba(52, 144, 181, 0.05) 100%)',
     icon: FileText
   },
   structuredData: {
-    accent: 'var(--success-green)',
-    borderColor: 'rgba(39, 174, 96, 0.28)',
-    gradient: 'linear-gradient(135deg, rgba(39, 174, 96, 0.12) 0%, rgba(39, 174, 96, 0.04) 100%)',
+    accent: 'var(--si-green)',
+    borderColor: 'rgba(145, 195, 100, 0.36)',
+    gradient: 'linear-gradient(135deg, rgba(145, 195, 100, 0.16) 0%, rgba(145, 195, 100, 0.06) 100%)',
     icon: Database
   },
   technicalHealth: {
-    accent: 'var(--orange-accent)',
-    borderColor: 'rgba(230, 126, 34, 0.28)',
-    gradient: 'linear-gradient(135deg, rgba(230, 126, 34, 0.12) 0%, rgba(230, 126, 34, 0.04) 100%)',
+    accent: 'var(--si-orange)',
+    borderColor: 'rgba(223, 89, 38, 0.34)',
+    gradient: 'linear-gradient(135deg, rgba(223, 89, 38, 0.15) 0%, rgba(223, 89, 38, 0.05) 100%)',
     icon: Settings
   },
   pageSEO: {
-    accent: '#8e44ad',
-    borderColor: 'rgba(142, 68, 173, 0.28)',
-    gradient: 'linear-gradient(135deg, rgba(142, 68, 173, 0.12) 0%, rgba(142, 68, 173, 0.04) 100%)',
+    accent: 'var(--si-light-blue)',
+    borderColor: 'rgba(78, 177, 205, 0.34)',
+    gradient: 'linear-gradient(135deg, rgba(78, 177, 205, 0.15) 0%, rgba(78, 177, 205, 0.05) 100%)',
     icon: Search
   }
 };
@@ -111,12 +111,36 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
     }
   };
 
+  const contentImprovements = (analysis.contentImprovements && analysis.contentImprovements.length > 0)
+    ? analysis.contentImprovements
+    : analysis.recommendations.slice(0, 3).map((recommendation, index) => ({
+      section: `${recommendation.category} Improvement ${index + 1}`,
+      current: `Gap identified in ${recommendation.category.toLowerCase()}: ${formatRecommendationText(recommendation.text)}`,
+      improved: `Implement this action first: ${formatRecommendationText(recommendation.text)}`,
+      reasoning: 'Addressing this issue improves crawlability, relevance, and AI answer quality for this page.',
+      priority: recommendation.priority
+    }));
+
+  const immediateActions = [
+    `Start with ${lowestFactor.label} (${lowestFactor.score}%) because it is your lowest-scoring factor.`,
+    ...analysis.recommendations.slice(0, 2).map((recommendation) => formatRecommendationText(recommendation.text))
+  ];
+
+  const longTermStrategy = [
+    'Re-run this analysis monthly to track score movement after each implementation sprint.',
+    'Expand optimization work beyond this page to core templates and high-value conversion pages.',
+    'Maintain a recurring content update process that aligns with AI search behavior and user intent shifts.'
+  ];
+
   return (
     <div className="max-w-6xl mx-auto" id="report-container">
       <div className="results">
         <div className="results-header">
-          <h1 style={{ margin: 0 }}>AI Website Grader Report</h1>
-          <p style={{ margin: '8px 0 0' }}>Analysis completed on {new Date(analysis.timestamp).toLocaleDateString()}</p>
+          <h1 style={{ margin: 0, textAlign: 'center' }}>AI Website Grader Report</h1>
+          <p style={{ margin: '8px 0 0', textAlign: 'center', fontSize: '1.06rem', opacity: 0.95 }}>
+            Powered by Search Influence - AI SEO Experts
+          </p>
+          <p style={{ margin: '10px 0 0', textAlign: 'center' }}>Analysis completed on {new Date(analysis.timestamp).toLocaleDateString()}</p>
         </div>
 
         <div className="content-area" style={{ maxHeight: 'none', overflow: 'visible' }}>
@@ -174,6 +198,14 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             </div>
           </div>
 
+          <div className="export-prominence-card">
+            <h2 className="major-section-heading">Share or Export This Report</h2>
+            <ExportButtons
+              analysis={analysis}
+              onExportMarkdown={handleExportMarkdown}
+            />
+          </div>
+
           <div style={{
             marginBottom: '18px',
             padding: '14px 16px',
@@ -193,7 +225,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             </p>
           </div>
 
-          <h2 style={{ margin: '0 0 12px', color: 'var(--content-text)', fontSize: '1.4rem', textAlign: 'center' }}>
+          <h2 className="major-section-heading">
             Analysis Score Breakdown
           </h2>
           <div className="factor-cards-grid" style={{ marginBottom: '18px' }}>
@@ -213,10 +245,10 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             marginBottom: '18px',
             padding: '16px',
             borderRadius: '12px',
-            border: '1px solid rgba(27, 115, 64, 0.32)',
-            background: 'linear-gradient(135deg, rgba(27, 115, 64, 0.1) 0%, rgba(20, 88, 50, 0.08) 100%)'
+            border: '1px solid rgba(1, 74, 97, 0.28)',
+            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.12) 0%, rgba(1, 74, 97, 0.08) 100%)'
           }}>
-            <h3 style={{ margin: '0 0 8px', color: 'var(--content-text)' }}>From snapshot to strategy</h3>
+            <h2 className="major-section-heading" style={{ textAlign: 'left', marginBottom: '8px' }}>From Snapshot to Strategy</h2>
             <p style={{ margin: '0 0 12px', color: 'var(--secondary-content)' }}>
               This grader is a free single-page analysis. If you want deeper insight across templates, technical systems,
               and content priorities, we can provide a comprehensive AI visibility review.
@@ -232,7 +264,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 gap: '8px',
                 padding: '10px 14px',
                 borderRadius: '8px',
-                background: '#1B7340',
+                background: 'var(--si-navy)',
                 color: '#fff',
                 fontWeight: 700,
                 textDecoration: 'none'
@@ -246,10 +278,10 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             marginBottom: '20px',
             padding: '16px',
             borderRadius: '12px',
-            border: '1px solid rgba(52, 152, 219, 0.22)',
-            background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.06) 0%, rgba(39, 174, 96, 0.05) 100%)'
+            border: '1px solid rgba(1, 74, 97, 0.22)',
+            background: 'linear-gradient(135deg, rgba(52, 144, 181, 0.08) 0%, rgba(78, 177, 205, 0.06) 100%)'
           }}>
-            <h3 style={{ margin: '0 0 12px', color: 'var(--content-text)' }}>Priority Recommendations</h3>
+            <h2 className="major-section-heading" style={{ textAlign: 'left', marginBottom: '12px' }}>Priority Recommendations</h2>
             <div style={{ display: 'grid', gap: '10px' }}>
               {analysis.recommendations.map((recommendation, index) => {
                 const priorityStyle = priorityStyleMap[recommendation.priority];
@@ -322,7 +354,15 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             </div>
           </div>
 
-          <h3 style={{ margin: '0 0 12px', color: 'var(--content-text)' }}>Detailed Factor Analysis</h3>
+          <h2 className="major-section-heading" style={{
+            textAlign: 'left',
+            background: 'rgba(1, 74, 97, 0.08)',
+            borderLeft: '4px solid var(--si-medium-blue)',
+            padding: '12px 14px',
+            borderRadius: '8px'
+          }}>
+            Detailed Factor Analysis
+          </h2>
           <div style={{ display: 'grid', gap: '12px', marginBottom: '20px' }}>
             {SCORING_FACTORS.map((factor) => {
               const theme = FACTOR_THEME[factor.key];
@@ -334,28 +374,128 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                   borderColor={theme.borderColor}
                   gradient={theme.gradient}
                   icon={theme.icon}
-                  defaultOpen={false}
+                  defaultOpen={factor.key === lowestScoringFactorKey}
                 />
               );
             })}
           </div>
 
-          <ExportButtons
-            analysis={analysis}
-            onExportMarkdown={handleExportMarkdown}
-          />
+          {contentImprovements.length > 0 && (
+            <section style={{ marginBottom: '24px' }}>
+              <h2 className="major-section-heading" style={{ textAlign: 'left', marginBottom: '14px' }}>
+                Priority Content Improvements
+              </h2>
+              <div style={{ display: 'grid', gap: '14px' }}>
+                {contentImprovements.map((improvement, index) => (
+                  <article
+                    key={`content-improvement-${index}`}
+                    style={{
+                      border: '1px solid var(--border-gray)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      background: 'var(--content-bg)'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                      <div style={{
+                        width: '30px',
+                        height: '30px',
+                        background: 'var(--si-orange)',
+                        color: 'var(--white)',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 700,
+                        fontSize: '0.86rem',
+                        flexShrink: 0
+                      }}>
+                        {index + 1}
+                      </div>
+                      <h3 style={{ margin: 0, color: 'var(--content-text)', fontSize: '1.05rem' }}>{improvement.section}</h3>
+                    </div>
+                    <div className="content-improvements-grid">
+                      <div style={{
+                        background: 'rgba(231, 76, 60, 0.08)',
+                        borderLeft: '4px solid var(--error-red)',
+                        borderRadius: '10px',
+                        padding: '12px'
+                      }}>
+                        <h4 style={{ margin: '0 0 6px', color: 'var(--content-text)', fontSize: '0.84rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          Current Issue
+                        </h4>
+                        <p style={{ margin: 0, color: 'var(--secondary-content)', fontSize: '0.92rem' }}>{improvement.current}</p>
+                      </div>
+                      <div style={{
+                        background: 'rgba(145, 195, 100, 0.14)',
+                        borderLeft: '4px solid var(--si-green)',
+                        borderRadius: '10px',
+                        padding: '12px'
+                      }}>
+                        <h4 style={{ margin: '0 0 6px', color: 'var(--content-text)', fontSize: '0.84rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          Recommended Action
+                        </h4>
+                        <p style={{ margin: 0, color: 'var(--secondary-content)', fontSize: '0.92rem' }}>{improvement.improved}</p>
+                      </div>
+                    </div>
+                    <p style={{ margin: '10px 0 0', color: 'var(--secondary-content)', fontSize: '0.9rem' }}>
+                      <strong style={{ color: 'var(--content-text)' }}>Why this helps:</strong> {improvement.reasoning}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section style={{
+            marginBottom: '24px',
+            borderRadius: '14px',
+            border: '1px solid rgba(1, 74, 97, 0.28)',
+            background: 'linear-gradient(135deg, rgba(52, 144, 181, 0.18) 0%, rgba(1, 74, 97, 0.12) 100%)',
+            padding: '20px'
+          }}>
+            <h2 className="major-section-heading" style={{ marginBottom: '14px' }}>Next Steps</h2>
+            <div className="next-steps-grid">
+              <div style={{
+                background: 'rgba(255,255,255,0.92)',
+                borderRadius: '12px',
+                padding: '16px',
+                border: '1px solid rgba(1, 74, 97, 0.18)'
+              }}>
+                <h3 style={{ margin: '0 0 10px', color: 'var(--content-text)', fontSize: '1.08rem' }}>Immediate Actions</h3>
+                <ol style={{ margin: 0, paddingLeft: '18px', color: 'var(--secondary-content)' }}>
+                  {immediateActions.map((action, index) => (
+                    <li key={`immediate-action-${index}`} style={{ marginBottom: '8px' }}>{action}</li>
+                  ))}
+                </ol>
+              </div>
+              <div style={{
+                background: 'rgba(255,255,255,0.92)',
+                borderRadius: '12px',
+                padding: '16px',
+                border: '1px solid rgba(1, 74, 97, 0.18)'
+              }}>
+                <h3 style={{ margin: '0 0 10px', color: 'var(--content-text)', fontSize: '1.08rem' }}>Long-term Strategy</h3>
+                <ol style={{ margin: 0, paddingLeft: '18px', color: 'var(--secondary-content)' }}>
+                  {longTermStrategy.map((action, index) => (
+                    <li key={`long-term-action-${index}`} style={{ marginBottom: '8px' }}>{action}</li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          </section>
 
           <div style={{
             marginTop: '30px',
             padding: '24px',
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, rgba(27, 115, 64, 0.12) 0%, rgba(20, 88, 50, 0.08) 100%)',
-            border: '1px solid rgba(27, 115, 64, 0.28)',
+            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.12) 0%, rgba(1, 74, 97, 0.08) 100%)',
+            border: '1px solid rgba(1, 74, 97, 0.3)',
             textAlign: 'center'
           }}>
-            <h3 style={{ margin: '0 0 10px', color: 'var(--content-text)', fontSize: '1.3rem' }}>
+            <h2 className="major-section-heading" style={{ marginBottom: '10px' }}>
               Want a roadmap beyond this single page?
-            </h3>
+            </h2>
             <p style={{ margin: '0 0 16px', color: 'var(--secondary-content)', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
               We&apos;ll turn this free page-level analysis into a comprehensive review with technical, content, and
               implementation priorities across your site.
@@ -371,7 +511,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 gap: '8px',
                 padding: '11px 16px',
                 borderRadius: '8px',
-                background: '#1B7340',
+                background: 'var(--si-navy)',
                 color: '#fff',
                 fontWeight: 700,
                 textDecoration: 'none'
