@@ -4,6 +4,7 @@ import { CSSProperties, useState } from 'react';
 import { ScoringFactorKey, WebsiteAnalysis } from '@/types';
 import { AlertCircle, AlertTriangle, ArrowRight, Database, FileText, Info, Lightbulb, Search, Settings, type LucideIcon } from 'lucide-react';
 import ExportButtons from './ExportButtons';
+import LeadCaptureModal from './LeadCaptureModal';
 import { generateMarkdownReport, downloadMarkdown } from '@/lib/exporters';
 import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
 import { SCORING_FACTORS } from '@/lib/scoring/config';
@@ -82,6 +83,8 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
   const { trackExport, trackCTA } = useGoogleTagManager();
   const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
   const [markdownCopied, setMarkdownCopied] = useState(false);
+  const [showLeadModal, setShowLeadModal] = useState(false);
+  const [leadSubmitted, setLeadSubmitted] = useState(false);
   const lowestScoringFactorKey = SCORING_FACTORS.reduce((lowestKey, factor) => {
     return analysis.factors[factor.key].score < analysis.factors[lowestKey].score ? factor.key : lowestKey;
   }, SCORING_FACTORS[0].key);
@@ -297,11 +300,8 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               This grader is a free single-page analysis. If you want deeper insight across templates, technical systems,
               and content priorities, we can provide a comprehensive AI visibility review.
             </p>
-            <a
-              href="https://www.searchinfluence.com/contact/"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackCTA('after-score-summary', 'contact-click')}
+            <button
+              onClick={() => { trackCTA('after-score-summary', 'lead-modal-open'); setShowLeadModal(true); }}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -311,11 +311,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 background: 'var(--si-navy)',
                 color: '#fff',
                 fontWeight: 700,
-                textDecoration: 'none'
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 'inherit'
               }}
             >
               Get Your Full AI Visibility Review <ArrowRight size={15} />
-            </a>
+            </button>
           </div>
 
           <div style={{
@@ -847,11 +849,8 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               We&apos;ll turn this free page-level analysis into a comprehensive review with technical, content, and
               implementation priorities across your site.
             </p>
-            <a
-              href="https://www.searchinfluence.com/contact/"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackCTA('bottom-banner', 'contact-click')}
+            <button
+              onClick={() => { trackCTA('bottom-banner', 'lead-modal-open'); setShowLeadModal(true); }}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -861,14 +860,36 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 background: 'var(--si-navy)',
                 color: '#fff',
                 fontWeight: 700,
-                textDecoration: 'none'
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 'inherit'
               }}
             >
               Get Your Full AI Visibility Review <ArrowRight size={15} />
-            </a>
+            </button>
           </div>
         </div>
       </div>
+
+      <LeadCaptureModal
+        isOpen={showLeadModal && !leadSubmitted}
+        actionLabel="AI Visibility Review"
+        onClose={() => setShowLeadModal(false)}
+        onSubmit={async (values) => {
+          const res = await fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...values, source: 'visibility-review-cta' })
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || 'Something went wrong.');
+          }
+          setLeadSubmitted(true);
+          setShowLeadModal(false);
+          trackCTA('lead-modal', 'lead-submitted');
+        }}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { saveLeadCapture } from '@/lib/supabase/leads';
+import { pushContactToHubSpot } from '@/lib/hubspot';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,12 +17,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'A valid email is required.' }, { status: 400 });
     }
 
+    // Save to Supabase (primary store)
     await saveLeadCapture({
       name,
       email,
       company: company || undefined,
       source: 'export-gate'
     });
+
+    // Push to HubSpot (non-blocking — won't fail the request if HubSpot is down)
+    pushContactToHubSpot({
+      email,
+      firstname: name,
+      company: company || undefined,
+      lead_source: 'AI Website Grader',
+    }).catch((err) => console.error('HubSpot push error (non-blocking):', err));
 
     return NextResponse.json({ ok: true });
   } catch (error) {
