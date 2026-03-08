@@ -666,6 +666,26 @@ details summary::marker {
     grid-template-columns: 1fr;
   }
 
+  .factor-details-accordion {
+    width: 100%;
+  }
+
+  .factor-details-summary > div {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .factor-details-summary > div > div:last-child {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .url-input,
+  .analyze-btn,
+  textarea {
+    min-height: 48px;
+  }
+
   .export-button-group {
     flex-direction: column;
     align-items: stretch;
@@ -679,6 +699,19 @@ details summary::marker {
 }
 
 @media (max-width: 375px) {
+  .results-header h1 {
+    font-size: 1.55rem;
+  }
+
+  .score-gauge-wrap {
+    width: 104px;
+    height: 104px;
+  }
+
+  .score-gauge-center {
+    font-size: 1.9rem;
+  }
+
   .content-area {
     padding: 14px;
   }
@@ -691,5 +724,9 @@ details summary::marker {
     padding-left: 14px !important;
     padding-right: 14px !important;
     font-size: 13px !important;
+  }
+
+  .factor-details-summary {
+    padding: 14px 14px !important;
   }
 }
