@@ -54,11 +54,11 @@
 - [x] Tone: helpful, not salesy
 
 ### 9. Mobile Optimization
-- [ ] Score cards stack on mobile
-- [ ] Factor accordion sections full-width
-- [ ] Print/Export/Share buttons accessible on mobile
-- [ ] Input form works on mobile
-- [ ] Test at 375px and 768px breakpoints
+- [x] Score cards stack on mobile
+- [x] Factor accordion sections full-width
+- [x] Print/Export/Share buttons accessible on mobile
+- [x] Input form works on mobile
+- [x] Test at 375px and 768px breakpoints
 
 ### 10. Calibration Validation
 - [ ] Run 9-site test suite (`run-calibration-suite.js`)
