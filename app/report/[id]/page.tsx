@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import ScoreReport from '@/components/ScoreReport';
 import { WebsiteAnalysis } from '@/types';
 import { normalizeWebsiteAnalysis } from '@/lib/normalize-analysis';
@@ -118,7 +119,7 @@ export default function SharedReportPage() {
           }}>
             Get a free, instant analysis with specific recommendations you can act on today.
           </p>
-          <a
+          <Link
             href="/"
             style={{
               display: 'inline-block',
@@ -133,7 +134,7 @@ export default function SharedReportPage() {
             }}
           >
             Grade Your Website Free
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -217,9 +218,9 @@ function SharedReportFooter() {
               Visit Search Influence
             </a>
             <span>•</span>
-            <a href="/" style={{ color: 'var(--orange-accent)', textDecoration: 'none' }}>
+            <Link href="/" style={{ color: 'var(--orange-accent)', textDecoration: 'none' }}>
               AI Website Grader
-            </a>
+            </Link>
           </div>
         </div>
       </div>
