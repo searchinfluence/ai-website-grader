@@ -415,7 +415,15 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
   });
 
   // ─── CTA Footer ───
-  ensureSpace(28);
+  // Only add CTA if it fits on the current page; skip if it would create a mostly-empty page
+  const ctaHeight = 26; // 4 padding + 22 box
+  const spaceLeft = pageHeight - 22 - y; // 22 = footer height buffer
+  if (spaceLeft < ctaHeight) {
+    // Not enough room — draw the CTA inline in the footer area instead of forcing a new page
+    drawFooter();
+    pdf.save(`ai-grader-report-${analysis.url.replace(/[^a-z0-9]/gi, '-')}.pdf`);
+    return;
+  }
   y += 4;
   const ctaY = y;
   const blueRgb = hexToRgb(siMediumBlue);

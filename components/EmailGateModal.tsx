@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { CSSProperties, FormEvent, useEffect, useState } from 'react';
 
 export type EmailGateValues = {
   name: string;
@@ -72,69 +72,98 @@ export default function EmailGateModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-slate-900/75 p-4">
-      <div className="max-h-[calc(100vh-2rem)] w-full max-w-xl overflow-y-auto overflow-x-hidden rounded-xl border border-slate-700 bg-slate-900 text-slate-100 shadow-2xl">
-        <div className="border-b border-slate-700 bg-gradient-to-r from-[#1B7340] to-[#145832] px-6 py-5">
-          <h3 className="text-xl font-bold">Get your full report</h3>
-          <p className="mt-1 text-sm text-slate-100/90">
+    <div style={overlayStyles}>
+      <div style={containerStyles}>
+        <div style={headerStyles}>
+          <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#fff' }}>Get your full report</h3>
+          <p style={{ margin: '6px 0 0', fontSize: '0.9rem', color: 'rgba(255,255,255,0.9)' }}>
             Add your details to unlock exports and get practical next steps. No spam.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 px-6 py-5">
-          <label className="block space-y-1">
-            <span className="text-sm font-semibold text-slate-200">Name</span>
+        <form onSubmit={handleSubmit} style={{ padding: '20px', display: 'grid', gap: '14px' }}>
+          <label style={{ display: 'grid', gap: '6px' }}>
+            <span style={labelStyles}>Name</span>
             <input
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
               autoComplete="name"
               disabled={isSubmitting}
-              className="w-full rounded-md border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 focus:border-[#1B7340] focus:outline-none focus:ring-2 focus:ring-[#1B7340]/30 disabled:cursor-not-allowed disabled:opacity-70"
+              style={{
+                ...inputStyles,
+                ...(isSubmitting ? disabledInputStyles : {})
+              }}
             />
           </label>
 
-          <label className="block space-y-1">
-            <span className="text-sm font-semibold text-slate-200">Email</span>
+          <label style={{ display: 'grid', gap: '6px' }}>
+            <span style={labelStyles}>Email</span>
             <input
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               autoComplete="email"
               disabled={isSubmitting}
-              className="w-full rounded-md border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 focus:border-[#1B7340] focus:outline-none focus:ring-2 focus:ring-[#1B7340]/30 disabled:cursor-not-allowed disabled:opacity-70"
+              style={{
+                ...inputStyles,
+                ...(isSubmitting ? disabledInputStyles : {})
+              }}
             />
           </label>
 
-          <label className="block space-y-1">
-            <span className="text-sm font-semibold text-slate-200">Company (optional)</span>
+          <label style={{ display: 'grid', gap: '6px' }}>
+            <span style={labelStyles}>Company (optional)</span>
             <input
               type="text"
               value={company}
               onChange={(event) => setCompany(event.target.value)}
               autoComplete="organization"
               disabled={isSubmitting}
-              className="w-full rounded-md border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 focus:border-[#1B7340] focus:outline-none focus:ring-2 focus:ring-[#1B7340]/30 disabled:cursor-not-allowed disabled:opacity-70"
+              style={{
+                ...inputStyles,
+                ...(isSubmitting ? disabledInputStyles : {})
+              }}
             />
           </label>
 
           {error && (
-            <p className="rounded-md border border-red-500/40 bg-red-900/30 px-3 py-2 text-sm text-red-200">{error}</p>
+            <p style={errorStyles}>{error}</p>
           )}
 
-          <div className="flex flex-wrap items-center justify-end gap-3 pt-1">
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', flexWrap: 'wrap', paddingTop: '4px' }}>
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="rounded-md border border-slate-600 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-slate-500 hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+              style={{
+                border: '1px solid var(--border-gray, #4b5563)',
+                background: 'transparent',
+                color: 'var(--secondary-content, #9ca3af)',
+                borderRadius: '8px',
+                padding: '10px 16px',
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                opacity: isSubmitting ? 0.7 : 1
+              }}
             >
               Not now
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-md bg-[#1B7340] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#145832] disabled:cursor-not-allowed disabled:opacity-70"
+              style={{
+                border: 'none',
+                background: 'linear-gradient(135deg, #1b7340 0%, #145832 100%)',
+                color: '#fff',
+                borderRadius: '8px',
+                padding: '10px 16px',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                opacity: isSubmitting ? 0.7 : 1
+              }}
             >
               {isSubmitting ? 'Saving...' : `Continue to ${actionLabel}`}
             </button>
@@ -144,3 +173,69 @@ export default function EmailGateModal({
     </div>
   );
 }
+
+const overlayStyles: CSSProperties = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  zIndex: 1200,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'rgba(15, 23, 42, 0.75)',
+  padding: '16px'
+};
+
+const containerStyles: CSSProperties = {
+  width: '100%',
+  maxWidth: '520px',
+  maxHeight: 'calc(100vh - 32px)',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  borderRadius: '12px',
+  border: '1px solid var(--border-gray, #334155)',
+  background: 'var(--content-bg, #0f172a)',
+  color: 'var(--content-text, #e2e8f0)',
+  boxShadow: '0 24px 48px rgba(0, 0, 0, 0.35)'
+};
+
+const headerStyles: CSSProperties = {
+  borderBottom: '1px solid var(--border-gray, #334155)',
+  background: 'linear-gradient(135deg, #1b7340 0%, #145832 100%)',
+  padding: '18px 20px'
+};
+
+const labelStyles: CSSProperties = {
+  fontSize: '0.88rem',
+  fontWeight: 600,
+  color: 'var(--content-text, #e2e8f0)'
+};
+
+const inputStyles: CSSProperties = {
+  width: '100%',
+  border: '1px solid var(--border-gray, #4b5563)',
+  borderRadius: '8px',
+  padding: '10px 12px',
+  fontSize: '0.95rem',
+  color: 'var(--content-text, #e2e8f0)',
+  background: 'var(--surface-bg, #1e293b)',
+  outline: 'none',
+  boxSizing: 'border-box'
+};
+
+const disabledInputStyles: CSSProperties = {
+  cursor: 'not-allowed',
+  opacity: 0.7
+};
+
+const errorStyles: CSSProperties = {
+  margin: 0,
+  padding: '8px 12px',
+  borderRadius: '8px',
+  border: '1px solid rgba(239, 68, 68, 0.4)',
+  background: 'rgba(127, 29, 29, 0.3)',
+  color: '#fca5a5',
+  fontSize: '0.88rem'
+};
