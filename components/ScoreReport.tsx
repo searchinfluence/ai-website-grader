@@ -79,6 +79,12 @@ function getScoreInterpretation(score: number, lowestFactor: { label: string; sc
   return `Your website needs significant work to be competitive in AI search results. Start with ${lowestFactor.label} (${lowestFactor.score}%) and work through each high-priority recommendation systematically.`;
 }
 
+const reviewCtaContent = {
+  title: 'Want the full AI visibility picture?',
+  body: 'This automated report covers one page. For a comprehensive review including AI presence analysis, competitive landscape, and a broader site audit, talk with Search Influence.',
+  button: 'Get Your Full AI Visibility Review'
+};
+
 export default function ScoreReport({ analysis }: ScoreReportProps) {
   const { trackExport, trackCTA } = useGoogleTagManager();
   const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
@@ -298,10 +304,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             border: '1px solid rgba(1, 74, 97, 0.2)',
             background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.04) 0%, rgba(52, 144, 181, 0.05) 58%, rgba(78, 177, 205, 0.08) 100%)'
           }}>
-            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px' }}>Need a Deeper Review?</h2>
+            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px' }}>{reviewCtaContent.title}</h2>
             <p style={{ margin: '0 0 12px', color: 'var(--secondary-content)' }}>
-              This report covers one page. If you want broader guidance across templates, technical systems, and content priorities,
-              we can turn this snapshot into a full AI visibility review.
+              {reviewCtaContent.body}
             </p>
             <button
               onClick={() => {
@@ -311,7 +316,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               }}
               className="soft-cta-button"
             >
-              See What a Full Review Covers <ArrowRight size={15} />
+              {reviewCtaContent.button} <ArrowRight size={15} />
             </button>
           </div>
 
@@ -829,18 +834,16 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
 
           <div className="soft-cta-panel" style={{
             marginTop: '8px',
-            padding: '24px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.05) 0%, rgba(78, 177, 205, 0.08) 100%)',
-            border: '1px solid rgba(1, 74, 97, 0.22)',
-            textAlign: 'center'
+            padding: '18px',
+            borderRadius: '14px',
+            border: '1px solid rgba(1, 74, 97, 0.2)',
+            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.04) 0%, rgba(52, 144, 181, 0.05) 58%, rgba(78, 177, 205, 0.08) 100%)'
           }}>
-            <h2 className="major-section-heading" style={{ marginBottom: '10px' }}>
-              Want a roadmap beyond this single page?
+            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px' }}>
+              {reviewCtaContent.title}
             </h2>
-            <p style={{ margin: '0 0 16px', color: 'var(--secondary-content)', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
-              We can expand this page-level snapshot into a broader review of technical, content, and implementation
-              priorities across the rest of your site.
+            <p style={{ margin: '0 0 12px', color: 'var(--secondary-content)' }}>
+              {reviewCtaContent.body}
             </p>
             <button
               onClick={() => {
@@ -848,9 +851,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 if (leadSubmitted) { window.open('https://www.searchinfluence.com/contact/', '_blank'); return; }
                 setShowLeadModal(true);
               }}
-              className="soft-cta-button secondary"
+              className="soft-cta-button"
             >
-              Request a Broader Review <ArrowRight size={15} />
+              {reviewCtaContent.button} <ArrowRight size={15} />
             </button>
           </div>
         </div>

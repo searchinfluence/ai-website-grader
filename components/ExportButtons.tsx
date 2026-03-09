@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FileDown, FileText, Loader2, Printer, Share2 } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
-import { generatePDFReport } from '@/lib/exporters';
+import { createPrintReportUrl, generatePDFReport } from '@/lib/exporters';
 import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
 import EmailGateModal, { EmailGateValues } from './EmailGateModal';
 
@@ -12,7 +12,7 @@ interface ExportButtonsProps {
   onExportMarkdown: () => void;
 }
 
-type ExportAction = 'pdf' | 'print' | 'share';
+type ExportAction = 'pdf' | 'print' | 'share' | 'markdown';
 type SavedLead = {
   email: string;
   name?: string;
@@ -70,6 +70,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
   const actionLabel = useMemo(() => {
     if (pendingAction === 'pdf') return 'PDF export';
+    if (pendingAction === 'markdown') return 'markdown export';
     if (pendingAction === 'share') return 'share link';
     return 'print view';
   }, [pendingAction]);
@@ -79,12 +80,6 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
     try {
       trackExport('pdf');
 
-      const reportContainer = document.getElementById('report-container');
-      if (!reportContainer) {
-        throw new Error('Report container not found. Please ensure the analysis is complete.');
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       await generatePDFReport(analysis);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -96,10 +91,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
   const printReport = () => {
     trackExport('print');
-
-    const key = `ai-report:${Date.now()}`;
-    localStorage.setItem(key, JSON.stringify(analysis));
-    const url = `/print-report?key=${encodeURIComponent(key)}`;
+    const url = createPrintReportUrl(analysis, 'print');
 
     // Try opening in a new tab (direct URL — avoids most popup blockers)
     const printWindow = window.open(url, '_blank');
@@ -174,6 +166,11 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       return;
     }
 
+    if (action === 'markdown') {
+      onExportMarkdown();
+      return;
+    }
+
     if (action === 'share') {
       await shareReport();
       return;
@@ -198,10 +195,9 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
     let preOpenedWindow: Window | null = null;
     const actionToRun = pendingAction;
 
-    let printKey = '';
-    if (actionToRun === 'print') {
-      printKey = `ai-report:${Date.now()}`;
-      localStorage.setItem(printKey, JSON.stringify(analysis));
+    let queuedPrintUrl = '';
+    if (actionToRun === 'print' || actionToRun === 'pdf') {
+      queuedPrintUrl = createPrintReportUrl(analysis, actionToRun);
       preOpenedWindow = window.open('', '_blank');
       if (preOpenedWindow) {
         preOpenedWindow.document.write('<html><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><p>Preparing print view...</p></body></html>');
@@ -230,13 +226,18 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
     setIsGateOpen(false);
 
     if (actionToRun) {
-      if (actionToRun === 'print' && preOpenedWindow) {
-        // Navigate the pre-opened window to the print page
-        trackExport('print');
-        preOpenedWindow.location.href = `/print-report?key=${encodeURIComponent(printKey)}`;
+      if ((actionToRun === 'print' || actionToRun === 'pdf') && preOpenedWindow) {
+        if (actionToRun === 'print') {
+          trackExport('print');
+        } else {
+          trackExport('pdf');
+        }
+        preOpenedWindow.location.href = queuedPrintUrl;
       } else if (actionToRun === 'print') {
         // Fallback if popup was still blocked
         printReport();
+      } else if (actionToRun === 'pdf') {
+        await exportPdf();
       } else {
         await runAction(actionToRun);
       }
@@ -291,7 +292,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
         <button
           className="export-action-btn"
-          onClick={onExportMarkdown}
+          onClick={() => void startGatedAction('markdown')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -394,7 +395,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       <p style={{ margin: '12px 0 0', color: 'var(--secondary-content)', fontSize: '0.86rem' }}>
         {savedLead?.email
           ? `Exports unlocked for ${savedLead.email}.`
-          : 'PDF, share, and print actions will prompt once for contact details, then remain unlocked on this device.'}
+          : 'PDF, markdown, share, and print actions will prompt once for contact details, then remain unlocked on this device.'}
       </p>
 
       {lastShareUrl && (
