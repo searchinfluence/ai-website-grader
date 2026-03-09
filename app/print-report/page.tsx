@@ -7,16 +7,16 @@ import { SCORING_FACTORS } from '@/lib/scoring/config';
 import { normalizeWebsiteAnalysis } from '@/lib/normalize-analysis';
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return '#1f8f4f';
-  if (score >= 60) return '#1f6fb2';
-  if (score >= 40) return '#e67e22';
-  return '#c0392b';
+  if (score >= 80) return '#91c364';
+  if (score >= 70) return '#4eb1cd';
+  if (score >= 50) return '#3490b5';
+  return '#e67e22';
 }
 
 function getScoreSummary(score: number): string {
   if (score >= 80) return 'Excellent';
-  if (score >= 60) return 'Good';
-  if (score >= 40) return 'Needs Improvement';
+  if (score >= 70) return 'Good';
+  if (score >= 50) return 'Needs Improvement';
   return 'Critical';
 }
 
@@ -226,7 +226,7 @@ function PrintReportContent() {
           background: 'linear-gradient(135deg, #012c3a 0%, #014a61 58%, #3490b5 100%)',
           color: '#fff',
           padding: '24px 28px 18px',
-          borderBottom: '4px solid #df5926'
+          borderBottom: '4px solid #e67e22'
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '24px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
@@ -331,10 +331,10 @@ function PrintReportContent() {
         </section>
 
         <section className="print-section print-page-break" style={{ marginTop: '24px' }}>
-          <h2 style={{ margin: '0 0 10px', fontSize: '1.15rem', fontWeight: 800, color: '#012c3a', borderLeft: '4px solid #df5926', paddingLeft: '10px' }}>Priority Recommendations</h2>
+          <h2 style={{ margin: '0 0 10px', fontSize: '1.15rem', fontWeight: 800, color: '#012c3a', borderLeft: '4px solid #e67e22', paddingLeft: '10px' }}>Priority Recommendations</h2>
           <div>
             {analysis.recommendations.map((item, index) => {
-              const priorityColor = item.priority === 'high' ? '#df5926' : item.priority === 'medium' ? '#3490b5' : '#91c364';
+              const priorityColor = item.priority === 'high' ? '#e67e22' : item.priority === 'medium' ? '#3490b5' : '#91c364';
               return (
                 <article
                   key={`${item.category}-${index}`}
@@ -508,7 +508,7 @@ function PrintReportContent() {
 
         {contentImprovements.length > 0 && (
           <section className="print-page-break" style={{ marginTop: '24px' }}>
-            <h2 style={{ margin: '0 0 12px', fontSize: '1.15rem', fontWeight: 800, color: '#012c3a', borderLeft: '4px solid #df5926', paddingLeft: '10px' }}>Priority Content Improvements</h2>
+            <h2 style={{ margin: '0 0 12px', fontSize: '1.15rem', fontWeight: 800, color: '#012c3a', borderLeft: '4px solid #e67e22', paddingLeft: '10px' }}>Priority Content Improvements</h2>
             <div style={{ display: 'grid', gap: '12px' }}>
               {contentImprovements.map((improvement, index) => (
                 <article key={`content-improvement-${index}`} className="print-panel" style={{ border: '1px solid #dbe4ea', borderRadius: '12px', padding: '14px 16px', background: '#fff' }}>

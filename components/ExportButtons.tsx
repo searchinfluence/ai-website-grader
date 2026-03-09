@@ -264,7 +264,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
             borderRadius: '8px',
             cursor: isExportingPDF ? 'not-allowed' : 'pointer',
             transition: 'all 0.3s ease',
-            boxShadow: '0 2px 8px rgba(223, 89, 38, 0.3)',
+            boxShadow: '0 2px 8px rgba(230, 126, 34, 0.3)',
             opacity: isExportingPDF ? 0.6 : 1,
             fontSize: '14px',
             fontWeight: '600',
@@ -273,12 +273,12 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
           onMouseEnter={(e) => {
             if (!isExportingPDF) {
               e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(223, 89, 38, 0.42)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(230, 126, 34, 0.42)';
             }
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(223, 89, 38, 0.3)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(230, 126, 34, 0.3)';
           }}
         >
           {isExportingPDF ? (
