@@ -197,10 +197,10 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
     let queuedPrintUrl = '';
     if (actionToRun === 'print' || actionToRun === 'pdf') {
-      queuedPrintUrl = createPrintReportUrl(analysis, actionToRun);
+      queuedPrintUrl = createPrintReportUrl(analysis, actionToRun, actionToRun === 'pdf');
       preOpenedWindow = window.open('', '_blank');
       if (preOpenedWindow) {
-        preOpenedWindow.document.write('<html><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><p>Preparing print view...</p></body></html>');
+        preOpenedWindow.document.write(`<html><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><p>Preparing ${actionToRun === 'pdf' ? 'PDF export' : 'print view'}...</p></body></html>`);
       }
     }
 

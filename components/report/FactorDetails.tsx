@@ -13,8 +13,8 @@ interface FactorDetailsProps {
 }
 
 const priorityStyleMap = {
-  high: { label: 'High', bg: 'rgba(231, 76, 60, 0.12)', border: 'rgba(231, 76, 60, 0.35)', text: 'var(--error-red)', icon: AlertTriangle },
-  medium: { label: 'Medium', bg: 'rgba(230, 126, 34, 0.12)', border: 'rgba(230, 126, 34, 0.35)', text: 'var(--orange-accent)', icon: AlertCircle },
+  high: { label: 'High', bg: 'rgba(1, 44, 58, 0.08)', border: 'rgba(1, 74, 97, 0.22)', text: 'var(--si-dark-navy)', icon: AlertTriangle },
+  medium: { label: 'Medium', bg: 'rgba(223, 89, 38, 0.1)', border: 'rgba(223, 89, 38, 0.26)', text: 'var(--orange-accent)', icon: AlertCircle },
   low: { label: 'Low', bg: 'rgba(39, 174, 96, 0.12)', border: 'rgba(39, 174, 96, 0.35)', text: 'var(--success-green)', icon: Info }
 } as const;
 

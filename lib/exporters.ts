@@ -3,10 +3,14 @@ import { SCORING_FACTORS } from '@/lib/scoring/config';
 
 export type PrintReportMode = 'print' | 'pdf';
 
-export function createPrintReportUrl(analysis: WebsiteAnalysis, mode: PrintReportMode = 'print'): string {
+export function createPrintReportUrl(
+  analysis: WebsiteAnalysis,
+  mode: PrintReportMode = 'print',
+  autoPrint = false
+): string {
   const key = `ai-report:${Date.now()}`;
   localStorage.setItem(key, JSON.stringify(analysis));
-  return `/print-report?key=${encodeURIComponent(key)}&mode=${encodeURIComponent(mode)}`;
+  return `/print-report?key=${encodeURIComponent(key)}&mode=${encodeURIComponent(mode)}${autoPrint ? '&autoPrint=true' : ''}`;
 }
 
 export function generateMarkdownReport(analysis: WebsiteAnalysis): string {
@@ -54,7 +58,7 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
     throw new Error('PDF generation is only available in the browser');
   }
 
-  const url = createPrintReportUrl(analysis, 'pdf');
+  const url = createPrintReportUrl(analysis, 'pdf', true);
   const pdfWindow = window.open(url, '_blank');
 
   if (!pdfWindow) {
