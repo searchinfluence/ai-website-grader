@@ -1,4 +1,6 @@
-# Rolled Back Features (Nov 9, 2025)
+# Rolled Back Features (HISTORICAL — Nov 9, 2025)
+
+> **Note:** This documents the V2 rollback from Nov 2025. V3 (March 2026) replaced the entire scoring system and re-implemented many of these features properly. Kept for historical reference only.
 
 These features were implemented but rolled back from commit `8f8930d` to `43deb05` for further development and testing.
 

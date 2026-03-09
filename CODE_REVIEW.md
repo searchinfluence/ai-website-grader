@@ -1,4 +1,6 @@
-# AI Website Grader Code Review
+# AI Website Grader Code Review (HISTORICAL — Pre-V3)
+
+> **Note:** This review was conducted before V3. Critical issues (SSRF, debug endpoint, CORS, XSS) were addressed in V3. Scoring was replaced with 4-factor model. Kept for reference only.
 
 ## Scope Reviewed
 - `package.json`
