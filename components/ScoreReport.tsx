@@ -44,8 +44,8 @@ const FACTOR_THEME: Record<ScoringFactorKey, { accent: string; borderColor: stri
 };
 
 const priorityStyleMap = {
-  high: { bg: 'rgba(231, 76, 60, 0.12)', border: 'rgba(231, 76, 60, 0.35)', text: 'var(--error-red)', label: 'High', icon: AlertTriangle },
-  medium: { bg: 'rgba(230, 126, 34, 0.12)', border: 'rgba(230, 126, 34, 0.35)', text: 'var(--orange-accent)', label: 'Medium', icon: AlertCircle },
+  high: { bg: 'rgba(1, 44, 58, 0.08)', border: 'rgba(1, 74, 97, 0.22)', text: 'var(--si-dark-navy)', label: 'High', icon: AlertTriangle },
+  medium: { bg: 'rgba(223, 89, 38, 0.1)', border: 'rgba(223, 89, 38, 0.26)', text: 'var(--orange-accent)', label: 'Medium', icon: AlertCircle },
   low: { bg: 'rgba(39, 174, 96, 0.12)', border: 'rgba(39, 174, 96, 0.35)', text: 'var(--success-green)', label: 'Low', icon: Info }
 } as const;
 
@@ -80,9 +80,9 @@ function getScoreInterpretation(score: number, lowestFactor: { label: string; sc
 }
 
 const reviewCtaContent = {
-  title: 'Want the full AI visibility picture?',
-  body: 'This automated report covers one page. For a comprehensive review including AI presence analysis, competitive landscape, and a broader site audit, talk with Search Influence.',
-  button: 'Get Your Full AI Visibility Review'
+  title: 'Want a broader AI visibility review?',
+  body: 'This automated report covers one page. If you want a wider read across templates, technical signals, and content priorities, Search Influence can turn this into a fuller review.',
+  button: 'Learn About the Full Review'
 };
 
 export default function ScoreReport({ analysis }: ScoreReportProps) {
@@ -195,7 +195,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           <p style={{ margin: '10px 0 0', textAlign: 'center' }}>Analysis completed on {new Date(analysis.timestamp).toLocaleDateString()}</p>
         </div>
 
-        <div className="content-area" style={{ maxHeight: 'none', overflow: 'visible' }}>
+        <div className="content-area report-flow" style={{ maxHeight: 'none', overflow: 'visible' }}>
           <div className="report-section score-summary-card" style={{
             border: '1px solid var(--border-gray)',
             borderRadius: '12px',
@@ -254,7 +254,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               <p className="section-heading-eyebrow section-heading-left">Report Actions</p>
               <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '6px' }}>Share or Export This Report</h2>
               <p style={{ margin: 0, color: 'var(--secondary-content)', maxWidth: '60ch' }}>
-                Save a branded PDF, export markdown for implementation teams, or generate a share link while the full analysis is still in view.
+                Save the report for later, hand markdown to the implementation team, or generate a share link while the full analysis is still in view.
               </p>
             </div>
             <ExportButtons
@@ -299,12 +299,12 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           </div>
 
           <div className="report-section soft-cta-panel" style={{
-            padding: '18px',
+            padding: '16px',
             borderRadius: '14px',
             border: '1px solid rgba(1, 74, 97, 0.2)',
-            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.04) 0%, rgba(52, 144, 181, 0.05) 58%, rgba(78, 177, 205, 0.08) 100%)'
+            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.03) 0%, rgba(78, 177, 205, 0.06) 100%)'
           }}>
-            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px' }}>{reviewCtaContent.title}</h2>
+            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px' }}>Need a broader review?</h2>
             <p style={{ margin: '0 0 12px', color: 'var(--secondary-content)' }}>
               {reviewCtaContent.body}
             </p>
@@ -316,7 +316,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               }}
               className="soft-cta-button"
             >
-              {reviewCtaContent.button} <ArrowRight size={15} />
+              Learn What a Full Review Includes <ArrowRight size={15} />
             </button>
           </div>
 
@@ -834,10 +834,10 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
 
           <div className="soft-cta-panel" style={{
             marginTop: '8px',
-            padding: '18px',
+            padding: '16px',
             borderRadius: '14px',
             border: '1px solid rgba(1, 74, 97, 0.2)',
-            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.04) 0%, rgba(52, 144, 181, 0.05) 58%, rgba(78, 177, 205, 0.08) 100%)'
+            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.03) 0%, rgba(52, 144, 181, 0.04) 58%, rgba(78, 177, 205, 0.06) 100%)'
           }}>
             <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px' }}>
               {reviewCtaContent.title}

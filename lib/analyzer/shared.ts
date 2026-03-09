@@ -25,6 +25,7 @@ export function summarizeSchema(content: CrawledContent): SchemaSummary {
   const rdfaTypes = new Set<string>();
   let validBlocks = 0;
   let hasGraph = false;
+  const visitedNodes = new WeakSet<object>();
 
   const extractType = (value: string): string | null => {
     const raw = value.trim();
@@ -45,6 +46,18 @@ export function summarizeSchema(content: CrawledContent): SchemaSummary {
     return raw;
   };
 
+  const addTypeValue = (value: unknown): void => {
+    if (typeof value === 'string') {
+      const type = extractType(value);
+      if (type) types.add(type);
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      value.forEach(addTypeValue);
+    }
+  };
+
   const addTypes = (value: unknown): void => {
     if (!value) return;
 
@@ -56,13 +69,11 @@ export function summarizeSchema(content: CrawledContent): SchemaSummary {
     if (typeof value !== 'object') return;
 
     const record = value as Record<string, unknown>;
-    const typeValue = record['@type'];
+    if (visitedNodes.has(record)) return;
+    visitedNodes.add(record);
 
-    if (typeof typeValue === 'string') {
-      types.add(typeValue);
-    } else if (Array.isArray(typeValue)) {
-      typeValue.filter((entry): entry is string => typeof entry === 'string').forEach((entry) => types.add(entry));
-    }
+    const typeValue = record['@type'];
+    addTypeValue(typeValue);
 
     const graphValue = record['@graph'];
     if (Array.isArray(graphValue)) {
@@ -101,6 +112,19 @@ export function summarizeSchema(content: CrawledContent): SchemaSummary {
       });
   }
 
+  const schemaPrefixes = new Set<string>(['schema']);
+  const prefixMatches = content.html.matchAll(/prefix\s*=\s*["']([^"']+)["']/gi);
+  for (const match of prefixMatches) {
+    const tokens = match[1].trim().split(/\s+/);
+    for (let index = 0; index < tokens.length - 1; index += 2) {
+      const prefixToken = tokens[index];
+      const uriToken = tokens[index + 1];
+      if (/(?:https?:)?\/\/schema\.org\/?/i.test(uriToken)) {
+        schemaPrefixes.add(prefixToken.replace(/:$/, '').toLowerCase());
+      }
+    }
+  }
+
   const hasSchemaVocab = /vocab\s*=\s*["']\s*(?:https?:)?\/\/schema\.org\/?\s*["']/i.test(content.html);
   const typeofMatches = content.html.matchAll(/typeof\s*=\s*["']([^"']+)["']/gi);
   for (const match of typeofMatches) {
@@ -112,7 +136,8 @@ export function summarizeSchema(content: CrawledContent): SchemaSummary {
         const type = extractType(token);
         if (!type) return;
 
-        const tokenIsSchemaType = /^schema:/i.test(token) || /schema\.org\//i.test(token) || hasSchemaVocab || !token.includes(':');
+        const tokenPrefix = token.includes(':') ? token.split(':', 1)[0].toLowerCase() : null;
+        const tokenIsSchemaType = /^schema:/i.test(token) || /schema\.org\//i.test(token) || hasSchemaVocab || (tokenPrefix ? schemaPrefixes.has(tokenPrefix) : !token.includes(':'));
         if (tokenIsSchemaType) {
           rdfaTypes.add(type);
           types.add(type);

@@ -60,6 +60,7 @@ function PrintReportContent() {
   const searchParams = useSearchParams();
   const [analysis, setAnalysis] = useState<WebsiteAnalysis | null>(null);
   const mode = searchParams.get('mode') === 'pdf' ? 'pdf' : 'print';
+  const shouldAutoPrint = searchParams.get('autoPrint') === 'true';
 
   useEffect(() => {
     const key = searchParams.get('key');
@@ -80,13 +81,18 @@ function PrintReportContent() {
   useEffect(() => {
     if (!analysis) return;
 
+    document.title = mode === 'pdf' ? 'AI Website Grader PDF Export' : 'AI Website Grader Print View';
+  }, [analysis, mode]);
+
+  useEffect(() => {
+    if (!analysis || !shouldAutoPrint) return;
+
     const timer = setTimeout(() => {
-      document.title = mode === 'pdf' ? 'AI Website Grader PDF Export' : 'AI Website Grader Print View';
       window.print();
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [analysis, mode]);
+  }, [analysis, shouldAutoPrint]);
 
   if (!analysis) {
     return (

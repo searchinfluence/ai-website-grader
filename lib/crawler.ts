@@ -764,6 +764,7 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
   // Extract schema types
   const schemaTypes: string[] = [];
   const validationErrors: string[] = [];
+  const visitedNodes = new WeakSet<object>();
   
   const countConversationalElements = (value: unknown): number => {
     if (!value) return 0;
@@ -811,6 +812,9 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
         if (typeof obj !== 'object') return;
 
         const objRecord = obj as Record<string, unknown>;
+        if (visitedNodes.has(objRecord)) return;
+        visitedNodes.add(objRecord);
+
         if (objRecord['@type']) {
           const type = Array.isArray(objRecord['@type']) ? objRecord['@type'] : [objRecord['@type']];
           type.forEach((t: unknown) => {
