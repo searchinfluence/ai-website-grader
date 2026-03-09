@@ -11,25 +11,25 @@ export const SCORING_FACTORS: ScoringFactorConfig[] = [
   {
     key: 'contentStructure',
     label: 'Content Structure',
-    weight: 0.15,
+    weight: 0.30,
     description: 'Heading hierarchy, content depth, FAQ/Q&A structure, internal linking, alt text, readability, and content-to-code ratio.'
   },
   {
     key: 'structuredData',
     label: 'Structured Data',
-    weight: 0.22,
+    weight: 0.20,
     description: 'JSON-LD presence, schema quality, Open Graph, social metadata, and rich snippet eligibility.'
   },
   {
     key: 'technicalHealth',
     label: 'Technical Health',
-    weight: 0.45,
+    weight: 0.30,
     description: 'HTTPS, Core Web Vitals, crawlability, canonical/hreflang setup, viewport, responsiveness, and speed.'
   },
   {
     key: 'pageSEO',
     label: 'Page SEO',
-    weight: 0.18,
+    weight: 0.20,
     description: 'Title/meta quality, H1 usage, URL quality, and image optimization.'
   }
 ];

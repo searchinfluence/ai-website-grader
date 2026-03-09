@@ -19,10 +19,19 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
   const hasViewport = Boolean(content.mobileInfo?.hasViewportMeta);
   const hasResponsiveCss = Boolean(content.mobileInfo?.mobileOptimizedCSS);
 
+  const performanceMetrics = content.aiAnalysisData?.performanceMetrics;
   const webVitals = content.aiAnalysisData?.performanceMetrics?.coreWebVitals?.score;
   const speedFromVitals = typeof webVitals === 'number' ? clamp(webVitals) : 65;
+  const accessibilityScore = typeof performanceMetrics?.accessibilityScore === 'number'
+    ? clamp(performanceMetrics.accessibilityScore)
+    : undefined;
+  const performanceScore = typeof performanceMetrics?.performanceScore === 'number'
+    ? clamp(performanceMetrics.performanceScore)
+    : undefined;
+  const htmlValidationState = performanceMetrics?.htmlValidation?.validationState ?? 'unknown';
   const loadTimeMs = content.loadTime ?? 3000;
   const speedFromLoadTime = clamp(loadTimeMs <= 1800 ? 95 : loadTimeMs <= 2500 ? 80 : loadTimeMs <= 4000 ? 60 : loadTimeMs <= 5500 ? 45 : 30);
+  const performanceComposite = performanceScore ?? clamp(speedFromVitals * 0.7 + speedFromLoadTime * 0.3);
   const score = clamp(
     (isHttps ? 100 : 20) * 0.12 +
     (robotsPresent ? (allowsBots ? 95 : 60) : 40) * 0.14 +
@@ -31,8 +40,7 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
     (hasHreflang ? 75 : 60) * 0.05 +
     (hasViewport ? 95 : 35) * 0.15 +
     (hasResponsiveCss ? 85 : 40) * 0.1 +
-    speedFromVitals * 0.12 +
-    speedFromLoadTime * 0.08
+    performanceComposite * 0.2
   );
 
   if (!isHttps) {
@@ -85,6 +93,38 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
     });
   }
 
+  if (performanceScore !== undefined && performanceScore < 70) {
+    findings.push(`Technical performance composite is ${performanceScore}/100 (CWV, HTML validation, and accessibility).`);
+    recommendations.push({
+      text: `Raise ${hostLabel} technical performance above 70 by improving Core Web Vitals, fixing HTML validation issues, and addressing accessibility gaps (current composite: ${performanceScore}/100).`,
+      priority: performanceScore < 50 ? 'high' : 'medium',
+      category: 'performance',
+      timeToImplement: '~half day'
+    });
+  }
+
+  if (htmlValidationState === 'invalid') {
+    const htmlErrors = content.aiAnalysisData?.performanceMetrics?.htmlValidation?.errors ?? 0;
+    const htmlWarnings = content.aiAnalysisData?.performanceMetrics?.htmlValidation?.warnings ?? 0;
+    findings.push(`HTML validation failed with ${htmlErrors} error(s) and ${htmlWarnings} warning(s).`);
+    recommendations.push({
+      text: `Fix HTML validation issues on ${hostLabel} to reduce parser ambiguity for crawlers and browsers (current validator output: ${htmlErrors} errors, ${htmlWarnings} warnings).`,
+      priority: htmlErrors > 10 ? 'high' : 'medium',
+      category: 'html-validation',
+      timeToImplement: '~half day'
+    });
+  }
+
+  if (accessibilityScore !== undefined && accessibilityScore < 70) {
+    findings.push(`Accessibility score is ${accessibilityScore}/100.`);
+    recommendations.push({
+      text: `Improve accessibility on ${hostLabel} to at least 70/100 by fixing semantic structure, labeling, and input/media accessibility issues (current score: ${accessibilityScore}/100).`,
+      priority: accessibilityScore < 50 ? 'high' : 'medium',
+      category: 'accessibility',
+      timeToImplement: '~half day'
+    });
+  }
+
   if (loadTimeMs > 3000) {
     findings.push(`Estimated load time is ${loadTimeMs}ms.`);
     recommendations.push({
@@ -113,6 +153,10 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
       hasViewport,
       hasResponsiveCss,
       pageSpeedScore: speedFromVitals,
+      performanceScore: performanceComposite,
+      reportedPerformanceScore: performanceScore,
+      accessibilityScore,
+      htmlValidationState,
       loadTimeMs
     }
   };
