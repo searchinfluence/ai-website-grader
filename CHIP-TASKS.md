@@ -1,120 +1,44 @@
-# AI Website Grader V3 — Tasks for Chip
+# AI Website Grader — Chip Tasks
 
+**Repo:** `~/clawd/repos/ai-website-grader-si`
+**Branch:** `main`
 **Deploy URL:** https://ai-website-grader-si.vercel.app/
-**Repo:** ~/clawd/repos/ai-website-grader-si
-**Stack:** Next.js, TypeScript, Tailwind CSS, Supabase
+**Stack:** Next.js 15, TypeScript, Tailwind CSS, Supabase
 
-## Context
-This is the AI Website Grader V3. The current Structured Data scoring is too harsh compared to the original V2 version. Plus we need several new features.
+## How This Works
+Chip picks up the **highest priority unchecked task**, completes it, commits, and moves on. Each task is self-contained with clear acceptance criteria.
 
-## Task 1: Fix Schema/Structured Data Scoring (HIGHEST PRIORITY)
+---
 
-### Problem
-The V3 structured data scoring formula (`lib/analyzer/structured-data.ts`) gives extremely low scores (6% for sites with OG tags but no JSON-LD). The V2 version (`~/clawd/repos/ai-website-grader-v2/lib/analyzer.ts`) was much more balanced.
+## Tasks (Priority Order)
 
-### V2 Approach (lines 1756-1935 of v2 analyzer.ts)
-V2 averaged 5 sub-scores:
-1. **schemaPresence** (starts at 0, gives points for detected schema types via regex on HTML + JSON-LD presence + microdata + schema count)
-2. **schemaValidation** (starts at 80!, only penalizes for errors)
-3. **richSnippetPotential** (starts at 40, gives points for content patterns like "faq", "question", "how to", "review", "price")
-4. **structuredDataCompleteness** (starts at 50, adds points for essential schemas)
-5. **jsonLdImplementation** (starts at 50, adds points for JSON-LD in head, valid syntax)
+### 1. Scoring Recalibration ⚡ HIGHEST PRIORITY
+- [ ] **Content Structure** (`lib/analyzer/content-structure.ts`): Reduce point values — internal linking needs 15+ for full points (not 5+), alt text needs 98%+ (not 90%+)
+- [ ] **Technical Health** (`lib/analyzer/technical-health.ts`): HTTPS from 15→10 pts, add Core Web Vitals penalties, stricter HTML error thresholds, require 90+ accessibility for full points
+- [ ] **Page SEO** (`lib/analyzer/page-seo.ts`): Title tags from 35→12 pts, meta descriptions from 30→12 pts, heavy H1 penalties for 0 or multiple
+- [ ] **Structured Data** (`lib/analyzer/structured-data.ts`): Reduce schema bonuses from 8→2-3 pts
+- [ ] **Validate scores**: searchinfluence.com (70-85), google.com (60-75), example.com (very low)
 
-Final V2 score = average of all 5, capped at 100.
+**Target ranges:** Well-optimized 70-80%, Excellent 80-90%, Issues 50-70%
 
-### V3 Current Formula (too harsh)
-```
-score = presenceScore*0.3 + typeScore*0.2 + completenessScore*0.2 + socialMetaScore*0.15 + richSnippetScore*0.15
-```
-Most components floor at 0, so sites without JSON-LD score ~6-13%.
+### 2. Visual Polish
+- [ ] Consistent spacing between report sections
+- [ ] Score card colors match SI brand (#012c3a navy, #4eb1cd light blue, #91c364 green, #df5926 orange)
+- [ ] CTA banners don't feel too aggressive
+- [ ] Review mobile layout at 375px and 768px
 
-### Fix
-Port the V2's multi-factor approach into V3's `analyzeStructuredData()` function in `lib/analyzer/structured-data.ts`. Keep the V3 code structure (returns FactorResult with findings, recommendations, stats) but replace the scoring math with the V2's 5-subscore average. Use the helper functions from the V2 file as reference — you can read them at `~/clawd/repos/ai-website-grader-v2/lib/analyzer.ts` (lines 1756-1935).
+### 3. Production Deploy
+- [ ] `npm run build` passes clean
+- [ ] `vercel --prod --yes`
+- [ ] Verify live site works with a test scan
 
-Key points:
-- The `summarizeSchema()` helper in `lib/analyzer/shared.ts` already does good type extraction — keep using it
-- The V2 regex-on-HTML patterns are important (they catch schema types even in GTM-injected content)
-- Make sure social meta (OG + Twitter) still contributes meaningfully
-- A site with NO schema at all should score ~30-45%, not 6%
-- Keep the recommendations and findings generation as-is
+---
 
-## Task 2: Email Gate for Exports
+## Completed (V3 Launch) ✅
+Schema scoring fix, enhanced schema detection, email gate, print report, share link, PDF export w/ SI branding, lead gen CTAs, mobile optimization, calibration suite — all shipped.
 
-Add an email capture modal that appears when users try to:
-- Export PDF
-- Print report
-- Share link (Task 4)
-
-### Requirements
-- Simple modal with: name, email, company (optional)
-- Store in Supabase `leads` table (create if not exists)
-- After email capture, proceed with the requested action
-- Remember the email in localStorage so they don't get gated again on repeat visits
-- The gate should feel helpful, not annoying ("Get your full report" framing)
-
-## Task 3: Print Report
-
-Add a print button that:
-- Opens browser print dialog with print-friendly CSS
-- Hides navigation, input form, and UI chrome
-- Shows the full report with proper page breaks
-- Gated behind email capture (Task 2)
-
-## Task 4: Share Link
-
-Add a share button that:
-- Generates a unique URL with the analysis results
-- Store results in Supabase so the link works for anyone
-- Copy-to-clipboard with toast notification
-- Gated behind email capture (Task 2)
-
-## Task 5: PDF Export with SI Branding
-
-Improve the existing PDF export:
-- SI green (#1B7340) as primary color
-- SI logo in header (use `/si-logo.png` — if it doesn't exist, create a text-based header with "Search Influence" in the brand green)
-- Professional layout: header with logo + date, score summary, factor breakdowns, recommendations
-- Proper page breaks between sections
-- Footer with "Generated by AI Website Grader | searchinfluence.com"
-- Gated behind email capture (Task 2)
-
-## Task 6: Lead Gen CTA Banner
-
-Add a prominent banner/section to the report that communicates:
-- This is a **free single-page analysis** (code-based, automated)
-- For a **comprehensive review** including AI presence analysis, competitive landscape, and multi-page audit → get in touch
-- CTA button: "Get Your Full AI Visibility Review" → links to https://www.searchinfluence.com/contact/ or opens a contact form
-- Should appear:
-  1. After the score summary (before factor details)
-  2. At the bottom of the report
-
-### Tone
-Helpful, not salesy. Something like:
-> "This automated analysis covers one page. Want the full picture? Our team provides comprehensive AI visibility reviews including competitive analysis, multi-page audits, and actionable strategy. [Get Your Free Consultation]"
-
-## Task 7: Mobile Optimization
-
-Review and fix the report for mobile:
-- Score cards should stack on mobile (they appear to be 4-across on desktop)
-- Factor accordion sections should be full-width
-- Print/Export/Share buttons should be accessible on mobile
-- The input form should work well on mobile
-- Test at 375px and 768px breakpoints
-
-## Notes
-- There are stashed changes (`git stash list`) — apply them first with `git stash pop`
-- The V2 codebase is at `~/clawd/repos/ai-website-grader-v2/` for reference only — don't modify it
-- Run `npm run build` to verify no TypeScript errors before committing
+## Rules
+- `npm run build` before every commit
 - Commit each task separately with descriptive messages
-
-## Order of Operations
-1. `git stash pop` first
-2. Task 1 (Schema scoring) — this is the most important
-3. Task 2 (Email gate) — foundation for other gated features
-4. Task 5 (PDF branding) — improve existing export
-5. Task 3 (Print)
-6. Task 4 (Share link)
-7. Task 6 (Lead gen CTA)
-8. Task 7 (Mobile)
-9. `npm run build` to verify everything compiles
-10. Commit all changes
+- When finished with a task, check it off and commit this file too
+- When ALL tasks done, notify: `openclaw system event --text "Done: AI Grader tasks complete" --mode now`
