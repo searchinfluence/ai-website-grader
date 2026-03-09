@@ -31,8 +31,8 @@ const FACTOR_THEME: Record<ScoringFactorKey, { accent: string; borderColor: stri
   },
   technicalHealth: {
     accent: 'var(--si-orange)',
-    borderColor: 'rgba(223, 89, 38, 0.34)',
-    gradient: 'linear-gradient(135deg, rgba(223, 89, 38, 0.15) 0%, rgba(223, 89, 38, 0.05) 100%)',
+    borderColor: 'rgba(230, 126, 34, 0.34)',
+    gradient: 'linear-gradient(135deg, rgba(230, 126, 34, 0.15) 0%, rgba(230, 126, 34, 0.05) 100%)',
     icon: Settings
   },
   pageSEO: {
@@ -59,23 +59,23 @@ const brandPalette = [
 ];
 
 function getOverallScoreColor(score: number) {
-  if (score >= 80) return 'var(--success-green)';
-  if (score >= 60) return 'var(--info-blue)';
-  if (score >= 40) return 'var(--orange-accent)';
-  return 'var(--error-red)';
+  if (score >= 80) return 'var(--si-green)';
+  if (score >= 70) return 'var(--si-light-blue)';
+  if (score >= 50) return 'var(--si-medium-blue)';
+  return 'var(--si-orange)';
 }
 
 function getOverallScoreStatus(score: number) {
   if (score >= 80) return 'Excellent';
-  if (score >= 60) return 'Good';
-  if (score >= 40) return 'Needs Improvement';
+  if (score >= 70) return 'Good';
+  if (score >= 50) return 'Needs Improvement';
   return 'Poor';
 }
 
 function getScoreInterpretation(score: number, lowestFactor: { label: string; score: number }) {
   if (score >= 80) return `Your website is well-optimized for AI search visibility. Focus on maintaining your strong foundation while improving ${lowestFactor.label} (${lowestFactor.score}%) to push your score even higher.`;
-  if (score >= 60) return `Your website has a solid foundation but has clear optimization opportunities. Your biggest area for improvement is ${lowestFactor.label} (${lowestFactor.score}%). Addressing the high-priority recommendations below could raise your score significantly.`;
-  if (score >= 40) return `Your website has multiple gaps affecting AI search visibility. ${lowestFactor.label} scored just ${lowestFactor.score}% and should be your first priority. Work through the high-priority recommendations to build a stronger foundation.`;
+  if (score >= 70) return `Your website has a solid foundation but has clear optimization opportunities. Your biggest area for improvement is ${lowestFactor.label} (${lowestFactor.score}%). Addressing the high-priority recommendations below could raise your score significantly.`;
+  if (score >= 50) return `Your website has multiple gaps affecting AI search visibility. ${lowestFactor.label} scored just ${lowestFactor.score}% and should be your first priority. Work through the high-priority recommendations to build a stronger foundation.`;
   return `Your website needs significant work to be competitive in AI search results. Start with ${lowestFactor.label} (${lowestFactor.score}%) and work through each high-priority recommendation systematically.`;
 }
 
@@ -190,11 +190,10 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         </div>
 
         <div className="content-area" style={{ maxHeight: 'none', overflow: 'visible' }}>
-          <div style={{
+          <div className="report-section score-summary-card" style={{
             border: '1px solid var(--border-gray)',
             borderRadius: '12px',
             padding: '22px',
-            marginBottom: '18px',
             background: 'var(--background-gray)',
             boxShadow: '0 8px 24px rgba(0,0,0,0.08)'
           }}>
@@ -205,14 +204,14 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 <p style={{ margin: 0, color: 'var(--secondary-content)', wordBreak: 'break-word' }}><strong>Title:</strong> {analysis.title || 'Untitled page'}</p>
               </div>
               <div className="report-score-gauge-col">
-                <div className="score-gauge-wrap">
+                <div className="score-gauge-wrap score-gauge-shell">
                   <svg width={gaugeSize} height={gaugeSize} viewBox={`0 0 ${gaugeSize} ${gaugeSize}`} aria-hidden="true">
                     <circle
                       cx={gaugeSize / 2}
                       cy={gaugeSize / 2}
                       r={gaugeRadius}
                       fill="none"
-                      stroke="#dee2e6"
+                      stroke="rgba(1, 74, 97, 0.16)"
                       strokeWidth={gaugeStrokeWidth}
                     />
                     <circle
@@ -244,7 +243,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             </div>
           </div>
 
-          <div className="export-prominence-card">
+          <div className="report-section export-prominence-card">
             <div className="section-heading-shell" style={{ marginBottom: '14px' }}>
               <p className="section-heading-eyebrow section-heading-left">Report Actions</p>
               <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '6px' }}>Share or Export This Report</h2>
@@ -258,15 +257,14 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             />
           </div>
 
-          <div style={{
-            marginBottom: '18px',
+          <div className="report-section" style={{
             padding: '14px 16px',
             borderRadius: '10px',
-            borderLeft: '4px solid var(--orange-accent)',
-            borderTop: '1px solid var(--border-gray)',
-            borderRight: '1px solid var(--border-gray)',
-            borderBottom: '1px solid var(--border-gray)',
-            background: 'rgba(255, 255, 255, 0.85)',
+            borderLeft: '4px solid var(--si-medium-blue)',
+            borderTop: '1px solid rgba(1, 74, 97, 0.18)',
+            borderRight: '1px solid rgba(1, 74, 97, 0.18)',
+            borderBottom: '1px solid rgba(1, 74, 97, 0.18)',
+            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.03) 0%, rgba(78, 177, 205, 0.07) 100%)',
             display: 'flex',
             gap: '10px',
             alignItems: 'flex-start'
@@ -281,7 +279,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             <p className="section-heading-eyebrow">Four-Factor Overview</p>
             <h2 className="major-section-heading">Analysis Score Breakdown</h2>
           </div>
-          <div className="factor-cards-grid" style={{ marginBottom: '18px' }}>
+          <div className="report-section factor-cards-grid">
             {SCORING_FACTORS.map((factor) => (
               <FactorCard
                 key={factor.key}
@@ -294,17 +292,16 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             ))}
           </div>
 
-          <div style={{
-            marginBottom: '18px',
-            padding: '16px',
-            borderRadius: '12px',
-            border: '1px solid rgba(1, 74, 97, 0.28)',
-            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.12) 0%, rgba(1, 74, 97, 0.08) 100%)'
+          <div className="report-section soft-cta-panel" style={{
+            padding: '18px',
+            borderRadius: '14px',
+            border: '1px solid rgba(1, 74, 97, 0.2)',
+            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.04) 0%, rgba(52, 144, 181, 0.05) 58%, rgba(78, 177, 205, 0.08) 100%)'
           }}>
-            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px' }}>From Snapshot to Strategy</h2>
+            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px' }}>Need a Deeper Review?</h2>
             <p style={{ margin: '0 0 12px', color: 'var(--secondary-content)' }}>
-              This grader is a free single-page analysis. If you want deeper insight across templates, technical systems,
-              and content priorities, we can provide a comprehensive AI visibility review.
+              This report covers one page. If you want broader guidance across templates, technical systems, and content priorities,
+              we can turn this snapshot into a full AI visibility review.
             </p>
             <button
               onClick={() => {
@@ -312,26 +309,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 if (leadSubmitted) { window.open('https://www.searchinfluence.com/contact/', '_blank'); return; }
                 setShowLeadModal(true);
               }}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 14px',
-                borderRadius: '8px',
-                background: 'var(--si-navy)',
-                color: '#fff',
-                fontWeight: 700,
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 'inherit'
-              }}
+              className="soft-cta-button"
             >
-              Get Your Full AI Visibility Review <ArrowRight size={15} />
+              See What a Full Review Covers <ArrowRight size={15} />
             </button>
           </div>
 
-          <div style={{
-            marginBottom: '20px',
+          <div className="report-section" style={{
             padding: '16px',
             borderRadius: '12px',
             border: '1px solid rgba(1, 74, 97, 0.22)',
@@ -416,7 +400,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           }}>
             Detailed Factor Analysis
           </h2>
-          <div className="factor-analysis-heading-card" style={{ marginBottom: '16px' }}>
+          <div className="report-section factor-analysis-heading-card">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
               <div>
                 <p className="section-heading-eyebrow section-heading-left" style={{ marginBottom: '6px' }}>Deep Dive</p>
@@ -431,7 +415,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
               </div>
             </div>
           </div>
-          <div style={{ display: 'grid', gap: '12px', marginBottom: '20px' }}>
+          <div className="report-section" style={{ display: 'grid', gap: '12px' }}>
             {SCORING_FACTORS.map((factor) => {
               const theme = FACTOR_THEME[factor.key];
               return (
@@ -448,7 +432,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             })}
           </div>
 
-          <section style={{ marginBottom: '24px' }}>
+          <section className="report-section">
               <h2 className="major-section-heading" style={{ textAlign: 'left', marginBottom: '14px' }}>
                 Performance Analysis
               </h2>
@@ -634,7 +618,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           </section>
 
           {crawledContent?.markdownContent && (
-            <section style={{ marginBottom: '24px' }}>
+            <section className="report-section">
               <h2 className="major-section-heading" style={{ textAlign: 'left', marginBottom: '14px' }}>
                 Page Content Structure (Markdown)
               </h2>
@@ -649,8 +633,8 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                     type="button"
                     onClick={handleCopyMarkdown}
                     style={{
-                      border: '1px solid rgba(223, 89, 38, 0.32)',
-                      background: 'rgba(223, 89, 38, 0.12)',
+                      border: '1px solid rgba(230, 126, 34, 0.32)',
+                      background: 'rgba(230, 126, 34, 0.12)',
                       color: 'var(--content-text)',
                       borderRadius: '8px',
                       padding: '8px 12px',
@@ -716,7 +700,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           )}
 
           {contentImprovements.length > 0 && (
-            <section style={{ marginBottom: '24px' }}>
+            <section className="report-section">
               <h2 className="major-section-heading" style={{ textAlign: 'left', marginBottom: '14px' }}>
                 Priority Content Improvements
               </h2>
@@ -746,7 +730,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                           fontWeight: 700,
                           fontSize: '0.86rem',
                           flexShrink: 0,
-                          boxShadow: '0 6px 14px rgba(223, 89, 38, 0.24)'
+                          boxShadow: '0 6px 14px rgba(230, 126, 34, 0.24)'
                         }}>
                           {index + 1}
                         </div>
@@ -803,8 +787,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             </section>
           )}
 
-          <section style={{
-            marginBottom: '24px',
+          <section className="report-section" style={{
             borderRadius: '14px',
             border: '1px solid rgba(1, 74, 97, 0.28)',
             background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.96) 0%, rgba(1, 74, 97, 0.92) 56%, rgba(52, 144, 181, 0.9) 100%)',
@@ -844,20 +827,20 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             </div>
           </section>
 
-          <div style={{
-            marginTop: '30px',
+          <div className="soft-cta-panel" style={{
+            marginTop: '8px',
             padding: '24px',
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.12) 0%, rgba(1, 74, 97, 0.08) 100%)',
-            border: '1px solid rgba(1, 74, 97, 0.3)',
+            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.05) 0%, rgba(78, 177, 205, 0.08) 100%)',
+            border: '1px solid rgba(1, 74, 97, 0.22)',
             textAlign: 'center'
           }}>
             <h2 className="major-section-heading" style={{ marginBottom: '10px' }}>
               Want a roadmap beyond this single page?
             </h2>
             <p style={{ margin: '0 0 16px', color: 'var(--secondary-content)', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
-              We&apos;ll turn this free page-level analysis into a comprehensive review with technical, content, and
-              implementation priorities across your site.
+              We can expand this page-level snapshot into a broader review of technical, content, and implementation
+              priorities across the rest of your site.
             </p>
             <button
               onClick={() => {
@@ -865,21 +848,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 if (leadSubmitted) { window.open('https://www.searchinfluence.com/contact/', '_blank'); return; }
                 setShowLeadModal(true);
               }}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '11px 16px',
-                borderRadius: '8px',
-                background: 'var(--si-navy)',
-                color: '#fff',
-                fontWeight: 700,
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 'inherit'
-              }}
+              className="soft-cta-button secondary"
             >
-              Get Your Full AI Visibility Review <ArrowRight size={15} />
+              Request a Broader Review <ArrowRight size={15} />
             </button>
           </div>
         </div>
