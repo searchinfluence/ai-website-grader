@@ -26,8 +26,24 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
   const altCoverage = totalImages === 0 ? 100 : ((totalImages - imagesMissingAlt) / totalImages) * 100;
 
   const text = getMainContentText(content);
-  const sentenceCount = Math.max(1, (text.match(/[.!?]+/g) || []).length);
-  const wordsPerSentence = words / sentenceCount;
+  const extractedWordCount = text.split(/\s+/).filter(Boolean).length;
+  let sentenceCount = Math.max(1, (text.match(/[.!?]+/g) || []).length);
+  let wordsPerSentence = words / sentenceCount;
+
+  if (words >= 400 && text.trim().length < 200) {
+    console.warn(
+      `[Content Structure] Main content extraction mismatch for ${content.url}: wordCount=${words}, extractedTextLength=${text.trim().length}, extractedWords=${extractedWordCount}`
+    );
+  }
+
+  if (wordsPerSentence > 50) {
+    sentenceCount = Math.max(1, Math.round(words / 17));
+    wordsPerSentence = words / sentenceCount;
+    console.warn(
+      `[Content Structure] Readability fallback applied for ${content.url}: estimated sentence count=${sentenceCount}, wordCount=${words}, extractedWords=${extractedWordCount}`
+    );
+  }
+
   const readabilityScore = clamp(100 - Math.max(0, Math.abs(wordsPerSentence - 18) * 4));
 
   const contentToCodeRatio = content.html.length > 0 ? text.length / content.html.length : 0;
