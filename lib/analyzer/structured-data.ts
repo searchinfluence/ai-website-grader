@@ -83,6 +83,10 @@ export function analyzeStructuredData(content: CrawledContent): FactorResult {
       validSchemaBlocks: schema.validBlocks,
       schemaTypeCount: schema.schemaTypes.length,
       schemaTypes: schema.schemaTypes,
+      schemaPresenceScore: presenceScore,
+      schemaTypeScore: typeScore,
+      schemaCompletenessScore: completenessScore,
+      richSnippetScore,
       hasOpenGraph,
       hasTwitter,
       richSnippetEligible: schema.hasFaqPage || schema.hasHowTo || schema.hasArticle || schema.hasProductOrService

@@ -97,8 +97,11 @@ export function analyzePageSeo(content: CrawledContent): FactorResult {
     recommendations,
     stats: {
       titleLength,
+      titleScore,
       descriptionLength,
+      descriptionScore,
       h1Count,
+      h1Score,
       pathDepth,
       hasQuery,
       pathIsClean,

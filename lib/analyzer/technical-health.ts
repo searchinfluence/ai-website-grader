@@ -23,7 +23,6 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
   const speedFromVitals = typeof webVitals === 'number' ? clamp(webVitals) : 65;
   const loadTimeMs = content.loadTime ?? 3000;
   const speedFromLoadTime = clamp(loadTimeMs <= 1800 ? 95 : loadTimeMs <= 2500 ? 80 : loadTimeMs <= 4000 ? 60 : loadTimeMs <= 5500 ? 45 : 30);
-
   const score = clamp(
     (isHttps ? 100 : 20) * 0.12 +
     (robotsPresent ? (allowsBots ? 95 : 60) : 40) * 0.14 +

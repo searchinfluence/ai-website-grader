@@ -13,9 +13,9 @@ interface FactorDetailsProps {
 }
 
 const priorityStyleMap = {
-  high: { label: 'High', bg: 'rgba(1, 44, 58, 0.08)', border: 'rgba(1, 74, 97, 0.22)', text: 'var(--si-dark-navy)', icon: AlertTriangle },
-  medium: { label: 'Medium', bg: 'rgba(223, 89, 38, 0.1)', border: 'rgba(223, 89, 38, 0.26)', text: 'var(--orange-accent)', icon: AlertCircle },
-  low: { label: 'Low', bg: 'rgba(39, 174, 96, 0.12)', border: 'rgba(39, 174, 96, 0.35)', text: 'var(--success-green)', icon: Info }
+  high: { label: 'High', bg: 'rgba(1, 44, 58, 0.07)', border: 'rgba(1, 44, 58, 0.18)', text: 'var(--si-dark-navy)', icon: AlertTriangle },
+  medium: { label: 'Medium', bg: 'rgba(223, 89, 38, 0.09)', border: 'rgba(223, 89, 38, 0.22)', text: 'var(--si-orange)', icon: AlertCircle },
+  low: { label: 'Low', bg: 'rgba(145, 195, 100, 0.12)', border: 'rgba(145, 195, 100, 0.28)', text: 'var(--si-green)', icon: Info }
 } as const;
 
 const statusCopy: Record<ScoringFactorResult['status'], string> = {
@@ -161,7 +161,7 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
       borderRadius: '12px',
       background: 'var(--content-bg)',
       overflow: 'hidden',
-      boxShadow: '0 10px 26px rgba(0,0,0,0.08)'
+      boxShadow: '0 10px 26px rgba(1, 44, 58, 0.08)'
     }}>
       <summary className="factor-details-summary" style={{
         cursor: 'pointer',
@@ -282,6 +282,7 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
                   borderRadius: '10px',
                   border: '1px solid var(--border-gray)',
                   background: 'rgba(52, 152, 219, 0.06)',
+                  borderLeft: '4px solid rgba(78, 177, 205, 0.5)',
                   color: 'var(--secondary-content)',
                   fontSize: '0.9rem'
                 }}>

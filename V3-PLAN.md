@@ -28,7 +28,7 @@ The stash (`git stash list`) has ~2,500 lines of WIP code including:
 - **Share API route** (`/api/share`) — creates/retrieves shared reports
 - **Shared reports library** — Supabase CRUD with 30-day expiry + RLS policies
 - **Supabase migrations** — `leads` + `shared_reports` tables ready to run
-- **PDF export** — jsPDF-based with SI green branding, factor breakdowns
+- **PDF export** — print-report based export using the browser print dialog
 
 ### What's NOT Done ❌
 - **Supabase tables not created** — migrations exist but haven't been run against the database
@@ -108,7 +108,7 @@ The stash (`git stash list`) has ~2,500 lines of WIP code including:
 ---
 
 ### Phase 5: PDF Export with SI Branding
-**Effort:** ~2-3 hours | **Risk:** Medium (jsPDF layout is fiddly)
+**Effort:** ~2-3 hours | **Risk:** Medium (print layout needs to stay aligned with the report view)
 
 1. Update `lib/exporters.ts` to use SI brand colors per SI-BRANDING.md:
    - Primary: Dark Navy `#012c3a` for headers

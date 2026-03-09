@@ -18,9 +18,9 @@ interface ScoreReportProps {
 
 const FACTOR_THEME: Record<ScoringFactorKey, { accent: string; borderColor: string; gradient: string; icon?: LucideIcon }> = {
   contentStructure: {
-    accent: 'var(--si-medium-blue)',
-    borderColor: 'rgba(52, 144, 181, 0.32)',
-    gradient: 'linear-gradient(135deg, rgba(52, 144, 181, 0.14) 0%, rgba(52, 144, 181, 0.05) 100%)',
+    accent: 'var(--si-dark-navy)',
+    borderColor: 'rgba(1, 44, 58, 0.24)',
+    gradient: 'linear-gradient(135deg, rgba(1, 44, 58, 0.11) 0%, rgba(1, 44, 58, 0.04) 100%)',
     icon: FileText
   },
   structuredData: {
@@ -30,15 +30,15 @@ const FACTOR_THEME: Record<ScoringFactorKey, { accent: string; borderColor: stri
     icon: Database
   },
   technicalHealth: {
-    accent: 'var(--si-orange)',
-    borderColor: 'rgba(230, 126, 34, 0.34)',
-    gradient: 'linear-gradient(135deg, rgba(230, 126, 34, 0.15) 0%, rgba(230, 126, 34, 0.05) 100%)',
+    accent: 'var(--si-light-blue)',
+    borderColor: 'rgba(78, 177, 205, 0.32)',
+    gradient: 'linear-gradient(135deg, rgba(78, 177, 205, 0.14) 0%, rgba(78, 177, 205, 0.05) 100%)',
     icon: Settings
   },
   pageSEO: {
-    accent: 'var(--si-light-blue)',
-    borderColor: 'rgba(78, 177, 205, 0.34)',
-    gradient: 'linear-gradient(135deg, rgba(78, 177, 205, 0.15) 0%, rgba(78, 177, 205, 0.05) 100%)',
+    accent: 'var(--si-orange)',
+    borderColor: 'rgba(223, 89, 38, 0.28)',
+    gradient: 'linear-gradient(135deg, rgba(223, 89, 38, 0.14) 0%, rgba(223, 89, 38, 0.05) 100%)',
     icon: Search
   }
 };
@@ -80,9 +80,36 @@ function getScoreInterpretation(score: number, lowestFactor: { label: string; sc
 }
 
 const reviewCtaContent = {
-  title: 'Want a broader AI visibility review?',
-  body: 'This automated report covers one page. If you want a wider read across templates, technical signals, and content priorities, Search Influence can turn this into a fuller review.',
-  button: 'Learn About the Full Review'
+  title: 'Want a broader review of the site?',
+  body: 'This report focuses on one page. If you want a broader read across templates, technical signals, and content priorities, Search Influence can extend this into a fuller review.',
+  button: 'See What a Full Review Covers'
+};
+
+const reviewCtaPanelStyles: CSSProperties = {
+  padding: '18px',
+  borderRadius: '14px',
+  border: '1px solid rgba(1, 74, 97, 0.24)',
+  background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.96) 0%, rgba(1, 74, 97, 0.92) 56%, rgba(52, 144, 181, 0.9) 100%)',
+  boxShadow: '0 16px 36px rgba(1, 44, 58, 0.16)'
+};
+
+const reviewCtaBodyStyles: CSSProperties = {
+  margin: '0 0 12px',
+  color: 'rgba(255,255,255,0.82)',
+  maxWidth: '62ch'
+};
+
+const reviewCtaButtonStyles: CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px',
+  border: '1px solid rgba(255,255,255,0.22)',
+  borderRadius: '999px',
+  background: 'rgba(255,255,255,0.12)',
+  color: 'var(--white)',
+  padding: '10px 16px',
+  fontSize: '0.95rem',
+  fontWeight: 700
 };
 
 export default function ScoreReport({ analysis }: ScoreReportProps) {
@@ -298,14 +325,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             ))}
           </div>
 
-          <div className="report-section soft-cta-panel" style={{
-            padding: '16px',
-            borderRadius: '14px',
-            border: '1px solid rgba(1, 74, 97, 0.2)',
-            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.03) 0%, rgba(78, 177, 205, 0.06) 100%)'
-          }}>
-            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px' }}>Need a broader review?</h2>
-            <p style={{ margin: '0 0 12px', color: 'var(--secondary-content)' }}>
+          <div className="report-section soft-cta-panel" style={reviewCtaPanelStyles}>
+            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px', color: 'var(--white)' }}>{reviewCtaContent.title}</h2>
+            <p style={reviewCtaBodyStyles}>
               {reviewCtaContent.body}
             </p>
             <button
@@ -315,8 +337,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 setShowLeadModal(true);
               }}
               className="soft-cta-button"
+              style={reviewCtaButtonStyles}
             >
-              Learn What a Full Review Includes <ArrowRight size={15} />
+              {reviewCtaContent.button} <ArrowRight size={15} />
             </button>
           </div>
 
@@ -832,17 +855,11 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             </div>
           </section>
 
-          <div className="soft-cta-panel" style={{
-            marginTop: '8px',
-            padding: '16px',
-            borderRadius: '14px',
-            border: '1px solid rgba(1, 74, 97, 0.2)',
-            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.03) 0%, rgba(52, 144, 181, 0.04) 58%, rgba(78, 177, 205, 0.06) 100%)'
-          }}>
-            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px' }}>
+          <div className="soft-cta-panel" style={{ ...reviewCtaPanelStyles, marginTop: '8px' }}>
+            <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '8px', color: 'var(--white)' }}>
               {reviewCtaContent.title}
             </h2>
-            <p style={{ margin: '0 0 12px', color: 'var(--secondary-content)' }}>
+            <p style={reviewCtaBodyStyles}>
               {reviewCtaContent.body}
             </p>
             <button
@@ -852,6 +869,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 setShowLeadModal(true);
               }}
               className="soft-cta-button"
+              style={reviewCtaButtonStyles}
             >
               {reviewCtaContent.button} <ArrowRight size={15} />
             </button>
