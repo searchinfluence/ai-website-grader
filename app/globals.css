@@ -143,7 +143,7 @@ body {
 /* Main Section */
 .main-section {
   padding: var(--spacing-lg) 0;
-  background: var(--dark-blue);
+  background: #2c3e50;
 }
 
 /* Form Card */
