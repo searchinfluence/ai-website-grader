@@ -85,10 +85,12 @@ export default function EmailGateModal({
           <label style={{ display: 'grid', gap: '6px' }}>
             <span style={labelStyles}>Name</span>
             <input
+              className="email-gate-input"
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
               autoComplete="name"
+              placeholder="Jane Doe"
               disabled={isSubmitting}
               style={{
                 ...inputStyles,
@@ -100,10 +102,12 @@ export default function EmailGateModal({
           <label style={{ display: 'grid', gap: '6px' }}>
             <span style={labelStyles}>Email</span>
             <input
+              className="email-gate-input"
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               autoComplete="email"
+              placeholder="jane@example.com"
               disabled={isSubmitting}
               style={{
                 ...inputStyles,
@@ -115,10 +119,12 @@ export default function EmailGateModal({
           <label style={{ display: 'grid', gap: '6px' }}>
             <span style={labelStyles}>Company (optional)</span>
             <input
+              className="email-gate-input"
               type="text"
               value={company}
               onChange={(event) => setCompany(event.target.value)}
               autoComplete="organization"
+              placeholder="Acme University"
               disabled={isSubmitting}
               style={{
                 ...inputStyles,
@@ -221,21 +227,27 @@ const inputStyles: CSSProperties = {
   fontSize: '0.95rem',
   color: '#1e293b',
   background: '#ffffff',
+  WebkitTextFillColor: '#1e293b',
+  colorScheme: 'light',
+  appearance: 'none',
   outline: 'none',
-  boxSizing: 'border-box'
+  boxSizing: 'border-box',
+  boxShadow: 'inset 0 0 0 9999px #ffffff, inset 0 1px 2px rgba(15, 23, 42, 0.04)'
 };
 
 const disabledInputStyles: CSSProperties = {
   cursor: 'not-allowed',
-  opacity: 0.7
+  opacity: 1,
+  background: '#f8fafc',
+  color: '#64748b'
 };
 
 const errorStyles: CSSProperties = {
   margin: 0,
-  padding: '8px 12px',
+  padding: '10px 12px',
   borderRadius: '8px',
-  border: '1px solid rgba(239, 68, 68, 0.4)',
-  background: 'rgba(127, 29, 29, 0.3)',
-  color: '#fca5a5',
+  border: '1px solid rgba(239, 68, 68, 0.22)',
+  background: '#fef2f2',
+  color: '#b91c1c',
   fontSize: '0.88rem'
 };

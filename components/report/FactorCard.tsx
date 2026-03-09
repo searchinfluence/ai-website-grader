@@ -23,12 +23,12 @@ export default function FactorCard({ factor, accent, borderColor, gradient, icon
   return (
     <div style={{
       textAlign: 'left',
-      padding: '16px',
+      padding: '18px',
       background: gradient,
       borderRadius: '12px',
       border: `1px solid ${borderColor}`,
       borderLeft: `5px solid ${accent}`,
-      boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+      boxShadow: '0 10px 22px rgba(1, 44, 58, 0.08)',
       minWidth: 0
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
@@ -49,7 +49,7 @@ export default function FactorCard({ factor, accent, borderColor, gradient, icon
           border: `1px solid ${borderColor}`,
           borderRadius: '999px',
           padding: '4px 10px',
-          background: 'rgba(255,255,255,0.65)'
+          background: 'rgba(255,255,255,0.78)'
         }}>
           {statusCopy[factor.status]}
         </span>
@@ -57,7 +57,7 @@ export default function FactorCard({ factor, accent, borderColor, gradient, icon
           Weight {Math.round(factor.weight * 100)}%
         </span>
       </div>
-      <div style={{ marginTop: '12px', height: '6px', borderRadius: '999px', background: '#dee2e6', overflow: 'hidden' }}>
+      <div style={{ marginTop: '14px', height: '6px', borderRadius: '999px', background: 'rgba(1, 44, 58, 0.1)', overflow: 'hidden' }}>
         <div
           style={{
             height: '100%',

@@ -384,7 +384,7 @@ This project is licensed under the MIT License.
 - Modern design system implementation
 - Icons from Lucide React
 - HTML parsing with Cheerio
-- PDF generation with jsPDF
+- PDF export via the print-report page and browser print dialog
 - Powered by Search Influence
 
 ---
