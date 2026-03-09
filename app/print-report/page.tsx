@@ -91,7 +91,15 @@ function PrintReportContent() {
       <main style={{ padding: '24px', fontFamily: 'Arial, sans-serif', textAlign: 'center', marginTop: '40px' }}>
         <p>Print data not found.</p>
         <button
-          onClick={() => window.history.back()}
+          onClick={() => {
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              window.close();
+              // Fallback if window.close() is blocked (not opened by script)
+              setTimeout(() => { window.location.href = '/'; }, 200);
+            }
+          }}
           style={{
             marginTop: '12px',
             padding: '10px 20px',
@@ -190,7 +198,14 @@ function PrintReportContent() {
         }}
       >
         <button
-          onClick={() => window.history.back()}
+          onClick={() => {
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              window.close();
+              setTimeout(() => { window.location.href = '/'; }, 200);
+            }
+          }}
           style={{
             padding: '8px 16px',
             background: '#012c3a',
