@@ -56,9 +56,9 @@ export default function ScoreCard({
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'var(--success-green)';
-    if (score >= 60) return 'var(--info-blue)';
-    if (score >= 40) return 'var(--orange-accent)';
-    return 'var(--error-red)';
+    if (score >= 70) return 'var(--si-light-blue)';
+    if (score >= 50) return 'var(--si-medium-blue)';
+    return 'var(--orange-accent)';
   };
 
   const statusColors = getStatusColor(status);

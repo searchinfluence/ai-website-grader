@@ -43,7 +43,7 @@ export default function Home() {
                 </a>
               </div>
               <h1>AI Website Grader</h1>
-              <div className="tagline">Score Your Site. Fix What Matters.</div>
+              <div className="tagline">Optimize for AI-Powered Search</div>
             </div>
             <div className="header-description">
               <p>

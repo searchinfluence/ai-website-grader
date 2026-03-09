@@ -94,13 +94,13 @@ export default function LeadCaptureModal({
         maxHeight: 'calc(100vh - 32px)'
       }}>
         <div style={{
-          background: 'linear-gradient(135deg, #1b7340 0%, #145832 100%)',
+          background: 'linear-gradient(135deg, #012c3a 0%, #014a61 62%, #3490b5 100%)',
           color: '#fff',
           padding: '18px 20px'
         }}>
           <h3 style={{ margin: 0, fontSize: '1.25rem' }}>Get your full report</h3>
           <p style={{ margin: '8px 0 0', fontSize: '0.9rem', opacity: 0.95 }}>
-            Share a few details so we can send tips that help you act on this analysis.
+            Share a few details so we can follow up with practical next steps based on this analysis.
           </p>
         </div>
 
@@ -174,7 +174,7 @@ export default function LeadCaptureModal({
               disabled={isSubmitting}
               style={{
                 border: 'none',
-                background: 'linear-gradient(135deg, #1b7340 0%, #145832 100%)',
+                background: 'linear-gradient(135deg, #014a61 0%, #3490b5 100%)',
                 color: '#fff',
                 borderRadius: '8px',
                 padding: '10px 14px',

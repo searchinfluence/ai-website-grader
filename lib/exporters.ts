@@ -79,9 +79,9 @@ export async function generatePDFReport(analysis: WebsiteAnalysis): Promise<void
   // Helper: score color using SI palette
   const getScoreColor = (score: number): string => {
     if (score >= 80) return siGreen;
-    if (score >= 60) return siMediumBlue;
-    if (score >= 40) return siOrange;
-    return '#c0392b';
+    if (score >= 70) return siLightBlue;
+    if (score >= 50) return siMediumBlue;
+    return siOrange;
   };
 
   // Helper: draw branded header bar

@@ -82,6 +82,7 @@ export async function parseTextContent(text: string): Promise<CrawledContent> {
   content.enhancedSchemaInfo = {
     jsonLdCount: 0,
     microdataCount: 0,
+    rdfaCount: 0,
     schemaTypes: [],
     validationErrors: [],
     aiFriendlySchemas: [],
@@ -758,35 +759,75 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
   
   // Count microdata elements
   const microdataCount = $('[itemscope]').length;
+  const rdfaCount = $('[typeof], [property]').length;
   
   // Extract schema types
   const schemaTypes: string[] = [];
   const validationErrors: string[] = [];
   
+  const countConversationalElements = (value: unknown): number => {
+    if (!value) return 0;
+    if (Array.isArray(value)) return value.reduce((sum, item) => sum + countConversationalElements(item), 0);
+    if (typeof value !== 'object') return 0;
+
+    const record = value as Record<string, unknown>;
+    let count = 0;
+    const type = record['@type'];
+    const typeList = Array.isArray(type) ? type : [type];
+    const normalizedTypes = typeList.filter((entry): entry is string => typeof entry === 'string').map((entry) => entry.toLowerCase());
+
+    if (record.mainEntity) {
+      count += Array.isArray(record.mainEntity) ? record.mainEntity.length : 1;
+    }
+
+    if (normalizedTypes.includes('howto') && record.step) {
+      count += Array.isArray(record.step) ? record.step.length : 1;
+    }
+
+    if (normalizedTypes.includes('recipe') && record.recipeInstructions) {
+      count += Array.isArray(record.recipeInstructions) ? record.recipeInstructions.length : 1;
+    }
+
+    Object.values(record).forEach((child) => {
+      count += countConversationalElements(child);
+    });
+
+    return count;
+  };
+
   schemaMarkup.forEach((schema, index) => {
     try {
       const parsed = JSON.parse(schema);
       
       // Extract @type values
       function extractTypes(obj: unknown): void {
-        if (obj && typeof obj === 'object' && obj !== null) {
-          const objRecord = obj as Record<string, unknown>;
-          if (objRecord['@type']) {
-            const type = Array.isArray(objRecord['@type']) ? objRecord['@type'] : [objRecord['@type']];
-            type.forEach((t: unknown) => {
-              if (typeof t === 'string' && !schemaTypes.includes(t)) {
-                schemaTypes.push(t);
-              }
-            });
-          }
-          
-          // Recursively check nested objects
-          Object.values(objRecord).forEach(value => {
-            if (typeof value === 'object') {
-              extractTypes(value);
+        if (!obj) return;
+
+        if (Array.isArray(obj)) {
+          obj.forEach(extractTypes);
+          return;
+        }
+
+        if (typeof obj !== 'object') return;
+
+        const objRecord = obj as Record<string, unknown>;
+        if (objRecord['@type']) {
+          const type = Array.isArray(objRecord['@type']) ? objRecord['@type'] : [objRecord['@type']];
+          type.forEach((t: unknown) => {
+            if (typeof t === 'string' && !schemaTypes.includes(t)) {
+              schemaTypes.push(t);
             }
           });
         }
+
+        const graph = objRecord['@graph'];
+        if (graph && typeof graph === 'object') {
+          extractTypes(graph);
+        }
+        
+        Object.values(objRecord).forEach((value) => {
+          extractTypes(value);
+        });
       }
       
       extractTypes(parsed);
@@ -821,23 +862,7 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
   schemaMarkup.forEach(schema => {
     try {
       const data = JSON.parse(schema);
-      
-      // Count FAQ/Q&A elements
-      if (data.mainEntity && Array.isArray(data.mainEntity)) {
-        conversationalElements += data.mainEntity.length;
-      } else if (data.mainEntity) {
-        conversationalElements += 1;
-      }
-      
-      // Count HowTo steps
-      if (data['@type'] === 'HowTo' && data.step) {
-        conversationalElements += Array.isArray(data.step) ? data.step.length : 1;
-      }
-      
-      // Count recipe instructions
-      if (data['@type'] === 'Recipe' && data.recipeInstructions) {
-        conversationalElements += Array.isArray(data.recipeInstructions) ? data.recipeInstructions.length : 1;
-      }
+      conversationalElements += countConversationalElements(data);
     } catch {
       // Invalid JSON, skip
     }
@@ -846,6 +871,7 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
   return {
     jsonLdCount,
     microdataCount,
+    rdfaCount,
     schemaTypes,
     validationErrors,
     aiFriendlySchemas: [...new Set(aiFriendlySchemas)], // Remove duplicates

@@ -28,25 +28,42 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
   const text = getMainContentText(content);
   const sentenceCount = Math.max(1, (text.match(/[.!?]+/g) || []).length);
   const wordsPerSentence = words / sentenceCount;
-  const readabilityScore = clamp(100 - Math.max(0, Math.abs(wordsPerSentence - 18) * 4));
+  const readabilityScore = clamp(78 - Math.max(0, Math.abs(wordsPerSentence - 18) * 5));
 
   const contentToCodeRatio = content.html.length > 0 ? text.length / content.html.length : 0;
 
-  const headingScore = clamp((h1Count === 1 ? 80 : h1Count === 0 ? 30 : 45) - headingJumps * 10 + Math.min(content.headings.length, 6) * 3);
-  const wordScore = clamp(words >= 1200 ? 95 : words >= 900 ? 85 : words >= 600 ? 70 : words >= 400 ? 55 : words >= 250 ? 40 : 25);
-  const faqScore = clamp((questionHeadings >= 3 ? 55 : questionHeadings * 12) + (faqIndicators > 0 ? 30 : 0));
-  const internalLinkScore = clamp(internalLinks >= 12 ? 95 : internalLinks >= 8 ? 80 : internalLinks >= 5 ? 65 : internalLinks >= 2 ? 45 : 20);
-  const ratioScore = clamp(contentToCodeRatio >= 0.2 ? 95 : contentToCodeRatio >= 0.15 ? 80 : contentToCodeRatio >= 0.1 ? 60 : contentToCodeRatio >= 0.06 ? 40 : 20);
-
-  const score = clamp(
-    headingScore * 0.2 +
-    wordScore * 0.2 +
-    faqScore * 0.12 +
-    internalLinkScore * 0.16 +
-    altCoverage * 0.16 +
-    readabilityScore * 0.1 +
-    ratioScore * 0.06
+  const headingScore = clamp(
+    (h1Count === 1 ? 72 : h1Count === 0 ? 8 : 22) -
+    headingJumps * 18 +
+    Math.min(content.headings.length, 6) * 2
   );
+  const wordScore = clamp(words >= 1500 ? 82 : words >= 1200 ? 74 : words >= 900 ? 64 : words >= 700 ? 54 : words >= 500 ? 40 : words >= 300 ? 24 : 10);
+  const faqScore = clamp((questionHeadings >= 4 ? 42 : questionHeadings * 8) + (faqIndicators > 0 ? 12 : 0));
+  const internalLinkScore = clamp(internalLinks >= 15 ? 84 : internalLinks >= 10 ? 68 : internalLinks >= 6 ? 52 : internalLinks >= 3 ? 34 : internalLinks >= 1 ? 18 : 6);
+  const altTextScore = clamp(
+    altCoverage >= 98 ? 86 :
+    altCoverage >= 95 ? 74 :
+    altCoverage >= 90 ? 58 :
+    altCoverage >= 75 ? 38 :
+    altCoverage >= 50 ? 20 :
+    5
+  );
+  const ratioScore = clamp(contentToCodeRatio >= 0.2 ? 78 : contentToCodeRatio >= 0.15 ? 66 : contentToCodeRatio >= 0.1 ? 52 : contentToCodeRatio >= 0.06 ? 34 : 16);
+
+  let score = clamp(
+    headingScore * 0.24 +
+    wordScore * 0.22 +
+    faqScore * 0.08 +
+    internalLinkScore * 0.18 +
+    altTextScore * 0.16 +
+    readabilityScore * 0.08 +
+    ratioScore * 0.04
+  );
+
+  if (h1Count !== 1) score = clamp(score - 12);
+  if (headingJumps > 0) score = clamp(score - Math.min(12, headingJumps * 4));
+  if (internalLinks < 3) score = clamp(score - 8);
+  if (altCoverage < 98 && totalImages > 0) score = clamp(score - 6);
 
   if (h1Count !== 1 || headingJumps > 0) {
     findings.push(`Heading hierarchy has ${h1Count} H1 tag(s) and ${headingJumps} skipped levels.`);
@@ -68,10 +85,10 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
     });
   }
 
-  if (internalLinks < 5) {
+  if (internalLinks < 15) {
     findings.push(`Only ${internalLinks} of ${totalLinks} links are internal contextual links.`);
     recommendations.push({
-      text: `On ${hostLabel}, add ${Math.max(0, 6 - internalLinks)} more contextual internal links in-body (current internal links: ${internalLinks}).`,
+      text: `On ${hostLabel}, add ${Math.max(0, 15 - internalLinks)} more contextual internal links in-body to reach a stronger internal-linking baseline (current internal links: ${internalLinks}).`,
       priority: 'medium',
       category: 'internal-linking',
       timeToImplement: '~30 min'
@@ -92,7 +109,7 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
   if (imagesMissingAlt > 0) {
     findings.push(`${imagesMissingAlt} of ${totalImages} images are missing alt text (${clamp(altCoverage)}% coverage).`);
     recommendations.push({
-      text: `On ${hostLabel}, write descriptive alt text for ${imagesMissingAlt} image(s) to raise coverage above 95% (currently ${clamp(altCoverage)}%).`,
+      text: `On ${hostLabel}, write descriptive alt text for ${imagesMissingAlt} image(s) to raise coverage above 98% (currently ${clamp(altCoverage)}%).`,
       priority: imagesMissingAlt > 5 ? 'high' : 'medium',
       category: 'image-alt-text',
       timeToImplement: '~30 min'
@@ -118,6 +135,7 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
       imagesMissingAlt,
       totalImages,
       altCoverage: clamp(altCoverage),
+      altTextScore,
       readabilityScore,
       contentToCodeRatio: Number(contentToCodeRatio.toFixed(3))
     }

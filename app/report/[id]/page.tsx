@@ -166,7 +166,7 @@ function SharedReportHeader({ url, timestamp }: { url?: string; timestamp?: stri
                 AI Website Grader
               </h1>
               <div style={{ fontSize: '0.9rem', color: 'var(--orange-accent)', fontWeight: '600' }}>
-                Score Your Site. Fix What Matters.
+                Optimize for AI-Powered Search
               </div>
             </div>
           </div>
