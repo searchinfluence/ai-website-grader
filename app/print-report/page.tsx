@@ -59,6 +59,7 @@ export default function PrintReportPage() {
 function PrintReportContent() {
   const searchParams = useSearchParams();
   const [analysis, setAnalysis] = useState<WebsiteAnalysis | null>(null);
+  const mode = searchParams.get('mode') === 'pdf' ? 'pdf' : 'print';
 
   useEffect(() => {
     const key = searchParams.get('key');
@@ -80,11 +81,12 @@ function PrintReportContent() {
     if (!analysis) return;
 
     const timer = setTimeout(() => {
+      document.title = mode === 'pdf' ? 'AI Website Grader PDF Export' : 'AI Website Grader Print View';
       window.print();
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [analysis]);
+  }, [analysis, mode]);
 
   if (!analysis) {
     return (
@@ -179,6 +181,11 @@ function PrintReportContent() {
             overflow: visible !important;
             white-space: pre-wrap !important;
           }
+
+          @page {
+            size: auto;
+            margin: 0.5in;
+          }
         }
       `}</style>
 
@@ -232,7 +239,7 @@ function PrintReportContent() {
             fontWeight: 600
           }}
         >
-          Print Again
+          {mode === 'pdf' ? 'Save as PDF' : 'Print Again'}
         </button>
       </div>
 
@@ -249,7 +256,11 @@ function PrintReportContent() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/search-influence-logo.png" alt="Search Influence" style={{ height: '34px', width: 'auto', marginBottom: '12px' }} />
             <h1 style={{ margin: '0 0 6px', fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.01em' }}>AI Website Grader Report</h1>
-            <p style={{ margin: 0, color: '#d8eff6', fontSize: '0.94rem' }}>Search Influence branded print summary for implementation and review.</p>
+            <p style={{ margin: 0, color: '#d8eff6', fontSize: '0.94rem' }}>
+              {mode === 'pdf'
+                ? 'Search Influence branded export view for saving or sharing as PDF.'
+                : 'Search Influence branded print summary for implementation and review.'}
+            </p>
           </div>
           <div style={{ textAlign: 'right', fontSize: '0.84rem', color: '#d8eff6', minWidth: '220px' }}>
             <p style={{ margin: '0 0 4px' }}><strong style={{ color: '#fff' }}>Generated:</strong> {new Date(analysis.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
@@ -297,8 +308,9 @@ function PrintReportContent() {
             <strong style={{ color: '#012c3a' }}>Overall status:</strong> <span style={{ color: scoreColor, fontWeight: 700 }}>{getScoreSummary(analysis.overallScore)}</span>
           </p>
           <p style={{ margin: 0, color: '#4d5966', lineHeight: 1.55 }}>
-            This print view includes the full report content: score breakdown, priority recommendations, factor-by-factor findings,
-            performance notes, content structure, and next steps.
+            {mode === 'pdf'
+              ? 'This export view includes the same full report content used for printing: score breakdown, priority recommendations, factor-by-factor findings, performance notes, content structure, and next steps.'
+              : 'This print view includes the full report content: score breakdown, priority recommendations, factor-by-factor findings, performance notes, content structure, and next steps.'}
           </p>
         </div>
 

@@ -195,9 +195,9 @@ const containerStyles: CSSProperties = {
   overflowY: 'auto',
   overflowX: 'hidden',
   borderRadius: '12px',
-  border: '1px solid var(--border-gray, #334155)',
-  background: 'var(--content-bg, #0f172a)',
-  color: 'var(--content-text, #e2e8f0)',
+  border: '1px solid #d7e0e8',
+  background: '#ffffff',
+  color: '#0f172a',
   boxShadow: '0 24px 48px rgba(0, 0, 0, 0.35)'
 };
 
@@ -210,17 +210,17 @@ const headerStyles: CSSProperties = {
 const labelStyles: CSSProperties = {
   fontSize: '0.88rem',
   fontWeight: 600,
-  color: 'var(--content-text, #e2e8f0)'
+  color: '#0f172a'
 };
 
 const inputStyles: CSSProperties = {
   width: '100%',
-  border: '1px solid var(--border-gray, #4b5563)',
+  border: '1px solid #cbd5e1',
   borderRadius: '8px',
   padding: '10px 12px',
   fontSize: '0.95rem',
-  color: 'var(--content-text, #e2e8f0)',
-  background: 'var(--surface-bg, #1e293b)',
+  color: '#0f172a',
+  background: '#ffffff',
   outline: 'none',
   boxSizing: 'border-box'
 };
