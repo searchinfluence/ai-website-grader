@@ -124,6 +124,7 @@ export interface CrawledContent {
   enhancedSchemaInfo?: {
     jsonLdCount: number;
     microdataCount: number;
+    rdfaCount: number;
     schemaTypes: string[];
     validationErrors: string[];
     aiFriendlySchemas: string[]; // FAQPage, QAPage, HowTo, etc.

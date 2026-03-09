@@ -4,15 +4,15 @@ export function formatScore(score: number): string {
 
 export function getScoreColor(score: number): string {
   if (score >= 80) return 'text-green-600';
-  if (score >= 60) return 'text-blue-600';
-  if (score >= 40) return 'text-yellow-600';
-  return 'text-red-600';
+  if (score >= 70) return 'text-cyan-700';
+  if (score >= 50) return 'text-blue-700';
+  return 'text-orange-600';
 }
 
 export function getScoreStatus(score: number): 'excellent' | 'good' | 'needs-improvement' | 'poor' {
   if (score >= 80) return 'excellent';
-  if (score >= 60) return 'good';
-  if (score >= 40) return 'needs-improvement';
+  if (score >= 70) return 'good';
+  if (score >= 50) return 'needs-improvement';
   return 'poor';
 }
 

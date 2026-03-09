@@ -23,19 +23,24 @@ export function analyzePageSeo(content: CrawledContent): FactorResult {
   const optimizedImageRatio = totalImages === 0 ? 1 : webpImages / totalImages;
   const imagesMissingAlt = content.images.filter((image) => !image.alt || !image.alt.trim()).length;
 
-  const titleScore = clamp(titleLength >= 30 && titleLength <= 60 ? 100 : titleLength > 0 ? 60 : 10);
-  const descriptionScore = clamp(descriptionLength >= 120 && descriptionLength <= 160 ? 100 : descriptionLength > 0 ? 60 : 10);
-  const h1Score = clamp(h1Count === 1 ? 100 : h1Count === 0 ? 20 : 45);
-  const urlScore = clamp((pathIsClean ? 70 : 40) + (pathDepth <= 3 ? 20 : 10) + (hasQuery ? 0 : 10));
-  const imageScore = clamp(totalImages === 0 ? 80 : (100 - (imagesMissingAlt / totalImages) * 100) * 0.7 + optimizedImageRatio * 30);
+  const titleScore = clamp(titleLength >= 30 && titleLength <= 60 ? 100 : titleLength >= 20 && titleLength <= 70 ? 58 : titleLength > 0 ? 28 : 0);
+  const descriptionScore = clamp(descriptionLength >= 120 && descriptionLength <= 160 ? 100 : descriptionLength >= 90 && descriptionLength <= 175 ? 56 : descriptionLength > 0 ? 26 : 0);
+  const h1Score = clamp(h1Count === 1 ? 100 : h1Count === 0 ? 0 : h1Count === 2 ? 18 : 8);
+  const urlScore = clamp((pathIsClean ? 62 : 28) + (pathDepth <= 2 ? 18 : pathDepth <= 4 ? 10 : 0) + (hasQuery ? 0 : 10));
+  const imageScore = clamp(totalImages === 0 ? 72 : (100 - (imagesMissingAlt / totalImages) * 100) * 0.65 + optimizedImageRatio * 20);
 
-  const score = clamp(
-    titleScore * 0.25 +
-    descriptionScore * 0.25 +
-    h1Score * 0.2 +
-    urlScore * 0.15 +
-    imageScore * 0.15
+  let score = clamp(
+    titleScore * 0.12 +
+    descriptionScore * 0.12 +
+    h1Score * 0.36 +
+    urlScore * 0.2 +
+    imageScore * 0.2
   );
+
+  if (h1Count === 0) score = clamp(score - 18);
+  if (h1Count > 1) score = clamp(score - Math.min(20, h1Count * 5));
+  if (titleLength === 0) score = clamp(score - 10);
+  if (descriptionLength === 0) score = clamp(score - 8);
 
   if (titleLength < 30 || titleLength > 60) {
     findings.push(`Title length is ${titleLength} characters.`);

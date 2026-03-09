@@ -46,7 +46,14 @@ export function summarizeSchema(content: CrawledContent): SchemaSummary {
   };
 
   const addTypes = (value: unknown): void => {
-    if (!value || typeof value !== 'object') return;
+    if (!value) return;
+
+    if (Array.isArray(value)) {
+      value.forEach(addTypes);
+      return;
+    }
+
+    if (typeof value !== 'object') return;
 
     const record = value as Record<string, unknown>;
     const typeValue = record['@type'];
@@ -61,15 +68,12 @@ export function summarizeSchema(content: CrawledContent): SchemaSummary {
     if (Array.isArray(graphValue)) {
       hasGraph = true;
       graphValue.forEach(addTypes);
+    } else if (graphValue && typeof graphValue === 'object') {
+      hasGraph = true;
+      addTypes(graphValue);
     }
 
-    Object.values(record).forEach((child) => {
-      if (Array.isArray(child)) {
-        child.forEach(addTypes);
-      } else if (child && typeof child === 'object') {
-        addTypes(child);
-      }
-    });
+    Object.values(record).forEach((child) => addTypes(child));
   };
 
   for (const block of content.schemaMarkup) {

@@ -54,19 +54,38 @@ const STAT_LABELS: Record<string, string> = {
   hasHreflang: 'Hreflang Tags',
   hasViewport: 'Viewport Meta',
   hasResponsiveCss: 'Responsive CSS',
+  hasResponsiveImages: 'Responsive Images',
+  hasTouchableElements: 'Touch-Friendly Controls',
+  mobileScore: 'Mobile Readiness',
   pageSpeedScore: 'PageSpeed Score',
   loadTimeMs: 'Load Time (ms)',
+  htmlErrors: 'HTML Errors',
+  htmlWarnings: 'HTML Warnings',
+  htmlValidationScore: 'HTML Validation Score',
+  accessibilityScore: 'Accessibility Score',
+  normalizedAccessibilityScore: 'Accessibility Grade',
   titleLength: 'Title Length',
   descriptionLength: 'Meta Description Length',
   pathDepth: 'URL Path Depth',
   hasQuery: 'Has Query Parameters',
   pathIsClean: 'Clean URL Path',
-  webpImages: 'WebP Images'
+  webpImages: 'WebP Images',
+  altTextScore: 'Alt Text Grade',
+  hasGraph: '@graph Detected',
+  microdataTypes: 'Microdata Types',
+  rdfaTypes: 'RDFa Types',
+  schemaPresence: 'Schema Presence',
+  schemaValidation: 'Schema Validation',
+  richSnippetPotential: 'Rich Snippet Potential',
+  structuredDataCompleteness: 'Schema Completeness',
+  jsonLdImplementation: 'JSON-LD Implementation'
 };
 
 function formatStatValueWithKey(key: string, value: unknown): string {
   if (typeof value === 'number') {
-    if (['altCoverage', 'readabilityScore', 'pageSpeedScore'].includes(key)) return `${Math.round(value)}%`;
+    if (['altCoverage', 'readabilityScore', 'pageSpeedScore', 'mobileScore', 'htmlValidationScore', 'accessibilityScore', 'normalizedAccessibilityScore', 'altTextScore', 'schemaPresence', 'schemaValidation', 'richSnippetPotential', 'structuredDataCompleteness', 'jsonLdImplementation'].includes(key)) {
+      return `${Math.round(value)}%`;
+    }
     if (key === 'loadTimeMs') return `${Math.round(value)}ms`;
     if (key === 'contentToCodeRatio') return `${(value * 100).toFixed(1)}%`;
     if (['titleLength', 'descriptionLength'].includes(key)) return `${value} chars`;
@@ -101,7 +120,9 @@ function getPreviewMetricValue(key: string, value: unknown): number | null {
   if (typeof value === 'boolean') return value ? 100 : 0;
   if (typeof value !== 'number' || !Number.isFinite(value)) return null;
 
-  if (['altCoverage', 'readabilityScore', 'pageSpeedScore'].includes(key)) return Math.max(0, Math.min(100, value));
+  if (['altCoverage', 'readabilityScore', 'pageSpeedScore', 'mobileScore', 'htmlValidationScore', 'accessibilityScore', 'normalizedAccessibilityScore', 'altTextScore', 'schemaPresence', 'schemaValidation', 'richSnippetPotential', 'structuredDataCompleteness', 'jsonLdImplementation'].includes(key)) {
+    return Math.max(0, Math.min(100, value));
+  }
   if (key === 'contentToCodeRatio') return Math.max(0, Math.min(100, value * 100));
   if (['titleLength', 'descriptionLength'].includes(key)) return Math.max(0, Math.min(100, (value / 160) * 100));
   if (key === 'loadTimeMs') return Math.max(0, Math.min(100, 100 - (value / 5000) * 100));
