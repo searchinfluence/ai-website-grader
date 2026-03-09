@@ -1,6 +1,8 @@
-# UI Review Fixes — V3 vs V2
+# UI Review Fixes — V3 vs V2 (COMPLETED — March 8, 2026)
 
-These are the issues identified by comparing V3 against the original V2 codebase. Fix all of them.
+> **Status:** All 11 issues fixed in commit `efdc0d0`. Kept for reference.
+
+These were the issues identified by comparing V3 against the original V2 codebase.
 
 ## What V3 Does Well (KEEP these)
 - Circular score gauge

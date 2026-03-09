@@ -1,7 +1,9 @@
-# AI Website Grader - Scoring System Update Summary
+# AI Website Grader — Scoring System Update Summary (HISTORICAL — Pre-V3)
+
+> **Note:** This documents the old 6-factor hybrid scoring iterations. V3 replaced everything with a 4-factor model. See `lib/scoring/config.ts` for current weights. Kept for historical reference.
 
 ## OVERVIEW
-This document tracks iterative improvements to the 6-Factor Hybrid AI Search Scoring System based on comparison with Claude AI analysis and user feedback.
+This document tracked iterative improvements to the old 6-Factor Hybrid AI Search Scoring System.
 
 ## ITERATION 1 - INITIAL ENHANCEMENTS
 **Date**: Initial implementation

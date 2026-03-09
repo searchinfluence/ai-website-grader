@@ -1,4 +1,7 @@
-# Scoring Logic Review - AI Website Grader
+# Scoring Logic Review — AI Website Grader (HISTORICAL — Pre-V3)
+
+> **Note:** This review identified inflation bugs in the old 7-factor/6-factor scoring system. All issues were addressed in V3's 4-factor rewrite. Kept for reference only.
+
 **Date**: November 9, 2025
 **Purpose**: Review all scoring logic before implementing calibration fixes
 
