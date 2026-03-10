@@ -17,13 +17,13 @@ export const SCORING_FACTORS: ScoringFactorConfig[] = [
   {
     key: 'structuredData',
     label: 'Structured Data',
-    weight: 0.20,
+    weight: 0.30,
     description: 'JSON-LD presence, schema quality, Open Graph, social metadata, and rich snippet eligibility.'
   },
   {
     key: 'technicalHealth',
     label: 'Technical Health',
-    weight: 0.30,
+    weight: 0.20,
     description: 'HTTPS, Core Web Vitals, crawlability, canonical/hreflang setup, viewport, responsiveness, and speed.'
   },
   {

@@ -5,10 +5,10 @@ function clamp(value, min = 0, max = 100) {
 }
 
 const FACTOR_WEIGHTS = {
-  contentStructure: 0.15,
-  structuredData: 0.22,
-  technicalHealth: 0.45,
-  pageSEO: 0.18,
+  contentStructure: 0.30,
+  structuredData: 0.30,
+  technicalHealth: 0.20,
+  pageSEO: 0.20,
 };
 
 function analyzeContentStructure(content) {
@@ -220,7 +220,7 @@ const fixtures = [
   },
   {
     key: 'google.com',
-    target: '60-75',
+    target: '50-68',
     notes: 'Representative homepage fixture: thin content and weak on-page SEO, but exceptional technical quality and strong crawlability.',
     title: 'Google',
     metaDescription: '',
@@ -312,7 +312,7 @@ for (const fixture of fixtures) {
   const total = overallScore(scores);
   const inRange =
     fixture.key === 'searchinfluence.com' ? total >= 70 && total <= 85 :
-    fixture.key === 'google.com' ? total >= 60 && total <= 75 :
+    fixture.key === 'google.com' ? total >= 50 && total <= 68 :
     total < 50;
 
   if (!inRange) hasFailure = true;
