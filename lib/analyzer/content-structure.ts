@@ -28,7 +28,13 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
   const text = getMainContentText(content);
   const extractedWordCount = text.split(/\s+/).filter(Boolean).length;
   let sentenceCount = Math.max(1, (text.match(/[.!?]+/g) || []).length);
-  let wordsPerSentence = words / sentenceCount;
+  // Use extractedWordCount (from the same text as sentenceCount) to avoid
+  // a mismatch where content.wordCount counts the full body but sentenceCount
+  // only reflects the main-content extraction -- this mismatch was the root
+  // cause of readabilityScore collapsing to 0 on sites with thin paragraph
+  // extraction but a large body word count.
+  const readabilityWordCount = extractedWordCount > 50 ? extractedWordCount : words;
+  let wordsPerSentence = readabilityWordCount / sentenceCount;
 
   if (words >= 400 && text.trim().length < 200) {
     console.warn(
@@ -37,8 +43,8 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
   }
 
   if (wordsPerSentence > 50) {
-    sentenceCount = Math.max(1, Math.round(words / 17));
-    wordsPerSentence = words / sentenceCount;
+    sentenceCount = Math.max(1, Math.round(readabilityWordCount / 17));
+    wordsPerSentence = readabilityWordCount / sentenceCount;
     console.warn(
       `[Content Structure] Readability fallback applied for ${content.url}: estimated sentence count=${sentenceCount}, wordCount=${words}, extractedWords=${extractedWordCount}`
     );
