@@ -20,28 +20,83 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
   const hasResponsiveCss = Boolean(content.mobileInfo?.mobileOptimizedCSS);
 
   const performanceMetrics = content.aiAnalysisData?.performanceMetrics;
-  const webVitals = content.aiAnalysisData?.performanceMetrics?.coreWebVitals?.score;
-  const speedFromVitals = typeof webVitals === 'number' ? clamp(webVitals) : 65;
-  const accessibilityScore = typeof performanceMetrics?.accessibilityScore === 'number'
-    ? clamp(performanceMetrics.accessibilityScore)
-    : undefined;
-  const performanceScore = typeof performanceMetrics?.performanceScore === 'number'
-    ? clamp(performanceMetrics.performanceScore)
-    : undefined;
   const htmlValidationState = performanceMetrics?.htmlValidation?.validationState ?? 'unknown';
   const loadTimeMs = content.loadTime ?? 3000;
   const speedFromLoadTime = clamp(loadTimeMs <= 1800 ? 95 : loadTimeMs <= 2500 ? 80 : loadTimeMs <= 4000 ? 60 : loadTimeMs <= 5500 ? 45 : 30);
-  const performanceComposite = performanceScore ?? clamp(speedFromVitals * 0.7 + speedFromLoadTime * 0.3);
-  const score = clamp(
-    (isHttps ? 100 : 20) * 0.12 +
-    (robotsPresent ? (allowsBots ? 95 : 60) : 40) * 0.14 +
-    (hasSitemapHint ? 90 : 45) * 0.12 +
-    (hasCanonical ? 95 : 40) * 0.12 +
-    (hasHreflang ? 75 : 60) * 0.05 +
-    (hasViewport ? 95 : 35) * 0.15 +
-    (hasResponsiveCss ? 85 : 40) * 0.1 +
-    performanceComposite * 0.2
+
+  // ── Accessibility: tiered thresholds (90+ for full points) ──────────────────
+  const rawAccessibilityScore = typeof performanceMetrics?.accessibilityScore === 'number'
+    ? clamp(performanceMetrics.accessibilityScore)
+    : 65; // conservative fallback
+  const normalizedAccessibilityScore = clamp(
+    rawAccessibilityScore >= 90 ? 100 :
+    rawAccessibilityScore >= 85 ? 85 :
+    rawAccessibilityScore >= 80 ? 72 :
+    rawAccessibilityScore >= 70 ? 55 :
+    rawAccessibilityScore >= 60 ? 35 : 15
   );
+
+  // ── HTML Validation: errors penalize heavily, warnings add smaller penalty ──
+  const htmlErrors = performanceMetrics?.htmlValidation?.errors ?? 0;
+  const htmlWarnings = performanceMetrics?.htmlValidation?.warnings ?? 0;
+  const htmlValidationScore = clamp(
+    (htmlErrors === 0
+      ? 100
+      : htmlErrors <= 2
+        ? 78
+        : htmlErrors <= 5
+          ? 52
+          : htmlErrors <= 10
+            ? 30
+            : 10) - Math.min(16, htmlWarnings * 2)
+  );
+
+  // ── Core Web Vitals: individual metric scores + penalty system ───────────────
+  const coreWebVitals = performanceMetrics?.coreWebVitals;
+  const speedFromVitals = typeof coreWebVitals?.score === 'number' ? clamp(coreWebVitals.score) : 65;
+
+  const lcp = coreWebVitals?.lcp ?? 2500;
+  const fid = coreWebVitals?.fid ?? 100;
+  const cls = coreWebVitals?.cls ?? 0.1;
+
+  const lcpScore = clamp(lcp <= 2500 ? 100 : lcp <= 4000 ? 70 : lcp <= 5000 ? 42 : 18);
+  const fidScore = clamp(fid <= 100 ? 100 : fid <= 200 ? 72 : fid <= 300 ? 48 : 20);
+  const clsScore = clamp(cls <= 0.1 ? 100 : cls <= 0.2 ? 68 : cls <= 0.25 ? 44 : 18);
+
+  // Explicit penalties for failing CWV thresholds
+  const coreWebVitalsPenalty =
+    (lcp > 4000 ? 8 : 0) +
+    (fid > 200 ? 8 : 0) +
+    (cls > 0.1 ? 6 : 0) +
+    (speedFromVitals < 75 ? 6 : 0);
+
+  const adjustedCoreWebVitalsScore = clamp(
+    speedFromVitals * 0.4 +
+    lcpScore * 0.25 +
+    fidScore * 0.2 +
+    clsScore * 0.15 -
+    coreWebVitalsPenalty
+  );
+
+  // ── Overall TH score ─────────────────────────────────────────────────────────
+  // Weights sum to 1.00. HTTPS and canonical/crawl signals are hygiene checks
+  // (lower weight). Performance signals (CWV, load time, HTML, a11y) drive
+  // meaningful differentiation.
+  const score = clamp(
+    (isHttps ? 100 : 20) * 0.10 +
+    (robotsPresent ? (allowsBots ? 95 : 60) : 40) * 0.13 +
+    (hasSitemapHint ? 90 : 45) * 0.09 +
+    (hasCanonical ? 95 : 40) * 0.10 +
+    (hasHreflang ? 75 : 60) * 0.03 +
+    (hasViewport ? 95 : 35) * 0.12 +
+    (hasResponsiveCss ? 85 : 40) * 0.08 +
+    adjustedCoreWebVitalsScore * 0.14 +
+    speedFromLoadTime * 0.07 +
+    htmlValidationScore * 0.07 +
+    normalizedAccessibilityScore * 0.07
+  );
+
+  // ── Findings & recommendations ───────────────────────────────────────────────
 
   if (!isHttps) {
     findings.push('Page is not served via HTTPS.');
@@ -93,19 +148,46 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
     });
   }
 
-  if (performanceScore !== undefined && performanceScore < 70) {
-    findings.push(`Technical performance composite is ${performanceScore}/100 (CWV, HTML validation, and accessibility).`);
+  // CWV penalty-based findings
+  if (lcp > 4000) {
+    findings.push(`LCP is ${lcp}ms — above the 4000ms poor threshold.`);
     recommendations.push({
-      text: `Raise ${hostLabel} technical performance above 70 by improving Core Web Vitals, fixing HTML validation issues, and addressing accessibility gaps (current composite: ${performanceScore}/100).`,
-      priority: performanceScore < 50 ? 'high' : 'medium',
-      category: 'performance',
+      text: `Reduce Largest Contentful Paint on ${hostLabel} from ${lcp}ms to under 2500ms by optimizing hero images, preloading key assets, and reducing server response time.`,
+      priority: 'high',
+      category: 'core-web-vitals',
+      timeToImplement: '~half day'
+    });
+  } else if (lcp > 2500) {
+    findings.push(`LCP is ${lcp}ms — above the 2500ms good threshold.`);
+    recommendations.push({
+      text: `Improve Largest Contentful Paint on ${hostLabel} from ${lcp}ms to under 2500ms by optimizing image delivery and reducing render-blocking resources.`,
+      priority: 'medium',
+      category: 'core-web-vitals',
+      timeToImplement: '~half day'
+    });
+  }
+
+  if (fid > 200) {
+    findings.push(`FID is ${fid}ms — above the 200ms poor threshold.`);
+    recommendations.push({
+      text: `Reduce First Input Delay on ${hostLabel} from ${fid}ms to under 100ms by splitting long JavaScript tasks and deferring non-critical scripts.`,
+      priority: fid > 300 ? 'high' : 'medium',
+      category: 'core-web-vitals',
+      timeToImplement: '~half day'
+    });
+  }
+
+  if (cls > 0.1) {
+    findings.push(`CLS is ${cls} — above the 0.1 good threshold.`);
+    recommendations.push({
+      text: `Fix Cumulative Layout Shift on ${hostLabel} (current: ${cls}) by setting explicit dimensions on images/embeds and avoiding dynamically injected content above the fold.`,
+      priority: cls > 0.25 ? 'high' : 'medium',
+      category: 'core-web-vitals',
       timeToImplement: '~half day'
     });
   }
 
   if (htmlValidationState === 'invalid') {
-    const htmlErrors = content.aiAnalysisData?.performanceMetrics?.htmlValidation?.errors ?? 0;
-    const htmlWarnings = content.aiAnalysisData?.performanceMetrics?.htmlValidation?.warnings ?? 0;
     findings.push(`HTML validation failed with ${htmlErrors} error(s) and ${htmlWarnings} warning(s).`);
     recommendations.push({
       text: `Fix HTML validation issues on ${hostLabel} to reduce parser ambiguity for crawlers and browsers (current validator output: ${htmlErrors} errors, ${htmlWarnings} warnings).`,
@@ -113,13 +195,29 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
       category: 'html-validation',
       timeToImplement: '~half day'
     });
+  } else if (htmlWarnings > 5) {
+    findings.push(`HTML has ${htmlWarnings} warnings that could affect parser behavior.`);
+    recommendations.push({
+      text: `Address HTML warnings on ${hostLabel} to improve cross-browser consistency (current: ${htmlWarnings} warnings).`,
+      priority: 'low',
+      category: 'html-validation',
+      timeToImplement: '~half day'
+    });
   }
 
-  if (accessibilityScore !== undefined && accessibilityScore < 70) {
-    findings.push(`Accessibility score is ${accessibilityScore}/100.`);
+  if (rawAccessibilityScore < 70) {
+    findings.push(`Accessibility score is ${rawAccessibilityScore}/100.`);
     recommendations.push({
-      text: `Improve accessibility on ${hostLabel} to at least 70/100 by fixing semantic structure, labeling, and input/media accessibility issues (current score: ${accessibilityScore}/100).`,
-      priority: accessibilityScore < 50 ? 'high' : 'medium',
+      text: `Improve accessibility on ${hostLabel} to at least 90/100 by fixing semantic structure, labeling, and input/media accessibility issues (current score: ${rawAccessibilityScore}/100).`,
+      priority: rawAccessibilityScore < 50 ? 'high' : 'medium',
+      category: 'accessibility',
+      timeToImplement: '~half day'
+    });
+  } else if (rawAccessibilityScore < 90) {
+    findings.push(`Accessibility score is ${rawAccessibilityScore}/100 — below the 90 excellent threshold.`);
+    recommendations.push({
+      text: `Push accessibility on ${hostLabel} above 90/100 by addressing remaining ARIA, labeling, and semantic structure gaps (current score: ${rawAccessibilityScore}/100).`,
+      priority: 'low',
       category: 'accessibility',
       timeToImplement: '~half day'
     });
@@ -153,11 +251,19 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
       hasViewport,
       hasResponsiveCss,
       pageSpeedScore: speedFromVitals,
-      performanceScore: performanceComposite,
-      reportedPerformanceScore: performanceScore,
-      accessibilityScore,
+      adjustedCoreWebVitalsScore,
+      lcpScore,
+      fidScore,
+      clsScore,
+      coreWebVitalsPenalty,
+      htmlValidationScore,
+      htmlErrors,
+      htmlWarnings,
       htmlValidationState,
-      loadTimeMs
+      normalizedAccessibilityScore,
+      rawAccessibilityScore,
+      loadTimeMs,
+      speedFromLoadTime
     }
   };
 }
