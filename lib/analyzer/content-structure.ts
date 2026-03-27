@@ -27,7 +27,11 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
 
   const text = getMainContentText(content);
   const extractedWordCount = text.split(/\s+/).filter(Boolean).length;
-  let sentenceCount = Math.max(1, (text.match(/[.!?]+/g) || []).length);
+  // Count raw punctuation marks before clamping to 1, so we can detect
+  // cases where paragraphs were joined without sentence-ending punctuation
+  // (punctuation loss during text extraction).
+  const rawPunctuationCount = (text.match(/[.!?]+/g) || []).length;
+  let sentenceCount = Math.max(1, rawPunctuationCount);
   // Use extractedWordCount (from the same text as sentenceCount) to avoid
   // a mismatch where content.wordCount counts the full body but sentenceCount
   // only reflects the main-content extraction -- this mismatch was the root
@@ -36,9 +40,24 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
   const readabilityWordCount = extractedWordCount > 50 ? extractedWordCount : words;
   let wordsPerSentence = readabilityWordCount / sentenceCount;
 
+  // Log when extraction yields near-empty text but wordCount is high
+  // (indicates a body/paragraph extraction mismatch).
   if (words >= 400 && text.trim().length < 200) {
     console.warn(
       `[Content Structure] Main content extraction mismatch for ${content.url}: wordCount=${words}, extractedTextLength=${text.trim().length}, extractedWords=${extractedWordCount}`
+    );
+  }
+
+  // Log when extracted text has words but almost no sentence-ending punctuation
+  // -- this typically means paragraphs were joined in a way that dropped
+  // trailing periods (punctuation loss in text extraction).
+  if (extractedWordCount >= 100 && rawPunctuationCount === 0) {
+    console.warn(
+      `[Content Structure] Punctuation loss detected for ${content.url}: extractedWords=${extractedWordCount} but rawPunctuationCount=0 — sentence boundaries stripped during text extraction`
+    );
+  } else if (extractedWordCount >= 100 && rawPunctuationCount < Math.floor(extractedWordCount / 50)) {
+    console.warn(
+      `[Content Structure] Low punctuation density for ${content.url}: extractedWords=${extractedWordCount}, rawPunctuationCount=${rawPunctuationCount} — possible partial punctuation loss during text extraction`
     );
   }
 
@@ -46,7 +65,7 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
     sentenceCount = Math.max(1, Math.round(readabilityWordCount / 17));
     wordsPerSentence = readabilityWordCount / sentenceCount;
     console.warn(
-      `[Content Structure] Readability fallback applied for ${content.url}: estimated sentence count=${sentenceCount}, wordCount=${words}, extractedWords=${extractedWordCount}`
+      `[Content Structure] Readability fallback applied for ${content.url}: wordsPerSentence=${Math.round(readabilityWordCount / Math.max(1, rawPunctuationCount))} exceeded threshold — estimated sentence count=${sentenceCount}, wordCount=${words}, extractedWords=${extractedWordCount}, rawPunctuationCount=${rawPunctuationCount}`
     );
   }
 
