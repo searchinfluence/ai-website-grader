@@ -39,17 +39,21 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
   // ── HTML Validation: errors penalize heavily, warnings add smaller penalty ──
   const htmlErrors = performanceMetrics?.htmlValidation?.errors ?? 0;
   const htmlWarnings = performanceMetrics?.htmlValidation?.warnings ?? 0;
-  const htmlValidationScore = clamp(
-    (htmlErrors === 0
-      ? 100
-      : htmlErrors <= 2
-        ? 78
-        : htmlErrors <= 5
-          ? 52
-          : htmlErrors <= 10
-            ? 30
-            : 10) - Math.min(16, htmlWarnings * 2)
-  );
+  // When the W3C validator is unavailable, use a neutral score (60) instead
+  // of pretending HTML is perfect. Unknown ≠ valid.
+  const htmlValidationScore = htmlValidationState === 'unknown'
+    ? 60
+    : clamp(
+        (htmlErrors === 0
+          ? 100
+          : htmlErrors <= 2
+            ? 78
+            : htmlErrors <= 5
+              ? 52
+              : htmlErrors <= 10
+                ? 30
+                : 10) - Math.min(16, htmlWarnings * 2)
+      );
 
   // ── Core Web Vitals: individual metric scores + penalty system ───────────────
   const coreWebVitals = performanceMetrics?.coreWebVitals;
