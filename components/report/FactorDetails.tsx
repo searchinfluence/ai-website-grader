@@ -7,7 +7,7 @@ interface FactorDetailsProps {
   factor: ScoringFactorResult;
   accent: string;
   borderColor: string;
-  gradient: string;
+  background: string;
   icon?: LucideIcon;
   defaultOpen?: boolean;
 }
@@ -132,7 +132,7 @@ function getPreviewMetricValue(key: string, value: unknown): number | null {
   return null;
 }
 
-export default function FactorDetails({ factor, accent, borderColor, gradient, icon: Icon, defaultOpen }: FactorDetailsProps) {
+export default function FactorDetails({ factor, accent, borderColor, background, icon: Icon, defaultOpen }: FactorDetailsProps) {
   const [copiedRecIndex, setCopiedRecIndex] = useState<number | null>(null);
   const entries = Object.entries(factor.stats ?? {});
   const previewStats = entries.slice(0, 3);
@@ -160,19 +160,18 @@ export default function FactorDetails({ factor, accent, borderColor, gradient, i
       border: `1px solid ${borderColor}`,
       borderRadius: '12px',
       background: 'var(--content-bg)',
-      overflow: 'hidden',
-      boxShadow: '0 10px 26px rgba(1, 44, 58, 0.08)'
+      overflow: 'hidden'
     }}>
       <summary className="factor-details-summary" style={{
         cursor: 'pointer',
         listStyle: 'none',
         padding: '16px 18px',
-        background: gradient,
+        background: background,
         borderLeft: `5px solid ${accent}`
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', alignItems: 'center' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--content-text)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: 'var(--content-text)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
               {Icon && <Icon size={18} style={{ color: accent }} />}
               {factor.label}
             </h3>
