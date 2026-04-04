@@ -16,29 +16,29 @@ interface ScoreReportProps {
   analysis: WebsiteAnalysis;
 }
 
-const FACTOR_THEME: Record<ScoringFactorKey, { accent: string; borderColor: string; gradient: string; icon?: LucideIcon }> = {
+const FACTOR_THEME: Record<ScoringFactorKey, { accent: string; borderColor: string; background: string; icon?: LucideIcon }> = {
   contentStructure: {
     accent: 'var(--si-dark-navy)',
     borderColor: 'rgba(1, 44, 58, 0.24)',
-    gradient: 'linear-gradient(135deg, rgba(1, 44, 58, 0.11) 0%, rgba(1, 44, 58, 0.04) 100%)',
+    background: 'rgba(1, 44, 58, 0.06)',
     icon: FileText
   },
   structuredData: {
     accent: 'var(--si-green)',
     borderColor: 'rgba(145, 195, 100, 0.36)',
-    gradient: 'linear-gradient(135deg, rgba(145, 195, 100, 0.16) 0%, rgba(145, 195, 100, 0.06) 100%)',
+    background: 'rgba(145, 195, 100, 0.08)',
     icon: Database
   },
   technicalHealth: {
     accent: 'var(--si-light-blue)',
     borderColor: 'rgba(78, 177, 205, 0.32)',
-    gradient: 'linear-gradient(135deg, rgba(78, 177, 205, 0.14) 0%, rgba(78, 177, 205, 0.05) 100%)',
+    background: 'rgba(78, 177, 205, 0.08)',
     icon: Settings
   },
   pageSEO: {
     accent: 'var(--si-orange)',
     borderColor: 'rgba(223, 89, 38, 0.28)',
-    gradient: 'linear-gradient(135deg, rgba(223, 89, 38, 0.14) 0%, rgba(223, 89, 38, 0.05) 100%)',
+    background: 'rgba(223, 89, 38, 0.07)',
     icon: Search
   }
 };
@@ -89,8 +89,7 @@ const reviewCtaPanelStyles: CSSProperties = {
   padding: '18px',
   borderRadius: '14px',
   border: '1px solid rgba(1, 74, 97, 0.24)',
-  background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.96) 0%, rgba(1, 74, 97, 0.92) 56%, rgba(52, 144, 181, 0.9) 100%)',
-  boxShadow: '0 16px 36px rgba(1, 44, 58, 0.16)'
+  background: '#012c3a'
 };
 
 const reviewCtaBodyStyles: CSSProperties = {
@@ -105,14 +104,13 @@ const reviewCtaButtonStyles: CSSProperties = {
   gap: '8px',
   border: 'none',
   borderRadius: '999px',
-  background: 'linear-gradient(135deg, #df5926 0%, #c44a1e 100%)',
+  background: '#df5926',
   color: '#fff',
   padding: '12px 22px',
   fontSize: '0.95rem',
-  fontWeight: 700,
+  fontWeight: 800,
   cursor: 'pointer',
-  boxShadow: '0 4px 12px rgba(223, 89, 38, 0.35)',
-  transition: 'all 0.2s ease'
+  transition: 'background 0.2s ease'
 };
 
 export default function ScoreReport({ analysis }: ScoreReportProps) {
@@ -218,8 +216,8 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
     <div className="max-w-6xl mx-auto" id="report-container">
       <div className="results">
         <div className="results-header">
-          <h1 style={{ margin: 0, textAlign: 'center' }}>AI Website Grader Report</h1>
-          <p style={{ margin: '8px 0 0', textAlign: 'center', fontSize: '1.06rem', opacity: 0.95 }}>
+          <h1 style={{ margin: 0, textAlign: 'center', fontSize: '2.6rem', fontWeight: 800 }}>AI Website Grader Report</h1>
+          <p style={{ margin: '8px 0 0', textAlign: 'center', fontSize: '1.06rem', opacity: 0.95, fontWeight: 300 }}>
             Powered by Search Influence — AI SEO Experts
           </p>
           <p style={{ margin: '10px 0 0', textAlign: 'center' }}>Analysis completed on {new Date(analysis.timestamp).toLocaleDateString()}</p>
@@ -230,8 +228,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             border: '1px solid var(--border-gray)',
             borderRadius: '12px',
             padding: '22px',
-            background: 'var(--background-gray)',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.08)'
+            background: 'var(--background-gray)'
           }}>
             <div className="report-score-header-grid">
               <div>
@@ -300,7 +297,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             borderTop: '1px solid rgba(1, 74, 97, 0.18)',
             borderRight: '1px solid rgba(1, 74, 97, 0.18)',
             borderBottom: '1px solid rgba(1, 74, 97, 0.18)',
-            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.03) 0%, rgba(78, 177, 205, 0.07) 100%)',
+            background: 'rgba(1, 44, 58, 0.04)',
             display: 'flex',
             gap: '10px',
             alignItems: 'flex-start'
@@ -322,7 +319,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 factor={analysis.factors[factor.key]}
                 accent={FACTOR_THEME[factor.key].accent}
                 borderColor={FACTOR_THEME[factor.key].borderColor}
-                gradient={FACTOR_THEME[factor.key].gradient}
+                background={FACTOR_THEME[factor.key].background}
                 icon={FACTOR_THEME[factor.key].icon}
               />
             ))}
@@ -350,7 +347,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             padding: '16px',
             borderRadius: '12px',
             border: '1px solid rgba(1, 74, 97, 0.22)',
-            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.06) 0%, rgba(52, 144, 181, 0.08) 55%, rgba(78, 177, 205, 0.08) 100%)'
+            background: 'rgba(1, 44, 58, 0.04)'
           }}>
             <h2 className="major-section-heading section-heading-left" style={{ marginBottom: '12px' }}>Priority Recommendations</h2>
             <div style={{ display: 'grid', gap: '10px' }}>
@@ -455,7 +452,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                   factor={analysis.factors[factor.key]}
                   accent={theme.accent}
                   borderColor={theme.borderColor}
-                  gradient={theme.gradient}
+                  background={theme.background}
                   icon={theme.icon}
                   defaultOpen={factor.key === lowestScoringFactorKey}
                 />
@@ -472,7 +469,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 border: '1px solid var(--border-gray)',
                 borderRadius: '14px',
                 padding: '18px',
-                background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.06) 0%, rgba(1, 74, 97, 0.08) 48%, rgba(78, 177, 205, 0.08) 100%)'
+                background: 'rgba(1, 44, 58, 0.04)'
               }}>
                 <div style={{ display: 'grid', gap: '12px', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
                   {performanceMetrics.coreWebVitals && (
@@ -636,7 +633,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 border: '1px solid var(--border-gray)',
                 borderRadius: '14px',
                 padding: '18px',
-                background: 'linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(1, 74, 97, 0.04) 100%)'
+                background: 'rgba(1, 44, 58, 0.04)'
               }}>
                 <p style={{ margin: '0 0 8px', color: 'var(--content-text)', fontWeight: 700 }}>
                   Performance metrics are loading or unavailable.
@@ -657,7 +654,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                 border: '1px solid var(--border-gray)',
                 borderRadius: '14px',
                 padding: '18px',
-                background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.08) 0%, rgba(1, 74, 97, 0.05) 100%)'
+                background: 'rgba(1, 44, 58, 0.05)'
               }}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
                   <button
@@ -743,8 +740,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                       border: '1px solid var(--border-gray)',
                       borderRadius: '12px',
                       padding: '16px',
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248, 250, 251, 0.96) 100%)',
-                      boxShadow: '0 10px 22px rgba(1, 44, 58, 0.08)'
+                      background: 'rgba(255, 255, 255, 0.98)'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
@@ -758,10 +754,9 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: 700,
+                          fontWeight: 800,
                           fontSize: '0.86rem',
-                          flexShrink: 0,
-                          boxShadow: '0 6px 14px rgba(230, 126, 34, 0.24)'
+                          flexShrink: 0
                         }}>
                           {index + 1}
                         </div>
@@ -821,7 +816,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           <section className="report-section" style={{
             borderRadius: '14px',
             border: '1px solid rgba(1, 74, 97, 0.28)',
-            background: 'linear-gradient(135deg, rgba(1, 44, 58, 0.96) 0%, rgba(1, 74, 97, 0.92) 56%, rgba(52, 144, 181, 0.9) 100%)',
+            background: '#012c3a',
             padding: '20px'
           }}>
             <h2 className="major-section-heading" style={{ marginBottom: '14px', color: 'var(--white)' }}>Next Steps</h2>
@@ -913,8 +908,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
           color: '#fff',
           padding: '14px 20px',
           borderRadius: '10px',
-          fontWeight: 600,
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+          fontWeight: 800,
           fontSize: '0.95rem'
         }}>
           Thanks! We&apos;ll be in touch.

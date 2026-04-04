@@ -5,7 +5,7 @@ interface FactorCardProps {
   factor: ScoringFactorResult;
   accent: string;
   borderColor: string;
-  gradient: string;
+  background: string;
   icon?: LucideIcon;
 }
 
@@ -17,22 +17,21 @@ const statusCopy: Record<ScoringFactorResult['status'], string> = {
   critical: 'Critical'
 };
 
-export default function FactorCard({ factor, accent, borderColor, gradient, icon: Icon }: FactorCardProps) {
+export default function FactorCard({ factor, accent, borderColor, background, icon: Icon }: FactorCardProps) {
   const clampedScore = Math.max(0, Math.min(100, factor.score));
 
   return (
     <div style={{
       textAlign: 'left',
       padding: '18px',
-      background: gradient,
+      background: background,
       borderRadius: '12px',
       border: `1px solid ${borderColor}`,
       borderLeft: `5px solid ${accent}`,
-      boxShadow: '0 10px 22px rgba(1, 44, 58, 0.08)',
       minWidth: 0
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-        <h3 style={{ margin: 0, color: 'var(--content-text)', fontSize: '1.02rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        <h3 style={{ margin: 0, color: 'var(--content-text)', fontSize: '1.1rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
           {Icon && <Icon size={18} style={{ color: accent }} />}
           {factor.label}
         </h3>

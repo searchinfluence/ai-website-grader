@@ -100,7 +100,7 @@ export default function Home() {
         <div className="container">
           <h2 style={{
             fontSize: '2rem',
-            fontWeight: '600',
+            fontWeight: '800',
             color: 'var(--white)',
             textAlign: 'center',
             margin: '0',
@@ -147,7 +147,7 @@ export default function Home() {
           <h2 style={{ 
             textAlign: 'center', 
             fontSize: '2.2rem', 
-            fontWeight: '800', 
+            fontWeight: 800, 
             color: 'var(--dark-blue)', 
             marginBottom: '40px' 
           }}>
@@ -403,7 +403,7 @@ export default function Home() {
                 </a>
               </div>
               <div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--white)', margin: '0 0 5px 0' }}>Search Influence</h3>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--white)', margin: '0 0 5px 0' }}>Search Influence</h3>
                 <p style={{ fontSize: '0.9rem', color: 'var(--medium-gray)', margin: 0 }}>AI SEO Experts</p>
               </div>
             </div>
