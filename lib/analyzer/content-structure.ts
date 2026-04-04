@@ -73,20 +73,49 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
 
   const contentToCodeRatio = content.html.length > 0 ? text.length / content.html.length : 0;
 
-  const headingScore = clamp((h1Count === 1 ? 80 : h1Count === 0 ? 30 : 45) - headingJumps * 10 + Math.min(content.headings.length, 6) * 3);
+  // ── Heading quality: reward depth and variety, not just H1 presence ────────
+  const headingDepth = Math.min(content.headings.length, 12); // cap at 12 to avoid nav inflation
+  const headingScore = clamp(
+    (h1Count === 1 ? 75 : h1Count === 0 ? 25 : 40) -
+    headingJumps * 12 +
+    headingDepth * 2.5 +
+    (content.headings.filter(h => h.level >= 2 && h.level <= 3).length >= 4 ? 10 : 0)
+  );
+
   const wordScore = clamp(words >= 1200 ? 95 : words >= 900 ? 85 : words >= 600 ? 70 : words >= 400 ? 55 : words >= 250 ? 40 : 25);
-  const faqScore = clamp((questionHeadings >= 3 ? 55 : questionHeadings * 12) + (faqIndicators > 0 ? 30 : 0));
-  const internalLinkScore = clamp(internalLinks >= 12 ? 95 : internalLinks >= 8 ? 80 : internalLinks >= 5 ? 65 : internalLinks >= 2 ? 45 : 20);
+
+  // ── FAQ/Q&A: also reward educational list structure (numbered steps, definitions) ──
+  const listElements = (content.html.match(/<(ol|dl)\b/gi) || []).length;
+  const definitionLists = (content.html.match(/<dl\b/gi) || []).length;
+  const educationalStructureBonus = Math.min(20, listElements * 5 + definitionLists * 8);
+  const faqScore = clamp(
+    (questionHeadings >= 5 ? 70 : questionHeadings >= 3 ? 55 : questionHeadings * 12) +
+    (faqIndicators > 0 ? 25 : 0) +
+    educationalStructureBonus
+  );
+
+  // ── Internal links: use content-area links, cap to avoid nav inflation ─────
+  // Pages with huge nav menus can have 50+ internal links that don't reflect
+  // actual in-body contextual linking. Cap the benefit and reward moderate counts.
+  const contextualLinkEstimate = Math.min(internalLinks, 25); // cap nav inflation
+  const internalLinkScore = clamp(
+    contextualLinkEstimate >= 12 ? 90 :
+    contextualLinkEstimate >= 8 ? 78 :
+    contextualLinkEstimate >= 5 ? 65 :
+    contextualLinkEstimate >= 2 ? 45 : 20
+  );
+
   const ratioScore = clamp(contentToCodeRatio >= 0.2 ? 95 : contentToCodeRatio >= 0.15 ? 80 : contentToCodeRatio >= 0.1 ? 60 : contentToCodeRatio >= 0.06 ? 40 : 20);
 
+  // ── Composite: increase heading + word + readability weight, reduce link weight ──
   const score = clamp(
-    headingScore * 0.2 +
-    wordScore * 0.2 +
-    faqScore * 0.12 +
-    internalLinkScore * 0.16 +
-    altCoverage * 0.16 +
-    readabilityScore * 0.1 +
-    ratioScore * 0.06
+    headingScore * 0.22 +
+    wordScore * 0.22 +
+    faqScore * 0.14 +
+    internalLinkScore * 0.12 +
+    altCoverage * 0.14 +
+    readabilityScore * 0.12 +
+    ratioScore * 0.04
   );
 
   if (h1Count !== 1 || headingJumps > 0) {

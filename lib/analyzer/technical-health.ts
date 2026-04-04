@@ -79,21 +79,22 @@ export function analyzeTechnicalHealth(content: CrawledContent): FactorResult {
   );
 
   // ── Overall TH score ─────────────────────────────────────────────────────────
-  // Weights sum to 1.00. HTTPS and canonical/crawl signals are hygiene checks
-  // (lower weight). Performance signals (CWV, load time, HTML, a11y) drive
-  // meaningful differentiation.
+  // Shift weight toward performance signals (CWV, HTML, a11y, speed) and reduce
+  // hygiene-check weight so TH scores differentiate more across sites.
+  // Hygiene (HTTPS, robots, sitemap, canonical, viewport, responsive) = 0.35
+  // Performance (CWV, speed, HTML validation, accessibility) = 0.65
   const score = clamp(
-    (isHttps ? 100 : 20) * 0.10 +
-    (robotsPresent ? (allowsBots ? 95 : 60) : 40) * 0.13 +
-    (hasSitemapHint ? 90 : 45) * 0.09 +
-    (hasCanonical ? 95 : 40) * 0.10 +
-    (hasHreflang ? 75 : 60) * 0.03 +
-    (hasViewport ? 95 : 35) * 0.12 +
-    (hasResponsiveCss ? 85 : 40) * 0.08 +
-    adjustedCoreWebVitalsScore * 0.14 +
-    speedFromLoadTime * 0.07 +
-    htmlValidationScore * 0.07 +
-    normalizedAccessibilityScore * 0.07
+    (isHttps ? 100 : 20) * 0.06 +
+    (robotsPresent ? (allowsBots ? 95 : 60) : 40) * 0.07 +
+    (hasSitemapHint ? 90 : 45) * 0.05 +
+    (hasCanonical ? 95 : 40) * 0.06 +
+    (hasHreflang ? 75 : 60) * 0.02 +
+    (hasViewport ? 95 : 35) * 0.05 +
+    (hasResponsiveCss ? 85 : 40) * 0.04 +
+    adjustedCoreWebVitalsScore * 0.22 +
+    speedFromLoadTime * 0.13 +
+    htmlValidationScore * 0.16 +
+    normalizedAccessibilityScore * 0.14
   );
 
   // ── Findings & recommendations ───────────────────────────────────────────────
