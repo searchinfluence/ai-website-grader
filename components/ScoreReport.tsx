@@ -103,13 +103,16 @@ const reviewCtaButtonStyles: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: '8px',
-  border: '1px solid rgba(255,255,255,0.22)',
+  border: 'none',
   borderRadius: '999px',
-  background: 'rgba(255,255,255,0.12)',
-  color: 'var(--white)',
-  padding: '10px 16px',
+  background: 'linear-gradient(135deg, #df5926 0%, #c44a1e 100%)',
+  color: '#fff',
+  padding: '12px 22px',
   fontSize: '0.95rem',
-  fontWeight: 700
+  fontWeight: 700,
+  cursor: 'pointer',
+  boxShadow: '0 4px 12px rgba(223, 89, 38, 0.35)',
+  transition: 'all 0.2s ease'
 };
 
 export default function ScoreReport({ analysis }: ScoreReportProps) {
