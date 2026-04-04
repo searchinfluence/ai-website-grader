@@ -71,18 +71,29 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
 
   const readabilityScore = clamp(100 - Math.max(0, Math.abs(wordsPerSentence - 18) * 4));
 
-  const contentToCodeRatio = content.html.length > 0 ? text.length / content.html.length : 0;
+  // Use markdownContent length if available (more reliable than paragraph
+  // extraction for content-to-code ratio). Fall back to extracted text.
+  const contentLength = content.markdownContent?.length || text.length;
+  const contentToCodeRatio = content.html.length > 0 ? contentLength / content.html.length : 0;
 
   // ── Heading quality: reward depth and variety, not just H1 presence ────────
   const headingDepth = Math.min(content.headings.length, 12); // cap at 12 to avoid nav inflation
+  // Cap heading jump penalty at 3 jumps worth — sites with deep chapter
+  // structures (H2→H5) shouldn't be destroyed. The first 2 jumps matter
+  // most; after that it's likely intentional sub-structure, not broken HTML.
+  const cappedJumpPenalty = Math.min(headingJumps, 3) * 10;
   const headingScore = clamp(
     (h1Count === 1 ? 75 : h1Count === 0 ? 25 : 40) -
-    headingJumps * 12 +
+    cappedJumpPenalty +
     headingDepth * 2.5 +
     (content.headings.filter(h => h.level >= 2 && h.level <= 3).length >= 4 ? 10 : 0)
   );
 
-  const wordScore = clamp(words >= 1200 ? 95 : words >= 900 ? 85 : words >= 600 ? 70 : words >= 400 ? 55 : words >= 250 ? 40 : 25);
+  // Penalize word counts that come from nav-heavy pages with low content-to-code
+  // ratio. A 1400-word homepage with 4% content ratio is mostly nav text.
+  const wordCountPenalty = (contentToCodeRatio < 0.06 && words > 600) ? 0.65 : (contentToCodeRatio < 0.10 && words > 800) ? 0.85 : 1.0;
+  const adjustedWords = Math.round(words * wordCountPenalty);
+  const wordScore = clamp(adjustedWords >= 1200 ? 95 : adjustedWords >= 900 ? 85 : adjustedWords >= 600 ? 70 : adjustedWords >= 400 ? 55 : adjustedWords >= 250 ? 40 : 25);
 
   // ── FAQ/Q&A: also reward educational list structure (numbered steps, definitions) ──
   const listElements = (content.html.match(/<(ol|dl)\b/gi) || []).length;
