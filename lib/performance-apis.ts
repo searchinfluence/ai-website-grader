@@ -21,17 +21,22 @@ export async function validateHTML(url: string, html?: string): Promise<{
   }>;
 }> {
   try {
-    // Use a simpler approach with the W3C validator
+    // W3C Nu HTML Checker
     const validatorUrl = 'https://validator.w3.org/nu/';
     
-    // Add timeout to prevent hanging requests
+    // 25s timeout — URL-based validation can take 10-15s for large pages
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
     
     let response: Response;
     
-    if (html) {
-      // Validate HTML content directly using a simpler approach
+    // Prefer URL-based validation (GET) — lets the W3C validator fetch the page
+    // itself, avoiding large HTML POST bodies that frequently time out on Vercel.
+    // Only fall back to HTML POST for manual text input (no URL available).
+    const isManualInput = !url || url === 'manual-input';
+    
+    if (isManualInput && html) {
+      // Manual text input: POST the HTML content directly
       const params = new URLSearchParams({
         out: 'json'
       });
@@ -46,7 +51,7 @@ export async function validateHTML(url: string, html?: string): Promise<{
         signal: controller.signal,
       });
     } else {
-      // Validate by URL
+      // URL-based validation: let the W3C validator fetch the page
       const params = new URLSearchParams({
         doc: url,
         out: 'json'
