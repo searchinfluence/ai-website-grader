@@ -90,8 +90,12 @@ export function analyzeContentStructure(content: CrawledContent): FactorResult {
   );
 
   // Penalize word counts that come from nav-heavy pages with low content-to-code
-  // ratio. A 1400-word homepage with 4% content ratio is mostly nav text.
-  const wordCountPenalty = (contentToCodeRatio < 0.06 && words > 600) ? 0.65 : (contentToCodeRatio < 0.10 && words > 800) ? 0.85 : 1.0;
+  // ratio — but only when extractedWordCount confirms the content is actually thin.
+  // A page with 3600 words and low ratio has real content + heavy HTML (Ahrefs).
+  // A page with 1400 words and low ratio is probably mostly nav (LSU homepage).
+  const extractionRatio = extractedWordCount > 0 ? extractedWordCount / Math.max(words, 1) : 1;
+  const isNavInflated = contentToCodeRatio < 0.07 && extractionRatio < 0.5 && words > 600;
+  const wordCountPenalty = isNavInflated ? 0.65 : 1.0;
   const adjustedWords = Math.round(words * wordCountPenalty);
   const wordScore = clamp(adjustedWords >= 1200 ? 95 : adjustedWords >= 900 ? 85 : adjustedWords >= 600 ? 70 : adjustedWords >= 400 ? 55 : adjustedWords >= 250 ? 40 : 25);
 
