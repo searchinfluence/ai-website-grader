@@ -782,8 +782,8 @@ textarea::placeholder {
   color: var(--orange-light);
 }
 
-/* FAQ Accordion Styles */
-details[open] summary span:last-child {
+/* FAQ Accordion Styles — scoped to .faq-section to avoid leaking into factor cards */
+.faq-section details[open] summary span:last-child {
   transform: translateY(-50%) rotate(180deg);
 }
 
