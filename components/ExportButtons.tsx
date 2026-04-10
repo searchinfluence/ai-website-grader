@@ -5,7 +5,7 @@ import { FileDown, FileText, Loader2, Printer, Share2 } from 'lucide-react';
 import { WebsiteAnalysis } from '@/types';
 import { createPrintReportUrl, generatePDFReport } from '@/lib/exporters';
 import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
-import EmailGateModal, { EmailGateValues } from './EmailGateModal';
+import HubSpotFormModal, { HubSpotSubmittedValues } from './HubSpotFormModal';
 
 interface ExportButtonsProps {
   analysis: WebsiteAnalysis;
@@ -14,7 +14,7 @@ interface ExportButtonsProps {
 
 type ExportAction = 'pdf' | 'print' | 'share' | 'markdown';
 type SavedLead = {
-  email: string;
+  email?: string;
   name?: string;
   company?: string;
 };
@@ -55,8 +55,8 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
     try {
       const raw = localStorage.getItem(LEAD_STORAGE_KEY);
       if (!raw) return;
-      const parsed = JSON.parse(raw) as Partial<EmailGateValues>;
-      if (parsed?.email) {
+      const parsed = JSON.parse(raw) as Partial<HubSpotSubmittedValues>;
+      if (parsed?.email || parsed?.name) {
         setSavedLead({
           name: parsed.name,
           email: parsed.email,
@@ -189,9 +189,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
     setIsGateOpen(true);
   };
 
-  const handleGateSubmit = async (values: EmailGateValues) => {
-    // For print action, pre-open the window NOW (in user gesture context)
-    // before the async fetch, so popup blockers don't block it
+  const handleGateSubmit = async (values: HubSpotSubmittedValues) => {
     let preOpenedWindow: Window | null = null;
     const actionToRun = pendingAction;
 
@@ -199,45 +197,34 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
     if (actionToRun === 'print' || actionToRun === 'pdf') {
       queuedPrintUrl = createPrintReportUrl(analysis, actionToRun, actionToRun === 'pdf');
       preOpenedWindow = window.open('', '_blank');
-      if (preOpenedWindow) {
-        preOpenedWindow.document.write(`<html><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><p>Preparing ${actionToRun === 'pdf' ? 'PDF export' : 'print view'}...</p></body></html>`);
-      }
-    }
-
-    const response = await fetch('/api/leads', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(values)
-    });
-
-    const data = await response.json().catch(() => null);
-    if (!response.ok) {
-      // Close pre-opened window on error
-      preOpenedWindow?.close();
-      throw new Error(data?.error || 'Unable to save your details right now.');
     }
 
     localStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(values));
-    setSavedLead(values);
+    setSavedLead(values.email ? {
+      email: values.email,
+      name: values.name,
+      company: values.company
+    } : {
+      name: values.name,
+      company: values.company
+    });
 
     setPendingAction(null);
     setIsGateOpen(false);
 
     if (actionToRun) {
-      if ((actionToRun === 'print' || actionToRun === 'pdf') && preOpenedWindow) {
+      if (actionToRun === 'print' || actionToRun === 'pdf') {
         if (actionToRun === 'print') {
           trackExport('print');
         } else {
           trackExport('pdf');
         }
-        preOpenedWindow.location.href = queuedPrintUrl;
-      } else if (actionToRun === 'print') {
-        // Fallback if popup was still blocked
-        printReport();
-      } else if (actionToRun === 'pdf') {
-        await exportPdf();
+
+        if (preOpenedWindow) {
+          preOpenedWindow.location.href = queuedPrintUrl;
+        } else {
+          window.location.href = queuedPrintUrl;
+        }
       } else {
         await runAction(actionToRun);
       }
@@ -395,6 +382,8 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       <p style={{ margin: '12px 0 0', color: 'var(--secondary-content)', fontSize: '0.86rem' }}>
         {savedLead?.email
           ? `Exports unlocked for ${savedLead.email}.`
+          : savedLead?.name
+            ? `Exports unlocked for ${savedLead.name}.`
           : 'PDF, markdown, share, and print actions will prompt once for contact details, then remain unlocked on this device.'}
       </p>
 
@@ -456,19 +445,16 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
         </div>
       )}
 
-      <EmailGateModal
+      <HubSpotFormModal
         isOpen={isGateOpen}
-        actionLabel={actionLabel}
-        initialValues={savedLead ? {
-          name: savedLead.name,
-          email: savedLead.email,
-          company: savedLead.company
-        } : undefined}
+        title="Get your full report"
+        description={`Add your details to unlock ${actionLabel} and get practical next steps.`}
+        formId={process.env.NEXT_PUBLIC_HUBSPOT_EXPORT_FORM_ID}
         onClose={() => {
           setIsGateOpen(false);
           setPendingAction(null);
         }}
-        onSubmit={handleGateSubmit}
+        onSubmitted={handleGateSubmit}
       />
     </>
   );

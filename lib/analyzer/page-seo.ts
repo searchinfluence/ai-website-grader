@@ -6,17 +6,18 @@ import { clamp, toStatus } from './shared';
 export function analyzePageSeo(content: CrawledContent): FactorResult {
   const findings: string[] = [];
   const recommendations: RecommendationItem[] = [];
-  const hostLabel = content.url === 'manual-input' ? 'this content input' : new URL(content.url).hostname;
+  const isManualInput = content.url === 'manual-input';
+  const hostLabel = isManualInput ? 'this content input' : new URL(content.url).hostname;
 
   const titleLength = content.title.trim().length;
   const descriptionLength = (content.metaDescription || '').trim().length;
   const h1Count = content.headings.filter((heading) => heading.level === 1).length;
 
-  const parsedUrl = new URL(content.url);
-  const path = parsedUrl.pathname;
-  const pathDepth = path.split('/').filter(Boolean).length;
-  const hasQuery = Boolean(parsedUrl.search);
-  const pathIsClean = /^\/[a-z0-9\-\/]*$/.test(path);
+  const parsedUrl = isManualInput ? null : new URL(content.url);
+  const path = parsedUrl?.pathname || '';
+  const pathDepth = isManualInput ? 0 : path.split('/').filter(Boolean).length;
+  const hasQuery = Boolean(parsedUrl?.search);
+  const pathIsClean = isManualInput ? true : /^\/[a-z0-9\-\/]*$/.test(path);
 
   const totalImages = content.images.length;
   const webpImages = content.images.filter((image) => /\.webp($|\?)/i.test(image.src)).length;
@@ -26,7 +27,9 @@ export function analyzePageSeo(content: CrawledContent): FactorResult {
   const titleScore = clamp(titleLength >= 30 && titleLength <= 60 ? 100 : titleLength > 0 ? 60 : 10);
   const descriptionScore = clamp(descriptionLength >= 120 && descriptionLength <= 160 ? 100 : descriptionLength > 0 ? 60 : 10);
   const h1Score = clamp(h1Count === 1 ? 100 : h1Count === 0 ? 20 : 45);
-  const urlScore = clamp((pathIsClean ? 70 : 40) + (pathDepth <= 3 ? 20 : 10) + (hasQuery ? 0 : 10));
+  const urlScore = isManualInput
+    ? 80
+    : clamp((pathIsClean ? 70 : 40) + (pathDepth <= 3 ? 20 : 10) + (hasQuery ? 0 : 10));
   const imageScore = clamp(totalImages === 0 ? 80 : (100 - (imagesMissingAlt / totalImages) * 100) * 0.7 + optimizedImageRatio * 30);
 
   const score = clamp(
@@ -67,7 +70,7 @@ export function analyzePageSeo(content: CrawledContent): FactorResult {
     });
   }
 
-  if (!pathIsClean || pathDepth > 3 || hasQuery) {
+  if (!isManualInput && (!pathIsClean || pathDepth > 3 || hasQuery)) {
     findings.push(`URL path quality issue detected (path depth ${pathDepth}, query params ${hasQuery ? 'present' : 'absent'}).`);
     recommendations.push({
       text: `Simplify the ${hostLabel} URL structure: current depth is ${pathDepth} levels${hasQuery ? ', has query parameters' : ''}${!pathIsClean ? ', contains non-clean characters' : ''}.`,

@@ -21,23 +21,20 @@ export default function ResourceCard({
   return (
     <div
       style={{
-        background: 'rgba(255, 255, 255, 0.05)',
+        background: 'rgba(255, 255, 255, 0.04)',
         border: '1px solid rgba(255, 255, 255, 0.1)',
         borderRadius: '12px',
         overflow: 'hidden',
         transition: 'all 0.3s ease',
-        backdropFilter: 'blur(10px)',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-5px)';
-        e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.2)';
+        e.currentTarget.style.transform = 'translateY(-2px)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = 'none';
       }}
     >
       {/* Image Area */}
@@ -123,27 +120,25 @@ export default function ResourceCard({
             style={{
               width: '100%',
               padding: '14px 24px',
-              background: 'linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%)',
+              background: 'var(--orange-accent)',
               color: 'var(--white)',
               border: 'none',
               borderRadius: '8px',
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'pointer',
-              transition: 'all 0.3s ease',
+              transition: 'background 0.2s ease, transform 0.2s ease',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
               fontFamily: 'var(--font-stack)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(230, 126, 34, 0.4)';
-              e.currentTarget.style.background = 'linear-gradient(135deg, var(--orange-light) 0%, var(--orange-accent) 100%)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.background = '#c95221';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-              e.currentTarget.style.background = 'linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%)';
+              e.currentTarget.style.background = 'var(--orange-accent)';
             }}
           >
             {buttonText}

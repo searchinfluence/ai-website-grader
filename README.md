@@ -4,7 +4,7 @@ A web application that analyzes websites for readiness in AI-powered search engi
 
 **Live:** [ai-grader.searchinfluence.com](https://ai-grader.searchinfluence.com) / [ai-website-grader-si.vercel.app](https://ai-website-grader-si.vercel.app/)
 
-**Powered by Search Influence** — AI-Driven SEO Experts for Higher Education and Healthcare.
+**Powered by Search Influence** -- AI SEO Experts for Higher Education and Healthcare.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.4.8-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
@@ -17,10 +17,10 @@ V3 uses a single, clean 4-factor scoring engine (replaced the old 7-factor and 6
 
 | Factor | Weight | What It Measures |
 |--------|--------|------------------|
-| **Technical Health** | 45% | HTTPS, Core Web Vitals, crawlability, canonical/hreflang, viewport, responsiveness, speed |
-| **Structured Data** | 22% | JSON-LD presence, schema quality, Open Graph, social metadata, rich snippet eligibility |
-| **Page SEO** | 18% | Title/meta quality, H1 usage, URL quality, image optimization |
-| **Content Structure** | 15% | Heading hierarchy, content depth, FAQ/Q&A structure, internal linking, alt text, readability |
+| **Content Structure** | 35% | Heading hierarchy, content depth, FAQ/Q&A structure, internal linking, alt text, readability |
+| **Structured Data** | 25% | JSON-LD presence, schema quality, Open Graph, social metadata, rich snippet eligibility |
+| **Technical Health** | 20% | HTTPS, Core Web Vitals, crawlability, canonical/hreflang, viewport, responsiveness, speed |
+| **Page SEO** | 20% | Title/meta quality, H1 usage, URL quality, image optimization |
 
 Weights are defined in a single config: `lib/scoring/config.ts`.
 
@@ -38,13 +38,15 @@ Scores are calibrated realistically. Even professional SEO agencies typically sc
 
 - **4-factor scoring engine** with shared config (single source of truth for UI + backend)
 - **Specific, data-backed recommendations** — tied to actual findings, with priority levels and effort estimates
-- **Email gate** — captures leads before export (name, email, company → Supabase + HubSpot)
+- **HubSpot-gated exports and CTA flow** -- one embedded HubSpot form powers export gating and CTA capture
 - **Share links** — generates shareable report URLs with 30-day expiry
 - **Print report** — clean print-friendly layout with SI branding
 - **PDF export** — uses print-report page + browser print dialog (no jsPDF)
 - **Markdown export** — gated behind email capture
 - **Supabase integration** — logs all analyses, leads, and shared reports
-- **HubSpot integration** — pushes captured leads to HubSpot CRM
+- **HubSpot integration** -- embedded forms plus optional lead push to HubSpot CRM
+- **Analyze Text mode** -- supports pasted content without requiring a live URL
+- **Google Tag Manager** -- GTM snippet and noscript container included through the app layout
 - **Free API integration** — Google PageSpeed Insights + W3C HTML Validator (no API key required)
 - **Real Core Web Vitals** — actual LCP, FID, CLS from Google
 - **SI branding** — branded header, CTAs, print layout, color palette
@@ -87,8 +89,8 @@ ai-website-grader-si/
 │   ├── ScoreReport.tsx           # Main report display
 │   ├── ScoreCard.tsx             # Factor score cards
 │   ├── ExportButtons.tsx         # Export actions (PDF, MD, print, share)
-│   ├── EmailGateModal.tsx        # Lead capture modal
-│   ├── LeadCaptureModal.tsx      # Alternate lead capture
+│   ├── HubSpotFormModal.tsx      # Shared HubSpot modal for exports and CTA
+│   ├── GoogleTagManager.tsx      # GTM script + noscript helpers
 │   └── report/
 │       ├── FactorCard.tsx        # Individual factor display
 │       └── FactorDetails.tsx     # Factor detail accordion
@@ -131,6 +133,7 @@ ai-website-grader-si/
 npm install
 npm run dev        # http://localhost:3000
 npm run build      # Production build
+tsc --noEmit       # Type check
 ```
 
 ### Deployment
@@ -147,7 +150,16 @@ Set in `.env.local` (gitignored):
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- HubSpot credentials (in `lib/hubspot.ts`)
+- `NEXT_PUBLIC_HUBSPOT_PORTAL_ID`
+- `NEXT_PUBLIC_HUBSPOT_EXPORT_FORM_ID`
+- `NEXT_PUBLIC_HUBSPOT_CTA_FORM_ID`
+- `NEXT_PUBLIC_GTM_ID`
+- `HUBSPOT_ACCESS_TOKEN`
+- `CORS_ALLOWED_ORIGINS`
+
+Notes:
+- `/app/api/analyze/route.ts` also accepts trusted Vercel preview origins ending in `.vercel.app` or `.vercel.dev`
+- HubSpot CRM push is non-blocking if `HUBSPOT_ACCESS_TOKEN` is missing
 
 ---
 
@@ -170,24 +182,28 @@ node scripts/validate-score-calibration.js
 
 Test sites: diviner.agency, grossmanlaw.net, highereducationseo.com, wfrancklemd.com, freeman.tulane.edu, searchinfluence.com, upcea.edu, oho.com, gofishdigital.com
 
+Additional QA docs:
+- `docs/EXECUTED-TEST-PLAN-2026-04-05.md`
+- `docs/HUMAN-QA-PLAN-2026-04-05.md`
+
 ---
 
 ## History
 
 - **V1** (2024): Initial grader with basic scoring
 - **V2** (Nov 2025): 7-factor weighted scoring, W3C validation, PageSpeed integration, export options
-- **V3** (Mar 2026): Complete rewrite — 4-factor scoring engine, Supabase backend, email gate, share links, HubSpot integration, SI branding overhaul, UI review polish (11 items), mobile responsive
+- **V3** (Mar-Apr 2026): Complete rewrite -- 4-factor scoring engine, Supabase backend, HubSpot modal integration, share links, SI branding overhaul, GTM, text-analysis support, preview deployment fixes, mobile responsive
 
 ### V3 Changelog
 - Replaced 7-factor + 6-factor hybrid scoring with clean 4-factor model
 - Split monolithic `analyzer.ts` (3500+ LOC) into domain-specific modules
 - Added Supabase for analysis logging, leads, and shared reports
 - Added HubSpot lead push
-- Email gate on all exports
+- HubSpot modal on gated exports and CTA flow
 - Share links with 30-day expiry
 - Print report with SI branding
 - PDF export via print dialog (removed jsPDF)
-- Security hardening: SSRF protection, CORS lockdown, removed debug endpoint
+- Security hardening: SSRF protection, trusted-origin checks for preview deployments, removed debug endpoint
 - UI review: 11 issues fixed (expanded factors, color palette, priority improvements section, next steps section, branded header, sub-detail scores, export button placement, heading hierarchy, gradient alignment, accordion polish)
 
 ---

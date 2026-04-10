@@ -210,6 +210,8 @@ async function analyzePerformanceWithCaching(url: string, html: string): Promise
 
 async function parseHtmlContent(html: string, url: string): Promise<CrawledContent> {
   const $ = cheerio.load(html) as cheerio.CheerioAPI;
+  const isManualInput = url === 'manual-input';
+  const urlHostname = !isManualInput ? new URL(url).hostname : '';
   
   // Extract title (use 'head > title' to avoid SVG <title> elements)
   const title = $('head > title').first().text().trim() || $('h1').first().text().trim() || 'Untitled';
@@ -251,7 +253,7 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
   $('a[href]').each((_, element) => {
     const href = $(element).attr('href') || '';
     const text = $(element).text().trim();
-    const internal = href.startsWith('/') || href.includes(new URL(url).hostname);
+    const internal = href.startsWith('/') || (!isManualInput && href.includes(urlHostname));
     if (href && text) links.push({ href, text, internal });
   });
   

@@ -15,6 +15,17 @@ export function createPrintReportUrl(
 
 export function generateMarkdownReport(analysis: WebsiteAnalysis): string {
   const date = new Date(analysis.timestamp).toLocaleDateString();
+  const crawledContent = analysis.crawledContent;
+  const performanceMetrics = crawledContent?.aiAnalysisData?.performanceMetrics;
+  const contentImprovements = (analysis.contentImprovements && analysis.contentImprovements.length > 0)
+    ? analysis.contentImprovements
+    : analysis.recommendations.slice(0, 3).map((recommendation, index) => ({
+      section: `${recommendation.category} Improvement ${index + 1}`,
+      current: `Gap identified in ${recommendation.category.toLowerCase()}: ${recommendation.text}`,
+      improved: `Implement this action first: ${recommendation.text}`,
+      reasoning: 'Addressing this issue improves crawlability, relevance, and AI answer quality for this page.',
+      priority: recommendation.priority
+    }));
 
   const factorRows = SCORING_FACTORS.map((factor) => {
     const result = analysis.factors[factor.key];
@@ -38,7 +49,65 @@ export function generateMarkdownReport(analysis: WebsiteAnalysis): string {
     .map((rec) => `- **${rec.priority.toUpperCase()}** (${rec.category}): ${rec.text}${rec.timeToImplement ? ` (${rec.timeToImplement})` : ''}`)
     .join('\n');
 
-  return `# AI Website Grader Report\n\n**Website:** ${analysis.url}  \n**Title:** ${analysis.title}  \n**Generated:** ${date}  \n**Overall Score:** ${analysis.overallScore}%\n\n## 4-Factor Score Breakdown\n\n| Factor | Score | Status | Weight |\n|---|---:|---|---:|\n${factorRows}\n\n## Priority Recommendations\n${priorityRecommendations || '- No recommendations generated.'}\n\n${factorSections}\n\n---\nThis report evaluates one page URL (not the entire site) using the v3 4-factor model.`;
+  const performanceSection = performanceMetrics ? [
+    '## Performance Analysis',
+    performanceMetrics.coreWebVitals
+      ? `- Core Web Vitals score: ${performanceMetrics.coreWebVitals.score}/100
+- LCP: ${performanceMetrics.coreWebVitals.lcp}ms
+- FID: ${performanceMetrics.coreWebVitals.fid}ms
+- CLS: ${performanceMetrics.coreWebVitals.cls}`
+      : null,
+    performanceMetrics.htmlValidation
+      ? `- HTML validation: ${performanceMetrics.htmlValidation.isValid ? 'Valid' : 'Invalid'}
+- Errors: ${performanceMetrics.htmlValidation.errors}
+- Warnings: ${performanceMetrics.htmlValidation.warnings}`
+      : null,
+    typeof performanceMetrics.accessibilityScore === 'number'
+      ? `- Accessibility score: ${performanceMetrics.accessibilityScore}/100`
+      : null,
+    typeof performanceMetrics.performanceScore === 'number'
+      ? `- Combined performance score: ${performanceMetrics.performanceScore}/100`
+      : null
+  ].filter(Boolean).join('\n\n') : '';
+
+  const contentImprovementsSection = contentImprovements.length > 0
+    ? `## Priority Content Improvements
+
+${contentImprovements.map((item, index) => `### ${index + 1}. ${item.section}
+- Priority: **${item.priority.toUpperCase()}**
+- Current issue: ${item.current}
+- Recommended change: ${item.improved}
+- Why it matters: ${item.reasoning}`).join('\n\n')}`
+    : '';
+
+  const pageMarkdownSection = crawledContent?.markdownContent
+    ? `## Page Content Structure (Markdown)
+
+\`\`\`md
+${crawledContent.markdownContent.trim()}
+\`\`\``
+    : '';
+
+  return `# AI Website Grader Report
+
+**Website:** ${analysis.url}  
+**Title:** ${analysis.title}  
+**Generated:** ${date}  
+**Overall Score:** ${analysis.overallScore}%
+
+## 4-Factor Score Breakdown
+
+| Factor | Score | Status | Weight |
+|---|---:|---|---:|
+${factorRows}
+
+## Priority Recommendations
+${priorityRecommendations || '- No recommendations generated.'}
+
+${factorSections}
+
+${performanceSection ? `${performanceSection}\n\n` : ''}${contentImprovementsSection ? `${contentImprovementsSection}\n\n` : ''}${pageMarkdownSection ? `${pageMarkdownSection}\n\n` : ''}---
+This report evaluates one page URL (not the entire site) using the v3 4-factor model.`;
 }
 
 export function downloadMarkdown(content: string, filename: string): void {
