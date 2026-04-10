@@ -4,7 +4,7 @@ import { CSSProperties, useState } from 'react';
 import { ScoringFactorKey, WebsiteAnalysis } from '@/types';
 import { AlertCircle, AlertTriangle, ArrowRight, Database, FileText, Info, Lightbulb, Search, Settings, type LucideIcon } from 'lucide-react';
 import ExportButtons from './ExportButtons';
-import LeadCaptureModal from './LeadCaptureModal';
+import HubSpotFormModal from './HubSpotFormModal';
 import { generateMarkdownReport, downloadMarkdown } from '@/lib/exporters';
 import { useGoogleTagManager } from '@/hooks/useGoogleTagManager';
 import { SCORING_FACTORS } from '@/lib/scoring/config';
@@ -88,7 +88,7 @@ const reviewCtaContent = {
 const reviewCtaPanelStyles: CSSProperties = {
   padding: '18px',
   borderRadius: '14px',
-  border: '1px solid rgba(1, 74, 97, 0.24)',
+  border: '1px solid rgba(1, 74, 97, 0.2)',
   background: '#012c3a'
 };
 
@@ -103,14 +103,14 @@ const reviewCtaButtonStyles: CSSProperties = {
   alignItems: 'center',
   gap: '8px',
   border: 'none',
-  borderRadius: '999px',
+  borderRadius: '8px',
   background: '#df5926',
   color: '#fff',
   padding: '12px 22px',
   fontSize: '0.95rem',
   fontWeight: 800,
   cursor: 'pointer',
-  transition: 'background 0.2s ease'
+  transition: 'background 0.2s ease, transform 0.2s ease'
 };
 
 export default function ScoreReport({ analysis }: ScoreReportProps) {
@@ -218,7 +218,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         <div className="results-header">
           <h1 style={{ margin: 0, textAlign: 'center', fontSize: '2.6rem', fontWeight: 800 }}>AI Website Grader Report</h1>
           <p style={{ margin: '8px 0 0', textAlign: 'center', fontSize: '1.06rem', opacity: 0.95, fontWeight: 300 }}>
-            Powered by Search Influence — AI SEO Experts
+            Powered by Search Influence -- AI SEO Experts
           </p>
           <p style={{ margin: '10px 0 0', textAlign: 'center' }}>Analysis completed on {new Date(analysis.timestamp).toLocaleDateString()}</p>
         </div>
@@ -228,7 +228,7 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
             border: '1px solid var(--border-gray)',
             borderRadius: '12px',
             padding: '22px',
-            background: 'var(--background-gray)'
+            background: '#f4f4f4'
           }}>
             <div className="report-score-header-grid">
               <div>
@@ -875,20 +875,13 @@ export default function ScoreReport({ analysis }: ScoreReportProps) {
         </div>
       </div>
 
-      <LeadCaptureModal
+      <HubSpotFormModal
         isOpen={showLeadModal && !leadSubmitted}
-        actionLabel="AI Visibility Review"
+        title="Get your full report"
+        description="Share a few details so we can follow up with practical next steps based on this analysis."
+        formId={process.env.NEXT_PUBLIC_HUBSPOT_CTA_FORM_ID}
         onClose={() => setShowLeadModal(false)}
-        onSubmit={async (values) => {
-          const res = await fetch('/api/leads', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...values, source: 'visibility-review-cta' })
-          });
-          if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            throw new Error(data.error || 'Something went wrong.');
-          }
+        onSubmitted={async (values) => {
           localStorage.setItem('ai-grader-lead', JSON.stringify(values));
           setLeadSubmitted(true);
           setShowLeadModal(false);

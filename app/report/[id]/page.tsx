@@ -98,7 +98,7 @@ export default function SharedReportPage() {
         background: 'var(--lighter-blue)',
         padding: '50px 0',
         textAlign: 'center',
-        borderTop: '3px solid var(--orange-accent)',
+        borderTop: '2px solid var(--orange-accent)',
       }}>
         <div className="container">
           <h2 style={{
@@ -124,13 +124,13 @@ export default function SharedReportPage() {
             style={{
               display: 'inline-block',
               padding: '14px 36px',
-              background: 'linear-gradient(135deg, var(--orange-accent) 0%, var(--orange-dark) 100%)',
+              background: 'var(--orange-accent)',
               color: 'var(--white)',
               borderRadius: '8px',
               fontSize: '1.1rem',
               fontWeight: '600',
               textDecoration: 'none',
-              transition: 'all 0.3s ease',
+              transition: 'background 0.2s ease, transform 0.2s ease',
             }}
           >
             Grade Your Website Free

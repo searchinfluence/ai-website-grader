@@ -32,6 +32,7 @@ export default function ResourcesSection() {
       style={{
         padding: '60px 0',
         background: 'var(--lighter-blue)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
       }}
     >
       <div className="container">

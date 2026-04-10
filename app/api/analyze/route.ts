@@ -28,6 +28,10 @@ const configuredOrigins = process.env.CORS_ALLOWED_ORIGINS
   .filter(Boolean) ?? [];
 
 const allowedOrigins = new Set([...DEFAULT_ALLOWED_ORIGINS, ...configuredOrigins]);
+const TRUSTED_VERCEL_SUFFIXES = [
+  '.vercel.app',
+  '.vercel.dev'
+];
 
 function getClientIp(request: NextRequest): string {
   const forwardedFor = request.headers.get('x-forwarded-for');
@@ -39,7 +43,17 @@ function getClientIp(request: NextRequest): string {
 
 function isTrustedOrigin(origin: string | null): boolean {
   if (!origin) return true;
-  return allowedOrigins.has(origin);
+
+  if (allowedOrigins.has(origin)) {
+    return true;
+  }
+
+  try {
+    const hostname = new URL(origin).hostname;
+    return TRUSTED_VERCEL_SUFFIXES.some((suffix) => hostname.endsWith(suffix));
+  } catch {
+    return false;
+  }
 }
 
 function buildCorsHeaders(origin: string | null): HeadersInit {

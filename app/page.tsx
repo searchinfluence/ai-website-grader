@@ -52,9 +52,9 @@ export default function Home() {
                 4 weighted factors with specific, prioritized recommendations you
                 can act on today.
               </p>
-              <p style={{ marginTop: '20px', fontSize: '1rem', color: 'var(--orange-accent)' }}>
-                <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--orange-accent)', textDecoration: 'underline' }}>
-                  Built by Search Influence
+              <p style={{ marginTop: '20px', fontSize: '1rem', color: 'var(--si-header-accent)' }}>
+                <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--si-header-accent)', textDecoration: 'underline' }}>
+                  Powered by Search Influence - AI SEO Experts
                 </a>
               </p>
             </div>
@@ -94,7 +94,7 @@ export default function Home() {
       {/* About Section Header */}
       <div style={{
         background: 'var(--lighter-blue)',
-        paddingTop: '60px',
+        paddingTop: '56px',
         paddingBottom: '20px'
       }}>
         <div className="container">
@@ -140,8 +140,8 @@ export default function Home() {
       {/* FAQ Section */}
       <div className="faq-section" style={{ 
         background: 'var(--background-gray)', 
-        padding: '40px 0',
-        marginTop: '40px'
+        padding: '48px 0',
+        marginTop: '0'
       }}>
         <div className="container">
           <h2 style={{ 

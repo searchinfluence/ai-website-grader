@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
+import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import GoogleTagManager, { GoogleTagManagerNoScript } from "@/components/GoogleTagManager";
 import GoogleSearchConsole from "@/components/GoogleSearchConsole";
+
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "800"],
+  display: "swap",
+  variable: "--font-open-sans",
+});
 
 export const metadata: Metadata = {
   title: "AI Website Grader - Search Influence",
@@ -40,11 +48,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
+      <head suppressHydrationWarning>
         {/* Google Tag Manager */}
         <GoogleTagManager />
       </head>
-      <body className="antialiased">
+      <body className={`${openSans.variable} antialiased`}>
         {/* GTM noscript fallback */}
         <GoogleTagManagerNoScript />
 
