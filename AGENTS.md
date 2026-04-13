@@ -40,7 +40,9 @@ Next.js 15 App Router + React 19 + TypeScript + Tailwind CSS. Deployed on Vercel
 
 **Single source of truth for weights:** `lib/scoring/config.ts`
 
-Score labels: 65-100 excellent, 55-64 good, 45-54 average, 0-44 needs improvement.
+Factor score labels (`lib/analyzer/shared.ts` `toStatus`): 85+ excellent, 70-84 good, 50-69 needs-improvement, 30-49 poor, 0-29 critical.
+
+Overall score labels (`components/ScoreReport.tsx` `getOverallScoreStatus`): 80+ Excellent, 70-79 Good, 50-69 Needs Improvement, 0-49 Poor.
 
 Recommendations are generated per-factor in each analyzer, then prioritized in `lib/analyzer/recommendations.ts`.
 
