@@ -90,16 +90,15 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
   };
 
   const printReport = () => {
-    trackExport('print');
     const url = createPrintReportUrl(analysis, 'print');
+    trackExport('print');
 
     // Try opening in a new tab (direct URL — avoids most popup blockers)
     const printWindow = window.open(url, '_blank');
     if (!printWindow) {
-      // Fallback: navigate in the same window
-      // Store analysis for restoration when user comes back
+      // Fallback: give GTM one tick to process the event before navigating away
       sessionStorage.setItem('ai-grader-analysis-backup', JSON.stringify(analysis));
-      window.location.href = url;
+      setTimeout(() => { window.location.href = url; }, 100);
     }
   };
 
@@ -124,8 +123,8 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
       }
 
       const shareUrl = data.shareUrl as string;
-      await copyText(shareUrl);
       trackExport('share');
+      await copyText(shareUrl);
       setLastShareUrl(shareUrl);
       setShareToast({ tone: 'success', message: 'Share link copied to clipboard.' });
       setTimeout(() => {
@@ -167,6 +166,7 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
     }
 
     if (action === 'markdown') {
+      trackExport('markdown');
       onExportMarkdown();
       return;
     }
