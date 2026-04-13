@@ -33,14 +33,16 @@ Next.js 15 App Router + React 19 + TypeScript + Tailwind CSS. Deployed on Vercel
 
 | Factor | Weight | Analyzer File |
 |--------|--------|---------------|
-| Content Structure | 30% | `lib/analyzer/content-structure.ts` |
-| Technical Health | 30% | `lib/analyzer/technical-health.ts` |
-| Structured Data | 20% | `lib/analyzer/structured-data.ts` |
+| Content Structure | 35% | `lib/analyzer/content-structure.ts` |
+| Structured Data | 25% | `lib/analyzer/structured-data.ts` |
+| Technical Health | 20% | `lib/analyzer/technical-health.ts` |
 | Page SEO | 20% | `lib/analyzer/page-seo.ts` |
 
 **Single source of truth for weights:** `lib/scoring/config.ts`
 
-Score labels: 65-100 excellent, 55-64 good, 45-54 average, 0-44 needs improvement.
+Factor score labels (`lib/analyzer/shared.ts` `toStatus`): 85+ excellent, 70-84 good, 50-69 needs-improvement, 30-49 poor, 0-29 critical.
+
+Overall score labels (`components/ScoreReport.tsx` `getOverallScoreStatus`): 80+ Excellent, 70-79 Good, 50-69 Needs Improvement, 0-49 Poor.
 
 Recommendations are generated per-factor in each analyzer, then prioritized in `lib/analyzer/recommendations.ts`.
 
@@ -68,6 +70,10 @@ Recommendations are generated per-factor in each analyzer, then prioritized in `
 
 - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` -- Supabase public
 - `SUPABASE_SERVICE_ROLE_KEY` -- Server-side admin key
+- `NEXT_PUBLIC_HUBSPOT_PORTAL_ID` -- HubSpot embed portal ID
+- `NEXT_PUBLIC_HUBSPOT_EXPORT_FORM_ID` -- HubSpot form for export gating
+- `NEXT_PUBLIC_HUBSPOT_CTA_FORM_ID` -- HubSpot form for CTA modal
+- `NEXT_PUBLIC_GTM_ID` -- Google Tag Manager container ID
 - `HUBSPOT_ACCESS_TOKEN` -- Lead push (optional, non-blocking if missing)
 - `CORS_ALLOWED_ORIGINS` -- Additional allowed origins (comma-separated)
 
