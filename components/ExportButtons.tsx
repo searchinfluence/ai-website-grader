@@ -124,12 +124,11 @@ export default function ExportButtons({ analysis, onExportMarkdown }: ExportButt
 
       const shareUrl = data.shareUrl as string;
       trackExport('share');
-      await copyText(shareUrl);
       setLastShareUrl(shareUrl);
-      setShareToast({ tone: 'success', message: 'Share link copied to clipboard.' });
+      setShareToast({ tone: 'success', message: 'Share link ready — copy it below.' });
       setTimeout(() => {
-        setShareToast((current) => (current?.message === 'Share link copied to clipboard.' ? null : current));
-      }, 2400);
+        setShareToast((current) => (current?.message === 'Share link ready — copy it below.' ? null : current));
+      }, 3000);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to create share link.';
       setShareToast({ tone: 'error', message });
