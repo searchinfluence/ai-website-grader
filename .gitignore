@@ -273,3 +273,5 @@ docs/archive/
 # AI comparison testing (development tool only)
 test-ai-comparison.js
 .env*.local
+
+.vercel
