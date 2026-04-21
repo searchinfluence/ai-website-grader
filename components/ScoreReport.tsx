@@ -80,7 +80,7 @@ function getScoreInterpretation(score: number, lowestFactor: { label: string; sc
 }
 
 const reviewCtaContent = {
-  title: 'Want a broader review of the site?',
+  title: 'Get the full picture of your AI visibility',
   body: 'This report focuses on one page. If you want a broader read across templates, technical signals, and content priorities, Search Influence can extend this into a fuller review.',
   button: 'See What a Full Review Covers'
 };

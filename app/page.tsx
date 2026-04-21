@@ -48,9 +48,8 @@ export default function Home() {
             <div className="header-description">
               <p>
                 Get a free, instant analysis of your website&apos;s content structure,
-                structured data, technical health, and on-page SEO -- scored across
-                4 weighted factors with specific, prioritized recommendations you
-                can act on today.
+                structured data, technical health, and on-page SEO, with specific,
+                prioritized recommendations you can act on today.
               </p>
               <p style={{ marginTop: '20px', fontSize: '1rem', color: 'var(--si-header-accent)' }}>
                 <a href="https://www.searchinfluence.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--si-header-accent)', textDecoration: 'underline' }}>
@@ -118,7 +117,7 @@ export default function Home() {
               <Target size={32} color="var(--orange-accent)" aria-hidden="true" />
             </div>
             <h3>4-Factor Scoring</h3>
-            <p>Content structure, structured data, technical health, and page SEO -- each weighted and scored so you know exactly where to focus.</p>
+            <p>Content structure, structured data, technical health, and page SEO -- each scored and weighted so you know exactly where to focus.</p>
           </div>
           <div className="feature">
             <div className="feature-icon">
@@ -188,7 +187,7 @@ export default function Home() {
                 }}>▼</span>
               </summary>
               <div style={{ padding: '25px 30px', color: 'var(--secondary-content)', lineHeight: '1.6' }}>
-                <p>The AI Website Grader is a sophisticated analysis tool designed for <strong>digital marketers, SEO professionals, web developers, and business owners</strong> who want to optimize their websites for AI-powered search engines and modern search algorithms.</p>
+                <p>The AI Website Grader is a fast, comprehensive analysis tool designed for <strong>digital marketers, SEO professionals, web developers, and business owners</strong> who want to optimize their websites for AI-powered search engines and modern search algorithms.</p>
                 <p style={{ marginTop: '15px' }}>It&apos;s particularly valuable for:</p>
                 <ul style={{ marginTop: '10px', paddingLeft: '20px' }}>
                   <li>Businesses of all sizes improving discoverability in AI-driven search</li>
@@ -385,7 +384,7 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <p style={{ marginTop: '15px' }}>Focus on improving lower-scoring categories first, especially those with high priority weights.</p>
+                <p style={{ marginTop: '15px' }}>Focus on improving lower-scoring categories first, especially those weighted more heavily.</p>
               </div>
             </details>
           </div>
