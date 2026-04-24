@@ -7,15 +7,31 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 ```bash
 npm run dev          # Start dev server on localhost:3000
 npm run build        # Production build (must pass before deploy)
-next lint            # ESLint
-tsc --noEmit         # Type check
-./deploy.sh "msg"    # Commit + push + vercel --prod
-vercel --prod        # Manual deploy
+npm run lint         # ESLint
+npm run type-check   # tsc --noEmit
+npm run test:run     # Vitest, single run
+npm run test         # Vitest, watch mode
+./deploy.sh          # Pre-deploy gate: tests + lint + typecheck + build (no commit, no push)
 ```
 
-Calibration testing: `node scripts/validate-score-calibration.js`
+Reference-site calibration is a separate manual check: `node scripts/validate-score-calibration.js` against sites like diviner.agency, grossmanlaw.net, searchinfluence.com.
 
-No automated test suite -- validation is manual against reference sites (diviner.agency, grossmanlaw.net, searchinfluence.com, etc.).
+## Deploy
+
+Use the `/deploy-ai-website-grader` skill ([.claude/skills/deploy-ai-website-grader/SKILL.md](.claude/skills/deploy-ai-website-grader/SKILL.md)). Vercel auto-deploys on merge to `main` via the GitHub integration — there is no manual `vercel --prod` step. The skill documents the full flow: feature branch → `./deploy.sh` → push → PR → human approval → merge.
+
+## Test Policy
+
+- Every code change ships with tests. Bug fixes ship with a regression test; new code covers success plus at least one failure path.
+- Tests live in [tests/](tests/) using Vitest.
+- `./deploy.sh` aborts on any failing test. Never `.skip` a test to make the gate pass — fix the code or fix the test.
+
+## Git Workflow
+
+- Feature work happens on a branch off `main` — never directly on `main`.
+- Commit early and often: small, focused commits with clear messages, not one giant commit at the end.
+- Push the branch, open a PR against `main`, share the URL for human review.
+- Do not merge your own PR without approval.
 
 ## Architecture
 

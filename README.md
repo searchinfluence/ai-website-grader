@@ -131,22 +131,28 @@ ai-website-grader-si/
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000
-npm run build      # Production build
-tsc --noEmit       # Type check
+npm run dev          # http://localhost:3000
+npm run build        # Production build
+npm run lint         # ESLint
+npm run type-check   # tsc --noEmit
+npm run test:run     # Vitest
 ```
 
 ### Deployment
-```bash
-# Commit + push + deploy
-npm run deploy "commit message"
 
-# Or deploy directly
-vercel --prod
-```
+Vercel auto-deploys on merge to `main`. The deploy procedure is documented in [.claude/skills/deploy-ai-website-grader/SKILL.md](.claude/skills/deploy-ai-website-grader/SKILL.md):
+
+1. Branch off `main`.
+2. Run `./deploy.sh` — the pre-deploy gate (tests + lint + typecheck + build; fails fast).
+3. Push branch, open PR against `main`, get human approval.
+4. Merge — Vercel deploys automatically.
+
+Do not push directly to `main` and do not run `vercel --prod` manually.
 
 ### Environment Variables
-Set in `.env.local` (gitignored):
+
+Copy [.env.example](.env.example) to `.env.local` and fill in your values. Required keys:
+
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
@@ -154,8 +160,8 @@ Set in `.env.local` (gitignored):
 - `NEXT_PUBLIC_HUBSPOT_EXPORT_FORM_ID`
 - `NEXT_PUBLIC_HUBSPOT_CTA_FORM_ID`
 - `NEXT_PUBLIC_GTM_ID`
-- `HUBSPOT_ACCESS_TOKEN`
-- `CORS_ALLOWED_ORIGINS`
+- `HUBSPOT_ACCESS_TOKEN` (optional)
+- `CORS_ALLOWED_ORIGINS` (optional)
 
 Notes:
 - `/app/api/analyze/route.ts` also accepts trusted Vercel preview origins ending in `.vercel.app` or `.vercel.dev`

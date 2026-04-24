@@ -208,7 +208,7 @@ async function analyzePerformanceWithCaching(url: string, html: string): Promise
   return metrics;
 }
 
-async function parseHtmlContent(html: string, url: string): Promise<CrawledContent> {
+export async function parseHtmlContent(html: string, url: string): Promise<CrawledContent> {
   const $ = cheerio.load(html) as cheerio.CheerioAPI;
   const isManualInput = url === 'manual-input';
   const urlHostname = !isManualInput ? new URL(url).hostname : '';
@@ -436,7 +436,7 @@ async function parseHtmlContent(html: string, url: string): Promise<CrawledConte
   };
 }
 
-function extractBalancedJsonObjects(input: string): string[] {
+export function extractBalancedJsonObjects(input: string): string[] {
   const objects: string[] = [];
   let depth = 0;
   let startIndex = -1;
@@ -508,7 +508,7 @@ function collectSchemaJsonFromSource(source: string): string[] {
   return Array.from(extracted);
 }
 
-function extractGtmContainerId(html: string): string | null {
+export function extractGtmContainerId(html: string): string | null {
   const match = html.match(GTM_ID_PATTERN);
   return match ? match[0] : null;
 }
@@ -885,7 +885,7 @@ function analyzeEnhancedSchemaInfo($: cheerio.CheerioAPI, schemaMarkup: string[]
   };
 }
 
-function normalizeUrl(url: string): string {
+export function normalizeUrl(url: string): string {
   const withProtocol = (!url.startsWith('http://') && !url.startsWith('https://'))
     ? `https://${url}`
     : url;
@@ -912,7 +912,7 @@ const BLOCKED_HOSTNAMES = new Set([
   '100.100.100.200',
 ]);
 
-async function assertSafeTargetUrl(url: string): Promise<void> {
+export async function assertSafeTargetUrl(url: string): Promise<void> {
   const parsed = new URL(url);
   const hostname = parsed.hostname.toLowerCase();
 
@@ -940,7 +940,7 @@ async function assertSafeTargetUrl(url: string): Promise<void> {
   }
 }
 
-function isPrivateOrLocalIp(value: string): boolean {
+export function isPrivateOrLocalIp(value: string): boolean {
   const normalized = value.replace(/^\[|\]$/g, '').toLowerCase();
   const ipVersion = net.isIP(normalized);
 
