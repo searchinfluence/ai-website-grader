@@ -18,8 +18,8 @@ echo "AI Website Grader — pre-deploy gate"
 echo "==================================="
 
 echo ""
-echo "1/4  Running tests..."
-npm run test:run
+echo "1/4  Running tests with coverage..."
+npm run test:coverage
 
 echo ""
 echo "2/4  Linting..."

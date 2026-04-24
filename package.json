@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "clean": "rm -rf .next out build dist",
     "predeploy-check": "./deploy.sh"
   },
@@ -32,6 +33,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.5",
     "eslint": "^9",
     "eslint-config-next": "15.4.8",
     "tailwindcss": "^4",
