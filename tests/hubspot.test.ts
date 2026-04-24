@@ -152,5 +152,28 @@ describe('pushContactToHubSpot', () => {
       const { pushContactToHubSpot } = await importHubSpot();
       await expect(pushContactToHubSpot({ email: 'a@b.com', firstname: 'A' })).resolves.toBeUndefined();
     });
+
+    it('on 409 with no parseable ID anywhere, logs and returns without throwing', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => new Response(JSON.stringify({ message: 'Conflict but no id' }), { status: 409 })),
+      );
+      const { pushContactToHubSpot } = await importHubSpot();
+      await expect(pushContactToHubSpot({ email: 'a@b.com', firstname: 'A' })).resolves.toBeUndefined();
+    });
+
+    it('does NOT throw when the PATCH update fails after a 409', async () => {
+      let calls = 0;
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => {
+          calls += 1;
+          if (calls === 1) return new Response(JSON.stringify({ id: '123' }), { status: 409 });
+          return new Response('forbidden', { status: 403 });
+        }),
+      );
+      const { pushContactToHubSpot } = await importHubSpot();
+      await expect(pushContactToHubSpot({ email: 'a@b.com', firstname: 'A' })).resolves.toBeUndefined();
+    });
   });
 });

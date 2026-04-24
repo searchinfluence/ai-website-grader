@@ -126,4 +126,68 @@ describe('normalizeWebsiteAnalysis', () => {
     expect(out!.contentImprovements).toHaveLength(1);
     expect(out!.contentImprovements[0].section).toBe('Body');
   });
+
+  it('preserves all optional recommendation fields when provided', () => {
+    const out = normalizeWebsiteAnalysis({
+      recommendations: [{
+        text: 'Do thing',
+        priority: 'high',
+        category: 'a',
+        implementation: 'Step by step',
+        codeExample: '<code/>',
+        tools: ['tool1', 'tool2'],
+        expectedImpact: 'high',
+        timeToImplement: '~1h',
+        testingInstructions: 'click here',
+        resources: ['https://docs.example.com'],
+      }],
+    });
+    const rec = out!.recommendations[0];
+    expect(rec.implementation).toBe('Step by step');
+    expect(rec.codeExample).toBe('<code/>');
+    expect(rec.tools).toEqual(['tool1', 'tool2']);
+    expect(rec.expectedImpact).toBe('high');
+    expect(rec.timeToImplement).toBe('~1h');
+    expect(rec.testingInstructions).toBe('click here');
+    expect(rec.resources).toEqual(['https://docs.example.com']);
+  });
+
+  it('drops non-string entries from tools and resources arrays', () => {
+    const out = normalizeWebsiteAnalysis({
+      recommendations: [{
+        text: 't',
+        priority: 'low',
+        category: 'c',
+        tools: ['ok', 123, null] as unknown as string[],
+        resources: [false, 'http://x'] as unknown as string[],
+      }],
+    });
+    expect(out!.recommendations[0].tools).toEqual(['ok']);
+    expect(out!.recommendations[0].resources).toEqual(['http://x']);
+  });
+
+  it('handles array-of-recommendations with non-object items by mapping defaults', () => {
+    const out = normalizeWebsiteAnalysis({
+      recommendations: [null as unknown as never, 'Plain string'],
+    });
+    expect(out!.recommendations).toHaveLength(2);
+    expect(out!.recommendations[0].text).toBe('Recommendation unavailable.');
+    expect(out!.recommendations[1].text).toBe('Plain string');
+  });
+
+  it('preserves contentImprovement implementation and estimatedImpact', () => {
+    const out = normalizeWebsiteAnalysis({
+      contentImprovements: [{
+        section: 'CTA',
+        current: 'old',
+        improved: 'new',
+        reasoning: 'reason',
+        priority: 'medium',
+        implementation: 'how to',
+        estimatedImpact: 'high',
+      }],
+    });
+    expect(out!.contentImprovements[0].implementation).toBe('how to');
+    expect(out!.contentImprovements[0].estimatedImpact).toBe('high');
+  });
 });

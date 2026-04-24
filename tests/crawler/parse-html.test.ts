@@ -130,4 +130,86 @@ describe('parseHtmlContent', () => {
     const out = await parseHtmlContent(heavyJs, 'https://example.com/spa');
     expect(typeof out.hasJavaScriptDependency).toBe('boolean');
   });
+
+  it('handles a page with no title element (uses h1 fallback or "Untitled")', async () => {
+    const out1 = await parseHtmlContent('<html><body><h1>Just an H1</h1></body></html>', 'https://example.com');
+    expect(out1.title).toBe('Just an H1');
+
+    const out2 = await parseHtmlContent('<html><body><p>no headings either</p></body></html>', 'https://example.com');
+    expect(out2.title).toBe('Untitled');
+  });
+
+  it('detects bot directives in robots meta tags', async () => {
+    const html = `<html><head><meta name="robots" content="noai, noimageai"/><meta name="googlebot" content="noindex"/></head><body><p>x</p></body></html>`;
+    const out = await parseHtmlContent(html, 'https://example.com');
+    expect(out.aiAnalysisData?.botAccessibility?.metaRobotsAI?.length).toBeGreaterThan(0);
+  });
+
+  it('detects social proof and contact form in uxInfo', async () => {
+    const html = `<html><body>
+      <form action="/contact"><input type="email" name="email"/><button>Send</button></form>
+      <div class="testimonial">Great product!</div>
+      <div class="reviews">5 stars</div>
+    </body></html>`;
+    const out = await parseHtmlContent(html, 'https://example.com');
+    expect(out.uxInfo?.hasContactForm).toBe(true);
+    expect(out.uxInfo?.hasSocialProof).toBe(true);
+  });
+
+  it('detects authority signals via .edu / .gov / .org links', async () => {
+    const html = `<html><body><p>Body</p>
+      <a href="https://university.edu/research">University research</a>
+      <a href="https://nih.gov/article">NIH</a>
+      <a href="https://wikipedia.org/article">Wiki</a>
+    </body></html>`;
+    const out = await parseHtmlContent(html, 'https://example.com');
+    const auth = out.aiAnalysisData?.authoritySignals;
+    expect(auth?.authorityLinks?.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('extracts factual indicators (citations, statistics, dates)', async () => {
+    const html = `<html><body>
+      <p>Per the 2024 study, 73% of widgets fail. According to Smith et al. (2023), this is rising.</p>
+      <p>Released 2026-04-15. Updated 2026-04-23.</p>
+      <a href="https://nih.gov/widgets">NIH widget research</a>
+    </body></html>`;
+    const out = await parseHtmlContent(html, 'https://example.com');
+    const fi = out.aiAnalysisData?.factualIndicators;
+    expect(fi).toBeDefined();
+    expect(fi!.statistics + fi!.citations).toBeGreaterThan(0);
+  });
+
+  it('detects AI-friendly schema types (FAQPage, HowTo) in enhancedSchemaInfo', async () => {
+    const html = `<html><head>
+      <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage"}</script>
+      <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo"}</script>
+    </head><body><p>x</p></body></html>`;
+    const out = await parseHtmlContent(html, 'https://example.com');
+    expect(out.enhancedSchemaInfo?.aiFriendlySchemas).toEqual(expect.arrayContaining(['FAQPage', 'HowTo']));
+  });
+
+  it('counts microdata items via [itemscope]', async () => {
+    const html = `<html><body>
+      <div itemscope itemtype="https://schema.org/Person"><span itemprop="name">Ada</span></div>
+      <div itemscope itemtype="https://schema.org/Organization"><span itemprop="name">Acme</span></div>
+    </body></html>`;
+    const out = await parseHtmlContent(html, 'https://example.com');
+    expect(out.enhancedSchemaInfo?.microdataCount).toBeGreaterThanOrEqual(2);
+  });
+
+  it('detects voice-search signals (questions, conversational content)', async () => {
+    const html = `<html><body>
+      <h1>How do I make widgets?</h1>
+      <p>You can make widgets by following these steps. What materials do I need? Why does this matter? How long will it take?</p>
+    </body></html>`;
+    const out = await parseHtmlContent(html, 'https://example.com');
+    const voice = out.aiAnalysisData?.voiceSearchOptimization;
+    expect(voice?.questionFormats).toBeGreaterThan(0);
+  });
+
+  it('falls back gracefully when fetchGtmSchema fetch throws (GTM ID present)', async () => {
+    const html = `<html><body><script>(function(){var gtm = 'GTM-ABCD1234';})()</script><p>body</p></body></html>`;
+    const out = await parseHtmlContent(html, 'https://example.com');
+    expect(out.gtmSchemaDetected).toBe(false);
+  });
 });
