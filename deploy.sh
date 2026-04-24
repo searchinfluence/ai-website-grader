@@ -1,42 +1,39 @@
 #!/bin/bash
+#
+# AI Website Grader — pre-deploy gate
+#
+# Vercel autodeploys on merge to main via the GitHub integration.
+# This script is the gate that must pass before you open or merge a PR.
+# It does NOT commit, push, or deploy. Use a feature branch and PR for that.
+#
+# Sequence (fails fast on any error):
+#   1. Tests              (vitest run)
+#   2. Lint               (next lint)
+#   3. Type check         (tsc --noEmit)
+#   4. Production build   (next build)
 
-# AI Website Grader Deployment Script
-# This script commits changes and triggers a direct Vercel deployment
+set -euo pipefail
 
-set -e  # Exit on any error
-
-echo "🚀 AI Website Grader - Direct Deployment Script"
-echo "================================================"
-
-# Check if there are any changes to commit
-if [ -z "$(git status --porcelain)" ]; then
-    echo "✅ No changes to commit"
-else
-    echo "📝 Committing changes..."
-    
-    # Add all changes
-    git add .
-    
-    # Get commit message from argument or use default
-    COMMIT_MSG=${1:-"Update AI Website Grader"}
-    
-    # Commit changes
-    git commit -m "$COMMIT_MSG"
-    
-    echo "✅ Changes committed"
-fi
-
-# Push to GitHub (this will trigger automatic deployment)
-echo "📤 Pushing to GitHub..."
-git push origin main
-
-# Trigger direct Vercel deployment for immediate feedback
-echo "🚀 Triggering direct Vercel deployment..."
-vercel --prod
+echo "AI Website Grader — pre-deploy gate"
+echo "==================================="
 
 echo ""
-echo "✅ Deployment complete!"
-echo "🌐 Production URL: https://ai-website-grader.vercel.app"
-echo "📊 Vercel Dashboard: https://vercel.com/will-scotts-projects/ai-website-grader"
+echo "1/4  Running tests..."
+npm run test:run
+
 echo ""
-echo "💡 Tip: Use './deploy.sh "Your commit message"' to customize the commit message" 
+echo "2/4  Linting..."
+npm run lint
+
+echo ""
+echo "3/4  Type checking..."
+npm run type-check
+
+echo ""
+echo "4/4  Building..."
+npm run build
+
+echo ""
+echo "All gates passed."
+echo "Next: push your feature branch and open a PR against main."
+echo "Vercel will deploy automatically once the PR is merged."

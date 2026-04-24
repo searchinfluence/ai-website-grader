@@ -11,8 +11,7 @@
     "test": "vitest",
     "test:run": "vitest run",
     "clean": "rm -rf .next out build dist",
-    "deploy": "./deploy.sh",
-    "deploy:prod": "vercel --prod"
+    "predeploy-check": "./deploy.sh"
   },
   "dependencies": {
     "@sparticuz/chromium": "^143.0.4",
