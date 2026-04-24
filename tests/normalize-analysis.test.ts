@@ -48,8 +48,7 @@ describe('normalizeWebsiteAnalysis', () => {
   });
 
   it('coerces unknown analysisScope back to "page"', () => {
-    // @ts-expect-error - intentional bad input
-    const out = normalizeWebsiteAnalysis({ analysisScope: 'site' });
+    const out = normalizeWebsiteAnalysis({ analysisScope: 'site' as never });
     expect(out!.analysisScope).toBe('page');
   });
 
@@ -111,20 +110,22 @@ describe('normalizeWebsiteAnalysis', () => {
         { },
       ],
     });
-    expect(out!.contentImprovements).toHaveLength(2);
-    expect(out!.contentImprovements[0].section).toBe('Hero');
-    expect(out!.contentImprovements[0].current).toBe('a');
-    expect(out!.contentImprovements[0].improved).toBe('b');
-    expect(out!.contentImprovements[1].section).toBe('Improvement');
-    expect(out!.contentImprovements[1].current).toBe('Current content needs improvement.');
+    const items = out!.contentImprovements!;
+    expect(items).toHaveLength(2);
+    expect(items[0].section).toBe('Hero');
+    expect(items[0].current).toBe('a');
+    expect(items[0].improved).toBe('b');
+    expect(items[1].section).toBe('Improvement');
+    expect(items[1].current).toBe('Current content needs improvement.');
   });
 
   it('drops non-object items from contentImprovements', () => {
     const out = normalizeWebsiteAnalysis({
       contentImprovements: ['not an object', null, { section: 'Body' }],
     });
-    expect(out!.contentImprovements).toHaveLength(1);
-    expect(out!.contentImprovements[0].section).toBe('Body');
+    const items = out!.contentImprovements!;
+    expect(items).toHaveLength(1);
+    expect(items[0].section).toBe('Body');
   });
 
   it('preserves all optional recommendation fields when provided', () => {
@@ -187,7 +188,8 @@ describe('normalizeWebsiteAnalysis', () => {
         estimatedImpact: 'high',
       }],
     });
-    expect(out!.contentImprovements[0].implementation).toBe('how to');
-    expect(out!.contentImprovements[0].estimatedImpact).toBe('high');
+    const items = out!.contentImprovements!;
+    expect(items[0].implementation).toBe('how to');
+    expect(items[0].estimatedImpact).toBe('high');
   });
 });

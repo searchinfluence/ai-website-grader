@@ -38,7 +38,7 @@ describe('assertSafeTargetUrl', () => {
   });
 
   it('throws when DNS resolves no addresses', async () => {
-    mockLookup.mockResolvedValueOnce([]);
+    mockLookup.mockResolvedValueOnce([] as never);
     await expect(assertSafeTargetUrl('https://example.com/x')).rejects.toThrow(/Could not resolve/i);
   });
 
@@ -46,7 +46,7 @@ describe('assertSafeTargetUrl', () => {
     mockLookup.mockResolvedValueOnce([
       { address: '93.184.216.34', family: 4 },
       { address: '10.0.0.5', family: 4 },
-    ]);
+    ] as never);
     await expect(assertSafeTargetUrl('https://example.com/x')).rejects.toThrow(/Resolved.+not allowed/i);
   });
 
@@ -54,7 +54,7 @@ describe('assertSafeTargetUrl', () => {
     mockLookup.mockResolvedValueOnce([
       { address: '93.184.216.34', family: 4 },
       { address: '2606:2800:220:1:248:1893:25c8:1946', family: 6 },
-    ]);
+    ] as never);
     await expect(assertSafeTargetUrl('https://example.com/x')).resolves.toBeUndefined();
   });
 });
