@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
     "clean": "rm -rf .next out build dist",
     "deploy": "./deploy.sh",
     "deploy:prod": "vercel --prod"
@@ -34,6 +36,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.8",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.5"
   }
 }
