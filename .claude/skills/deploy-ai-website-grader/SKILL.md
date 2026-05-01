@@ -24,7 +24,7 @@ Vercel auto-deploys on merge to `main` via the GitHub integration. There is **no
 
 ## Step 1 — Work on a feature branch
 
-Never commit directly to `main`. From `main`:
+Always work on a branch — direct commits to `main` skip the PR review step. From `main`:
 
 ```bash
 git checkout -b <kebab-case-branch-name>
@@ -101,8 +101,8 @@ Vercel picks up the merge and deploys to production automatically. Confirm at:
 
 ## Hard rules
 
-- Never push directly to `main`.
-- Never run `vercel --prod` manually — it bypasses the gate.
-- Never skip or `.skip` a test to make the gate pass.
-- Never merge your own PR without Shane's approval.
-- Never rewrite history on `main` without explicit instruction.
+- **Don't push directly to `main`** — direct pushes skip the pre-deploy gate (tests + lint + typecheck + build) and the PR review step, risking broken code in production.
+- **Don't run `vercel --prod` manually** — Vercel's GitHub integration auto-deploys on merge to `main`. Manual deploys bypass the PR review and the gate.
+- **Don't `.skip` a test to make the gate pass** — `.skip` hides the underlying bug and ships broken code to users. Fix the code, or fix the test if it's actually wrong.
+- **Don't merge your own PR without Shane's approval** — the human review step is the last check before production.
+- **Don't rewrite history on `main` without explicit instruction** — collaborators rely on stable refs, and force-pushes can lose commits.
